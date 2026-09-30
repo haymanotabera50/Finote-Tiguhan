@@ -12,6 +12,11 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/finote
 export let isConnectedToMongoDB = false;
 
 export async function connectDB(): Promise<boolean> {
+  if (mongoose.connection.readyState === 1) {
+    isConnectedToMongoDB = true;
+    return true;
+  }
+
   try {
     mongoose.set('strictQuery', false);
     await mongoose.connect(MONGODB_URI, {

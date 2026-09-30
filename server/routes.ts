@@ -6,7 +6,6 @@ import { DepartmentSetting } from './models/DepartmentSetting';
 import { Announcement } from './models/Announcement';
 import { ContactMessage } from './models/ContactMessage';
 import { readLocalStore, writeLocalStore } from './localStore';
-import { renderAdminHtml } from './adminHtml';
 
 export const apiRouter = Router();
 
@@ -16,83 +15,6 @@ function getReqUser(req: Request) {
   const deptId = (req.headers['x-user-dept'] as string) || '';
   return { role, deptId };
 }
-
-// ----------------------------------------------------
-// 0. API ROOT & DISCOVERY / BROWSER ADMIN FALLBACK
-// ----------------------------------------------------
-apiRouter.get('/', (req: Request, res: Response) => {
-  if (req.accepts('html') && !req.xhr && !req.headers.accept?.includes('application/json')) {
-    return res.type('html').send(renderAdminHtml());
-  }
-
-  return res.json({
-    status: 'online',
-    name: 'Finote Teguhan Sunday School Backend API',
-    version: '1.0.0',
-    database: {
-      connected: isConnectedToMongoDB,
-      engine: isConnectedToMongoDB ? 'MongoDB Atlas / Server' : 'Local Document Store (server/data/store.json)'
-    },
-    adminPortal: 'http://localhost:5000/admin',
-    webPortal: 'http://localhost:5173',
-    endpoints: {
-      health: 'GET /api/health',
-      stats: 'GET /api/stats',
-      auth_login: 'POST /api/auth/login',
-      auth_users: 'GET /api/auth/users',
-      registrations: 'GET, POST /api/registrations',
-      registration_status: 'PATCH /api/registrations/:id/status',
-      registration_delete: 'DELETE /api/registrations/:id',
-      departments: 'GET, PUT /api/departments/:deptId',
-      announcement: 'GET, PUT /api/announcement',
-      contact: 'GET, POST /api/contact'
-    }
-  });
-});
-
-apiRouter.get('/stats', async (_req: Request, res: Response) => {
-  try {
-    if (isConnectedToMongoDB) {
-      const [totalRegs, pendingRegs, approvedRegs, usersCount, contactCount, ann] = await Promise.all([
-        StudentRegistration.countDocuments(),
-        StudentRegistration.countDocuments({ status: 'pending' }),
-        StudentRegistration.countDocuments({ status: { $in: ['approved', 'enrolled'] } }),
-        User.countDocuments(),
-        ContactMessage.countDocuments(),
-        Announcement.findOne()
-      ]);
-      return res.json({
-        database: { connected: true, name: 'MongoDB Atlas' },
-        registrations: {
-          total: totalRegs,
-          pending: pendingRegs,
-          approved: approvedRegs
-        },
-        usersCount,
-        contactCount,
-        announcement: ann || { enabled: false }
-      });
-    } else {
-      const store = readLocalStore();
-      const totalRegs = store.registrations.length;
-      const pendingRegs = store.registrations.filter(r => r.status === 'pending').length;
-      const approvedRegs = store.registrations.filter(r => r.status === 'approved' || r.status === 'enrolled').length;
-      return res.json({
-        database: { connected: false, name: 'Local Document Store' },
-        registrations: {
-          total: totalRegs,
-          pending: pendingRegs,
-          approved: approvedRegs
-        },
-        usersCount: store.users.length,
-        contactCount: store.contactMessages?.length || 0,
-        announcement: store.announcement
-      });
-    }
-  } catch (err: unknown) {
-    res.status(500).json({ error: (err as Error).message });
-  }
-});
 
 // ----------------------------------------------------
 // 1. AUTHENTICATION & USERS
@@ -251,36 +173,6 @@ apiRouter.patch('/registrations/:id/status', async (req: Request, res: Response)
   }
 });
 
-apiRouter.delete('/registrations/:id', async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { role } = getReqUser(req);
-
-    if (role !== 'leadership') {
-      return res.status(403).json({ error: 'Unauthorized: Only leadership can delete registration records' });
-    }
-
-    if (isConnectedToMongoDB) {
-      const deleted = await StudentRegistration.findByIdAndDelete(id);
-      if (!deleted) {
-        return res.status(404).json({ error: 'Record not found' });
-      }
-      return res.json({ success: true, message: 'Registration deleted' });
-    } else {
-      const store = readLocalStore();
-      const idx = store.registrations.findIndex(r => r.id === id || r._id === id);
-      if (idx === -1) {
-        return res.status(404).json({ error: 'Record not found' });
-      }
-      store.registrations.splice(idx, 1);
-      writeLocalStore(store);
-      return res.json({ success: true, message: 'Registration deleted' });
-    }
-  } catch (err: unknown) {
-    res.status(500).json({ error: (err as Error).message });
-  }
-});
-
 // ----------------------------------------------------
 // 3. DEPARTMENT SETTINGS (RBAC: LEADERSHIP ONLY EDITS 'leadership', DEPT ADMIN ONLY EDITS OWN)
 // ----------------------------------------------------
@@ -433,20 +325,6 @@ apiRouter.post('/contact', async (req: Request, res: Response) => {
       store.contactMessages.unshift(msg);
       writeLocalStore(store);
       return res.status(201).json(msg);
-    }
-  } catch (err: unknown) {
-    res.status(500).json({ error: (err as Error).message });
-  }
-});
-
-apiRouter.get('/contact', async (_req: Request, res: Response) => {
-  try {
-    if (isConnectedToMongoDB) {
-      const messages = await ContactMessage.find().sort({ createdAt: -1 });
-      return res.json(messages);
-    } else {
-      const store = readLocalStore();
-      return res.json(store.contactMessages || []);
     }
   } catch (err: unknown) {
     res.status(500).json({ error: (err as Error).message });

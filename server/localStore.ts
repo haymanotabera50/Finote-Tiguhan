@@ -1,8 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 
-const DATA_DIR = path.resolve(process.cwd(), 'server', 'data');
+const isVercel = !!process.env.VERCEL;
+const DATA_DIR = isVercel ? '/tmp' : path.resolve(process.cwd(), 'server', 'data');
 const STORE_FILE = path.join(DATA_DIR, 'store.json');
+const SEED_FILE = path.resolve(process.cwd(), 'server', 'data', 'store.json');
 
 interface LocalStoreData {
   users: Array<Record<string, unknown>>;
@@ -147,6 +149,15 @@ function ensureDirExists() {
 export function readLocalStore(): LocalStoreData {
   ensureDirExists();
   if (!fs.existsSync(STORE_FILE)) {
+    if (isVercel && fs.existsSync(SEED_FILE)) {
+      try {
+        const seedRaw = fs.readFileSync(SEED_FILE, 'utf-8');
+        fs.writeFileSync(STORE_FILE, seedRaw, 'utf-8');
+        return JSON.parse(seedRaw);
+      } catch (e) {
+        // Fallback to defaultData
+      }
+    }
     fs.writeFileSync(STORE_FILE, JSON.stringify(defaultData, null, 2), 'utf-8');
     return defaultData;
   }
