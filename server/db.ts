@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { User } from './models/User';
-import { StudentRegistration } from './models/StudentRegistration';
-import { DepartmentSetting } from './models/DepartmentSetting';
-import { Announcement } from './models/Announcement';
+import { User } from './models/User.js';
+import { StudentRegistration } from './models/StudentRegistration.js';
+import { DepartmentSetting } from './models/DepartmentSetting.js';
+import { Announcement } from './models/Announcement.js';
 
 dotenv.config();
 

@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { apiRouter } from './routes';
-import { renderAdminHtml } from './adminHtml';
+import { apiRouter } from './routes.js';
+import { renderAdminHtml } from './adminHtml.js';
 
 dotenv.config();
 
