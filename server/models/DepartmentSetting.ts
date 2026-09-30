@@ -28,5 +28,6 @@ const DepartmentSettingSchema: Schema = new Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-export const DepartmentSetting = mongoose.models.DepartmentSetting || 
+export const DepartmentSetting: mongoose.Model<IDepartmentSetting> = 
+  (mongoose.models.DepartmentSetting as mongoose.Model<IDepartmentSetting>) || 
   mongoose.model<IDepartmentSetting>('DepartmentSetting', DepartmentSettingSchema);

@@ -20,5 +20,6 @@ const AnnouncementSchema: Schema = new Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-export const Announcement = mongoose.models.Announcement || 
+export const Announcement: mongoose.Model<IAnnouncement> = 
+  (mongoose.models.Announcement as mongoose.Model<IAnnouncement>) || 
   mongoose.model<IAnnouncement>('Announcement', AnnouncementSchema);

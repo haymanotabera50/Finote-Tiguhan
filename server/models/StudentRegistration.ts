@@ -43,5 +43,6 @@ const StudentRegistrationSchema: Schema = new Schema({
   registeredAt: { type: Date, default: Date.now }
 });
 
-export const StudentRegistration = mongoose.models.StudentRegistration || 
+export const StudentRegistration: mongoose.Model<IStudentRegistration> = 
+  (mongoose.models.StudentRegistration as mongoose.Model<IStudentRegistration>) || 
   mongoose.model<IStudentRegistration>('StudentRegistration', StudentRegistrationSchema);

@@ -18,5 +18,6 @@ const ContactMessageSchema: Schema = new Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-export const ContactMessage = mongoose.models.ContactMessage || 
+export const ContactMessage: mongoose.Model<IContactMessage> = 
+  (mongoose.models.ContactMessage as mongoose.Model<IContactMessage>) || 
   mongoose.model<IContactMessage>('ContactMessage', ContactMessageSchema);
