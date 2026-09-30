@@ -176,3 +176,4 @@ export const weeklySchedule = [
     titleEn: "General Sunday School Assembly, Sermon & Ministry Updates"
   }
 ];
+

@@ -170,3 +170,4 @@ export const departmentsData: Department[] = [
     color: "from-emerald-700/30 to-teal-900/30",
   }
 ];
+

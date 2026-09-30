@@ -13,11 +13,42 @@
     color: #e2f1ee;
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
   h1, h2, h3, h4, .font-cinzel {
     font-family: 'Cinzel', 'Noto Sans Ethiopic', serif;
   }
+}
+
+/* Theme overrides */
+body.theme-teal {
+  background-color: #081716;
+  color: #e2f1ee;
+}
+
+body.theme-gold {
+  background-color: #140d04;
+  color: #fef3c7;
+}
+body.theme-gold ::-webkit-scrollbar-thumb {
+  background: #78350f;
+}
+
+body.theme-crimson {
+  background-color: #16060c;
+  color: #ffe4e6;
+}
+body.theme-crimson ::-webkit-scrollbar-thumb {
+  background: #881337;
+}
+
+/* Font size overrides */
+html.font-large {
+  font-size: 114%;
+}
+html.font-standard {
+  font-size: 100%;
 }
 
 /* Custom subtle scrollbar */

@@ -275,3 +275,4 @@ export const siteContent = {
     footerCopyright: "Lafto Debre Teguhan St. Michael Church Finote Teguhan Sunday School. All Rights Reserved."
   }
 };
+

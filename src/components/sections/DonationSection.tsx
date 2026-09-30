@@ -176,3 +176,4 @@ export const DonationSection: React.FC = () => {
     </section>
   );
 };
+

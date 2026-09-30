@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
+import { useCustomization } from '../../context/CustomizationContext';
 import { siteContent } from '../../data/translations';
 import { departmentsData } from '../../data/departmentsData';
 import { EthiopianCross } from '../common/EthiopianCross';
@@ -7,11 +9,13 @@ import { Department } from '../../types';
 import { 
   Shield, TrendingUp, BookOpen, Flame, HeartHandshake, 
   Coins, Video, Sparkles, Users, Baby, Palette, Music, 
-  Building2, GraduationCap, Search, ArrowRight, Check
+  Building2, GraduationCap, Search, ArrowRight, Check, 
+  Clock, Megaphone, Edit3, Eye, Lock
 } from 'lucide-react';
 
 interface DepartmentsProps {
   onJoinDepartment: (deptId: string) => void;
+  onOpenPortalWithDept?: (deptId: string) => void;
 }
 
 const iconMap: Record<string, React.ElementType> = {
@@ -20,13 +24,17 @@ const iconMap: Record<string, React.ElementType> = {
   Building2, GraduationCap
 };
 
-export const Departments: React.FC<DepartmentsProps> = ({ onJoinDepartment }) => {
+export const Departments: React.FC<DepartmentsProps> = ({ 
+  onJoinDepartment,
+  onOpenPortalWithDept 
+}) => {
   const { language, isAmharic } = useLanguage();
+  const { currentUser, canEditDepartment } = useAuth();
+  const { departmentSettings } = useCustomization();
   const t = siteContent[language];
 
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedDeptForDetail, setSelectedDeptForDetail] = useState<Department | null>(null);
 
   const filteredDepartments = useMemo(() => {
     return departmentsData.filter((dept) => {
@@ -44,7 +52,7 @@ export const Departments: React.FC<DepartmentsProps> = ({ onJoinDepartment }) =>
 
   return (
     <section id="departments" className="py-24 bg-[#081716] relative overflow-hidden">
-      {/* Decorative Blur Backgrounds */}
+      {/* Background Glow */}
       <div className="absolute top-1/4 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-10 left-10 w-80 h-80 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
@@ -53,7 +61,7 @@ export const Departments: React.FC<DepartmentsProps> = ({ onJoinDepartment }) =>
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">
             <EthiopianCross size={14} variant="simple" />
-            <span>{isAmharic ? "የአገልግሎት ዘርፎች" : "Parish Ministries"}</span>
+            <span>{isAmharic ? "የሰንበት ት/ቤቱ 14 ክፍላት" : "The 14 Active Ministries"}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
             {t.departmentsTitle}
@@ -62,11 +70,26 @@ export const Departments: React.FC<DepartmentsProps> = ({ onJoinDepartment }) =>
           <p className="text-emerald-200/80 text-base sm:text-lg">
             {t.departmentsSubtitle}
           </p>
+
+          {/* Role Status Note */}
+          {currentUser && (
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#061514] border border-amber-500/30 text-xs text-amber-300">
+              <Shield size={14} className="text-amber-400" />
+              <span>
+                {currentUser.role === 'leadership'
+                  ? (isAmharic 
+                      ? 'ሥራ አመራር ክፍል፦ በሁሉም ክፍላት ላይ የቁጥጥር እይታ አለዎት (የራስዎን ክፍል ብቻ ማረም ይፈቀዳል)' 
+                      : 'Leadership Mode: Full oversight of all departments (Self-edit restricted to Leadership)')
+                  : (isAmharic
+                      ? `${currentUser.departmentNameAm || 'ክፍልዎ'}፦ የራስዎን ክፍል ብቻ የማስተዳደር ፈቃድ አለዎት`
+                      : `${currentUser.departmentNameEn || 'Department'}: You can manage only your department`)}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Filter Tabs & Search Bar */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
-          {/* Category Tabs */}
           <div className="flex flex-wrap items-center justify-center gap-2">
             {[
               { id: 'all', label: t.departmentsFilterAll },
@@ -89,7 +112,6 @@ export const Departments: React.FC<DepartmentsProps> = ({ onJoinDepartment }) =>
             ))}
           </div>
 
-          {/* Search Input */}
           <div className="relative w-full md:w-72">
             <Search size={16} className="absolute left-3.5 top-3 text-emerald-400/60" />
             <input
@@ -107,35 +129,70 @@ export const Departments: React.FC<DepartmentsProps> = ({ onJoinDepartment }) =>
           {filteredDepartments.map((dept) => {
             const IconComponent = iconMap[dept.icon] || Shield;
             const subUnits = isAmharic ? dept.subSectionsAm : dept.subSectionsEn;
+            const settings = departmentSettings[dept.id];
+            const canEdit = canEditDepartment(dept.id);
+            const isMyDept = currentUser?.departmentId === dept.id;
 
             return (
               <div
                 key={dept.id}
-                className="rounded-3xl bg-[#09201e]/80 border border-amber-500/25 hover:border-amber-400/60 p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-amber-500/10 group text-left relative overflow-hidden"
+                className={`rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl text-left relative overflow-hidden border-2 ${
+                  isMyDept
+                    ? 'bg-[#0c2a27] border-amber-400 shadow-amber-500/10'
+                    : 'bg-[#09201e]/85 border-amber-500/25 hover:border-amber-400/60'
+                }`}
               >
-                {/* Background Card Gradient */}
-                <div className={`absolute -top-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br ${dept.color} blur-2xl group-hover:scale-150 transition-transform duration-500`} />
-
                 <div>
-                  {/* Top Icon & Badge */}
+                  {/* Top Bar with Icon & Permission Badges */}
                   <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all">
-                      <IconComponent size={24} />
+                    <div className="flex items-center gap-2">
+                      <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                        <IconComponent size={24} />
+                      </div>
+                      {canEdit && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1">
+                          <Edit3 size={10} />
+                          <span>{isAmharic ? 'የማረም ፈቃድ' : 'Editable'}</span>
+                        </span>
+                      )}
                     </div>
+
                     <span className="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-700/50 text-emerald-300">
                       {dept.category}
                     </span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">
+                  <h3 className="text-xl font-bold text-white mb-2 leading-snug">
                     {isAmharic ? dept.nameAm : dept.nameEn}
                   </h3>
+
+                  {/* Motto (if customized by admin) */}
+                  {settings?.mottoAm && (
+                    <div className="text-xs text-amber-300/90 font-serif italic mb-2 border-l-2 border-amber-500/50 pl-2">
+                      {isAmharic ? settings.mottoAm : settings.mottoEn || settings.mottoAm}
+                    </div>
+                  )}
 
                   {/* Description */}
                   <p className="text-xs sm:text-sm text-emerald-100/80 leading-relaxed mb-4">
                     {isAmharic ? dept.descAm : dept.descEn}
                   </p>
+
+                  {/* Meeting Time & Notice (if set) */}
+                  {settings?.meetingTimeAm && (
+                    <div className="mb-3 p-2.5 rounded-xl bg-[#061514] border border-emerald-900/80 flex items-center gap-2 text-xs text-amber-300">
+                      <Clock size={14} className="text-amber-400 shrink-0" />
+                      <span>{isAmharic ? settings.meetingTimeAm : settings.meetingTimeEn || settings.meetingTimeAm}</span>
+                    </div>
+                  )}
+
+                  {settings?.announcementAm && (
+                    <div className="mb-4 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2 text-xs text-amber-200">
+                      <Megaphone size={14} className="text-amber-400 shrink-0 mt-0.5" />
+                      <span>{isAmharic ? settings.announcementAm : settings.announcementEn || settings.announcementAm}</span>
+                    </div>
+                  )}
 
                   {/* Sub Units List */}
                   {subUnits && subUnits.length > 0 && (
@@ -158,26 +215,30 @@ export const Departments: React.FC<DepartmentsProps> = ({ onJoinDepartment }) =>
                   )}
                 </div>
 
-                {/* Card Action Button */}
-                <div className="pt-3">
+                {/* Card Action Buttons */}
+                <div className="pt-3 flex items-center gap-2">
                   <button
                     onClick={() => onJoinDepartment(dept.id)}
-                    className="w-full py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 hover:border-amber-400 font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="flex-1 py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 hover:border-amber-400 font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <span>{t.departmentsJoinBtn}</span>
                     <ArrowRight size={14} />
                   </button>
+
+                  {onOpenPortalWithDept && (currentUser?.role === 'leadership' || canEdit) && (
+                    <button
+                      onClick={() => onOpenPortalWithDept(dept.id)}
+                      className="px-3 py-2.5 rounded-xl bg-[#061514] border border-emerald-800 hover:border-amber-400 text-emerald-200 hover:text-white text-xs font-semibold transition-all cursor-pointer flex items-center gap-1"
+                      title={canEdit ? (isAmharic ? "ይህንን ክፍል አርም" : "Edit Department") : (isAmharic ? "የሥራ አመራር ቁጥጥር" : "Leadership Oversight")}
+                    >
+                      {canEdit ? <Edit3 size={14} className="text-amber-400" /> : <Eye size={14} className="text-amber-400" />}
+                    </button>
+                  )}
                 </div>
               </div>
             );
           })}
         </div>
-
-        {filteredDepartments.length === 0 && (
-          <div className="py-16 text-center text-emerald-300/60 text-sm">
-            {isAmharic ? "ምንም የተገኘ ክፍል የለም።" : "No departments match your filter."}
-          </div>
-        )}
       </div>
     </section>
   );

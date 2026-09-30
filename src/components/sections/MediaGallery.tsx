@@ -287,3 +287,4 @@ export const MediaGallery: React.FC = () => {
     </section>
   );
 };
+

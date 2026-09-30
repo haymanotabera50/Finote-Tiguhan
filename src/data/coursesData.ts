@@ -146,3 +146,4 @@ export const coursesData: Course[] = [
     level: "adult"
   }
 ];
+

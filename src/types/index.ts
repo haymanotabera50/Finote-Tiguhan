@@ -78,3 +78,4 @@ export interface NewsItem {
   categoryAm: string;
   categoryEn: string;
 }
+

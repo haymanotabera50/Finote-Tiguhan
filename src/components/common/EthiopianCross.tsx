@@ -62,3 +62,4 @@ export const EthiopianCross: React.FC<CrossProps> = ({
     </svg>
   );
 };
+

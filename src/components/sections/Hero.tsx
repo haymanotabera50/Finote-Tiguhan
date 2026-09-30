@@ -120,3 +120,4 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
     </section>
   );
 };
+

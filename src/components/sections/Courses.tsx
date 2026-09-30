@@ -136,3 +136,4 @@ export const Courses: React.FC<CoursesProps> = ({ onEnroll }) => {
     </section>
   );
 };
+
