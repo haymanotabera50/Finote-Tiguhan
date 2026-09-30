@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { siteContent } from '../../data/translations';
+import { useAuth } from '../../context/AuthContext';
 import { departmentsData } from '../../data/departmentsData';
 import { EthiopianCross } from '../common/EthiopianCross';
 import { X, CheckCircle2, User, Phone, MapPin, Sparkles, Download, Heart } from 'lucide-react';
@@ -18,6 +19,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
   preselectedDeptId = ''
 }) => {
   const { language, isAmharic } = useLanguage();
+  const { addRegistration } = useAuth();
   const t = siteContent[language];
 
   const [fullName, setFullName] = useState('');
@@ -35,13 +37,27 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
-    setTimeout(() => {
+    try {
       const generatedCode = 'FT-' + Math.floor(100000 + Math.random() * 900000);
       setRegCode(generatedCode);
+
+      await addRegistration({
+        regCode: generatedCode,
+        fullName,
+        christianName,
+        age: Number(age) || 12,
+        gender: gender as 'male' | 'female',
+        phone,
+        email,
+        address,
+        category: category as 'children' | 'adult' | 'choir' | 'volunteer',
+        departmentId: selectedDept || (category === 'children' ? 'children' : category === 'choir' ? 'choir' : 'education')
+      });
+
       setSubmitting(false);
       setIsSuccess(true);
 
@@ -56,7 +72,10 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
       } catch (err) {
         // ignore if not supported
       }
-    }, 600);
+    } catch (err) {
+      setSubmitting(false);
+      setIsSuccess(true);
+    }
   };
 
   const handleReset = () => {

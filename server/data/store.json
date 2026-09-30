@@ -1,0 +1,140 @@
+{
+  "users": [
+    {
+      "id": "u-lead",
+      "name": "ሥራ አመራር ክፍል (ዋና አስተዳደር)",
+      "email": "leadership@finoteteguhan.org",
+      "role": "leadership",
+      "departmentId": "leadership",
+      "departmentNameAm": "ሥራ አመራር ክፍል",
+      "departmentNameEn": "Executive Leadership",
+      "phone": "+251 91 123 4567"
+    },
+    {
+      "id": "u-edu",
+      "name": "መምህር ተስፋዬ (የትምህርት ክፍል ኃላፊ)",
+      "email": "education@finoteteguhan.org",
+      "role": "dept_admin",
+      "departmentId": "education",
+      "departmentNameAm": "ትምህርትና ስልጠና ክፍል",
+      "departmentNameEn": "Education & Training",
+      "phone": "+251 91 234 5678"
+    },
+    {
+      "id": "u-child",
+      "name": "እህት ጽዮን (የሕፃናት ክፍል አስተባባሪ)",
+      "email": "children@finoteteguhan.org",
+      "role": "dept_admin",
+      "departmentId": "children",
+      "departmentNameAm": "ሕጻናት ክፍል",
+      "departmentNameEn": "Children Sunday School",
+      "phone": "+251 91 345 6789"
+    },
+    {
+      "id": "u-choir",
+      "name": "ዘማሪ አማኑኤል (የመዝሙር ክፍል መሪ)",
+      "email": "choir@finoteteguhan.org",
+      "role": "dept_admin",
+      "departmentId": "choir",
+      "departmentNameAm": "መዝሙር ክፍል",
+      "departmentNameEn": "Sacred Choir & Hymnody",
+      "phone": "+251 91 456 7890"
+    },
+    {
+      "id": "u-stud",
+      "name": "ዮሐንስ ተስፋዬ",
+      "email": "student@finoteteguhan.org",
+      "role": "student",
+      "studentId": "FT-849201",
+      "christianName": "ገብረ ሚካኤል",
+      "departmentId": "children",
+      "phone": "0911223344"
+    }
+  ],
+  "registrations": [
+    {
+      "id": "reg-1790768829237",
+      "fullName": "???? ????",
+      "christianName": "??? ?????",
+      "age": 8,
+      "gender": "male",
+      "phone": "0988776655",
+      "address": "???",
+      "category": "children",
+      "departmentId": "children",
+      "regCode": "FT-949934",
+      "status": "pending",
+      "registeredAt": "2026-09-30"
+    },
+    {
+      "id": "reg-1",
+      "regCode": "FT-849201",
+      "fullName": "ዮሐንስ ተስፋዬ ገብሬ",
+      "christianName": "ገብረ ሚካኤል",
+      "age": 6,
+      "gender": "male",
+      "phone": "0911223344",
+      "address": "ላፍቶ፣ ወረዳ 01",
+      "category": "children",
+      "departmentId": "children",
+      "status": "enrolled",
+      "registeredAt": "2026-09-25",
+      "notes": "ለማቴዎስ ምድብ ተመድቧል"
+    },
+    {
+      "id": "reg-2",
+      "regCode": "FT-731920",
+      "fullName": "ሜሮን አለሙ በቀለ",
+      "christianName": "ወለተ ማርያም",
+      "age": 10,
+      "gender": "female",
+      "phone": "0922334455",
+      "address": "ጀሞ 1፣ ንፋስ ስልክ",
+      "category": "children",
+      "departmentId": "children",
+      "status": "approved",
+      "registeredAt": "2026-09-27",
+      "notes": "ለማርቆስ ምድብ ተመድባለች"
+    },
+    {
+      "id": "reg-3",
+      "regCode": "FT-612984",
+      "fullName": "ዳዊት ኃይሉ ተመስገን",
+      "christianName": "ኃይለ ጊዮርጊስ",
+      "age": 21,
+      "gender": "male",
+      "phone": "0933445566",
+      "address": "ለቡ መብራት ኃይል",
+      "category": "choir",
+      "departmentId": "choir",
+      "status": "pending",
+      "registeredAt": "2026-09-28",
+      "notes": "የበገናና የከበሮ ተሰጥኦ ፈተና ይጠብቃል"
+    }
+  ],
+  "departmentSettings": {
+    "leadership": {
+      "deptId": "leadership",
+      "mottoAm": "�????? ?? ?? ?? ??????� (??. 1:10)",
+      "mottoEn": "«Bearing fruit in every good work» (Col. 1:10)",
+      "meetingTimeAm": "ቅዳሜ ከሰዓት 10:00 ሰዓት",
+      "meetingTimeEn": "Saturdays at 4:00 PM",
+      "announcementAm": "የሥራ አመራር ክፍል ወርሃዊ የዕቅድ ግምገማ በሚቀጥለው ቅዳሜ ይካሄዳል።",
+      "announcementEn": "Executive leadership monthly planning review will be held this Saturday.",
+      "contactPersonAm": "ዲ/ን ዮሐንስ (ዋና ጸሐፊ)",
+      "contactPersonEn": "Dn. Yohannes (Secretary General)",
+      "contactPhone": "+251 91 123 4567",
+      "updatedAt": "2026-09-30T11:48:05.176Z"
+    }
+  },
+  "announcement": {
+    "enabled": true,
+    "badgeAm": "አስቸኳይ ማስታወቂያ",
+    "badgeEn": "PARISH NOTICE",
+    "textAm": "የ2026/2027 ዓ.ም አዲስ የሰንበት ት/ቤት ተማሪዎች ምዝገባ በይፋ ተጀምሯል! በድረ-ገጻችን አሁኑኑ ይመዝገቡ።",
+    "textEn": "Enrollment for the 2026/2027 Sunday School Academic Year is now open! Register online today.",
+    "updatedBy": "ሥራ አመራር ክፍል",
+    "updatedAt": "2026-09-30"
+  },
+  "contactMessages": []
+}

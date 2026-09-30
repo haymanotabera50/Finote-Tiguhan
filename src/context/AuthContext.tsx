@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, StudentRegistrationRecord } from '../types/auth';
+import { api } from '../services/api';
 
 interface AuthContextType {
   currentUser: User | null;
   isAuthenticated: boolean;
-  login: (email: string, role?: string, deptId?: string) => void;
+  login: (email: string, role?: string, deptId?: string) => Promise<void>;
   logout: () => void;
   switchRole: (role: 'leadership' | 'dept_admin' | 'student', deptId?: string) => void;
   
@@ -16,87 +17,10 @@ interface AuthContextType {
   
   // Registration records management
   registrations: StudentRegistrationRecord[];
-  addRegistration: (reg: Omit<StudentRegistrationRecord, 'id' | 'registeredAt' | 'status'>) => StudentRegistrationRecord;
-  updateRegistrationStatus: (id: string, status: StudentRegistrationRecord['status'], notes?: string) => void;
+  addRegistration: (reg: Omit<StudentRegistrationRecord, 'id' | 'registeredAt' | 'status'>) => Promise<StudentRegistrationRecord>;
+  updateRegistrationStatus: (id: string, status: StudentRegistrationRecord['status'], notes?: string) => Promise<void>;
+  refreshRegistrations: () => Promise<void>;
 }
-
-const mockInitialRegistrations: StudentRegistrationRecord[] = [
-  {
-    id: "reg-1",
-    regCode: "FT-849201",
-    fullName: "ዮሐንስ ተስፋዬ ገብሬ",
-    christianName: "ገብረ ሚካኤል",
-    age: 6,
-    gender: "male",
-    phone: "0911223344",
-    address: "ላፍቶ፣ ወረዳ 01",
-    category: "children",
-    departmentId: "children",
-    status: "enrolled",
-    registeredAt: "2026-09-25",
-    notes: "ለማቴዎስ ምድብ ተመድቧል"
-  },
-  {
-    id: "reg-2",
-    regCode: "FT-731920",
-    fullName: "ሜሮን አለሙ በቀለ",
-    christianName: "ወለተ ማርያም",
-    age: 10,
-    gender: "female",
-    phone: "0922334455",
-    address: "ጀሞ 1፣ ንፋስ ስልክ",
-    category: "children",
-    departmentId: "children",
-    status: "approved",
-    registeredAt: "2026-09-27",
-    notes: "ለማርቆስ ምድብ ተመድባለች"
-  },
-  {
-    id: "reg-3",
-    regCode: "FT-612984",
-    fullName: "ዳዊት ኃይሉ ተመስገን",
-    christianName: "ኃይለ ጊዮርጊስ",
-    age: 21,
-    gender: "male",
-    phone: "0933445566",
-    address: "ለቡ መብራት ኃይል",
-    category: "choir",
-    departmentId: "choir",
-    status: "pending",
-    registeredAt: "2026-09-28",
-    notes: "የበገናና የከበሮ ተሰጥኦ ፈተና ይጠብቃል"
-  },
-  {
-    id: "reg-4",
-    regCode: "FT-501243",
-    fullName: "ስንታየሁ ግርማ ወርቁ",
-    christianName: "ተክለ ሃይማኖት",
-    age: 26,
-    gender: "male",
-    phone: "0944556677",
-    address: "ላፍቶ ቅዱስ ሚካኤል አካባቢ",
-    category: "adult",
-    departmentId: "education",
-    status: "approved",
-    registeredAt: "2026-09-29",
-    notes: "የአብነትና የነገረ መለኮት ምዝገባ"
-  },
-  {
-    id: "reg-5",
-    regCode: "FT-419082",
-    fullName: "ማህሌት ብርሃኑ ደምሴ",
-    christianName: "ኪዳነ ማርያም",
-    age: 24,
-    gender: "female",
-    phone: "0955667788",
-    address: "ኮተቤ / አዲስ አበባ",
-    category: "volunteer",
-    departmentId: "charity",
-    status: "pending",
-    registeredAt: "2026-09-30",
-    notes: "በሙያና በጎ አድራጎት ክፍል የሕክምና ድጋፍ"
-  }
-];
 
 const presetUsers: Record<string, User> = {
   leadership: {
@@ -157,33 +81,55 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('ft_user');
-    return saved ? JSON.parse(saved) : presetUsers.leadership; // Default to leadership demo for easy exploration
+    return saved ? JSON.parse(saved) : presetUsers.leadership;
   });
 
   const [registrations, setRegistrations] = useState<StudentRegistrationRecord[]>(() => {
     const saved = localStorage.getItem('ft_registrations');
-    return saved ? JSON.parse(saved) : mockInitialRegistrations;
+    return saved ? JSON.parse(saved) : [];
   });
 
-  const login = (email: string, role?: string, deptId?: string) => {
-    // If matching preset user
-    const matched = Object.values(presetUsers).find((u) => u.email.toLowerCase() === email.toLowerCase());
-    if (matched) {
-      setCurrentUser(matched);
-      localStorage.setItem('ft_user', JSON.stringify(matched));
-      return;
+  const refreshRegistrations = async () => {
+    try {
+      const role = currentUser?.role || 'leadership';
+      const deptId = currentUser?.departmentId;
+      const remoteData = await api.getRegistrations(role, deptId);
+      if (Array.isArray(remoteData) && remoteData.length > 0) {
+        setRegistrations(remoteData);
+        localStorage.setItem('ft_registrations', JSON.stringify(remoteData));
+      }
+    } catch (err) {
+      // Keep local state if server is loading
     }
+  };
 
-    const newUser: User = {
-      id: "u-" + Date.now(),
-      name: email.split('@')[0],
-      email,
-      role: (role as User['role']) || 'student',
-      departmentId: deptId || 'children',
-      studentId: 'FT-' + Math.floor(100000 + Math.random() * 900000)
-    };
-    setCurrentUser(newUser);
-    localStorage.setItem('ft_user', JSON.stringify(newUser));
+  useEffect(() => {
+    refreshRegistrations();
+  }, [currentUser]);
+
+  const login = async (email: string, role?: string, deptId?: string) => {
+    try {
+      const user = await api.login(email);
+      setCurrentUser(user);
+      localStorage.setItem('ft_user', JSON.stringify(user));
+    } catch (err) {
+      const matched = Object.values(presetUsers).find((u) => u.email.toLowerCase() === email.toLowerCase());
+      if (matched) {
+        setCurrentUser(matched);
+        localStorage.setItem('ft_user', JSON.stringify(matched));
+        return;
+      }
+      const newUser: User = {
+        id: "u-" + Date.now(),
+        name: email.split('@')[0],
+        email,
+        role: (role as User['role']) || 'student',
+        departmentId: deptId || 'children',
+        studentId: 'FT-' + Math.floor(100000 + Math.random() * 900000)
+      };
+      setCurrentUser(newUser);
+      localStorage.setItem('ft_user', JSON.stringify(newUser));
+    }
   };
 
   const logout = () => {
@@ -192,67 +138,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const switchRole = (role: 'leadership' | 'dept_admin' | 'student', deptId = 'education') => {
+    let u: User;
     if (role === 'leadership') {
-      setCurrentUser(presetUsers.leadership);
-      localStorage.setItem('ft_user', JSON.stringify(presetUsers.leadership));
+      u = presetUsers.leadership;
     } else if (role === 'dept_admin') {
-      const u = presetUsers[deptId] || {
+      u = presetUsers[deptId] || {
         ...presetUsers.education,
         departmentId: deptId,
         name: `${deptId} ክፍል አስተባባሪ`
       };
-      setCurrentUser(u);
-      localStorage.setItem('ft_user', JSON.stringify(u));
     } else {
-      setCurrentUser(presetUsers.student);
-      localStorage.setItem('ft_user', JSON.stringify(presetUsers.student));
+      u = presetUsers.student;
     }
+    setCurrentUser(u);
+    localStorage.setItem('ft_user', JSON.stringify(u));
   };
 
-  /**
-   * PERMISSION CHECK 1: Can View Department
-   * - 'leadership' (ሥራ አመራር) has all admin access to other classes & departments (OVERSIGHT)
-   * - 'dept_admin' can view their own department
-   */
   const canViewDepartment = (deptId: string): boolean => {
     if (!currentUser) return false;
-    if (currentUser.role === 'leadership') return true; // Full oversight
+    if (currentUser.role === 'leadership') return true;
     if (currentUser.role === 'dept_admin') return currentUser.departmentId === deptId;
-    return true; // public info
+    return true;
   };
 
-  /**
-   * PERMISSION CHECK 2: Can Edit Department
-   * - 'leadership' (ሥራ አመራር) can ONLY EDIT its own department ('leadership')!
-   * - 'dept_admin' can ONLY EDIT their own department!
-   */
   const canEditDepartment = (deptId: string): boolean => {
     if (!currentUser) return false;
     if (currentUser.role === 'leadership') {
-      // User requirement: "ሥራ አመራር ክፍል this team should have all the admin access to the other classes or departements but can only edit its departement"
       return deptId === 'leadership';
     }
     if (currentUser.role === 'dept_admin') {
-      // User requirement: "the other departements acces will be only their departemnt"
       return currentUser.departmentId === deptId;
     }
     return false;
   };
 
-  /**
-   * PERMISSION CHECK 3: Can View All Registrations
-   * - 'leadership' sees all student registrations across Sunday school
-   */
   const canViewAllRegistrations = (): boolean => {
     if (!currentUser) return false;
     return currentUser.role === 'leadership';
   };
 
-  /**
-   * PERMISSION CHECK 4: Can Manage Specific Registration
-   * - 'leadership' can approve/enroll any applicant
-   * - 'dept_admin' can approve applicants for their department
-   */
   const canManageRegistration = (record: StudentRegistrationRecord): boolean => {
     if (!currentUser) return false;
     if (currentUser.role === 'leadership') return true;
@@ -262,22 +186,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return false;
   };
 
-  const addRegistration = (reg: Omit<StudentRegistrationRecord, 'id' | 'registeredAt' | 'status'>) => {
-    const newRecord: StudentRegistrationRecord = {
-      ...reg,
-      id: "reg-" + Date.now(),
-      registeredAt: new Date().toISOString().split('T')[0],
-      status: 'pending'
-    };
-    const updated = [newRecord, ...registrations];
-    setRegistrations(updated);
-    localStorage.setItem('ft_registrations', JSON.stringify(updated));
-    return newRecord;
+  const addRegistration = async (reg: Omit<StudentRegistrationRecord, 'id' | 'registeredAt' | 'status'>) => {
+    try {
+      const record = await api.createRegistration(reg);
+      const updated = [record, ...registrations];
+      setRegistrations(updated);
+      localStorage.setItem('ft_registrations', JSON.stringify(updated));
+      return record;
+    } catch (err) {
+      const newRecord: StudentRegistrationRecord = {
+        ...reg,
+        id: "reg-" + Date.now(),
+        registeredAt: new Date().toISOString().split('T')[0],
+        status: 'pending'
+      };
+      const updated = [newRecord, ...registrations];
+      setRegistrations(updated);
+      localStorage.setItem('ft_registrations', JSON.stringify(updated));
+      return newRecord;
+    }
   };
 
-  const updateRegistrationStatus = (id: string, status: StudentRegistrationRecord['status'], notes?: string) => {
+  const updateRegistrationStatus = async (id: string, status: StudentRegistrationRecord['status'], notes = '') => {
+    try {
+      const role = currentUser?.role || 'leadership';
+      const deptId = currentUser?.departmentId;
+      await api.updateRegistrationStatus(id, status, notes, role, deptId);
+    } catch (err) {
+      // Local fallback
+    }
     const updated = registrations.map((r) => {
-      if (r.id === id) {
+      const recordId = r.id || (r as unknown as { _id: string })._id;
+      if (recordId === id) {
         return { ...r, status, notes: notes || r.notes };
       }
       return r;
@@ -300,7 +240,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         canManageRegistration,
         registrations,
         addRegistration,
-        updateRegistrationStatus
+        updateRegistrationStatus,
+        refreshRegistrations
       }}
     >
       {children}

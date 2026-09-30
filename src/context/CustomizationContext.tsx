@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DepartmentSettings } from '../types/auth';
+import { api } from '../services/api';
 
 export type AppTheme = 'teal' | 'gold' | 'crimson';
 export type FontSize = 'standard' | 'large';
@@ -23,6 +24,7 @@ interface CustomizationContextType {
   updateAnnouncement: (announcement: Partial<GlobalAnnouncement>) => void;
   departmentSettings: Record<string, DepartmentSettings>;
   updateDepartmentSettings: (deptId: string, settings: Partial<DepartmentSettings>) => void;
+  refreshSettings: () => Promise<void>;
 }
 
 const initialAnnouncement: GlobalAnnouncement = {
@@ -111,6 +113,27 @@ export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({
     return saved ? JSON.parse(saved) : initialDeptSettings;
   });
 
+  const refreshSettings = async () => {
+    try {
+      const depts = await api.getDepartments();
+      if (depts && Object.keys(depts).length > 0) {
+        setDepartmentSettingsState((prev) => ({ ...prev, ...depts }));
+        localStorage.setItem('ft_dept_settings', JSON.stringify({ ...departmentSettings, ...depts }));
+      }
+      const ann = await api.getAnnouncement();
+      if (ann && ann.textAm) {
+        setAnnouncementState((prev) => ({ ...prev, ...ann }));
+        localStorage.setItem('ft_announcement', JSON.stringify(ann));
+      }
+    } catch (e) {
+      // Keep local state if server is loading
+    }
+  };
+
+  useEffect(() => {
+    refreshSettings();
+  }, []);
+
   const setTheme = (t: AppTheme) => {
     setThemeState(t);
     localStorage.setItem('ft_theme', t);
@@ -121,13 +144,18 @@ export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem('ft_font_size', s);
   };
 
-  const updateAnnouncement = (partial: Partial<GlobalAnnouncement>) => {
+  const updateAnnouncement = async (partial: Partial<GlobalAnnouncement>) => {
     const updated = { ...announcement, ...partial };
     setAnnouncementState(updated);
     localStorage.setItem('ft_announcement', JSON.stringify(updated));
+    try {
+      await api.updateAnnouncement(updated, 'leadership');
+    } catch (e) {
+      // Local fallback
+    }
   };
 
-  const updateDepartmentSettings = (deptId: string, settings: Partial<DepartmentSettings>) => {
+  const updateDepartmentSettings = async (deptId: string, settings: Partial<DepartmentSettings>) => {
     const existing = departmentSettings[deptId] || {
       id: deptId,
       mottoAm: "",
@@ -151,9 +179,14 @@ export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({
     };
     setDepartmentSettingsState(updated);
     localStorage.setItem('ft_dept_settings', JSON.stringify(updated));
+
+    try {
+      await api.updateDepartment(deptId, settings, 'leadership', deptId);
+    } catch (e) {
+      // Local fallback
+    }
   };
 
-  // Apply theme class to document body
   useEffect(() => {
     document.body.classList.remove('theme-teal', 'theme-gold', 'theme-crimson');
     document.body.classList.add(`theme-${theme}`);
@@ -172,7 +205,8 @@ export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({
         announcement,
         updateAnnouncement,
         departmentSettings,
-        updateDepartmentSettings
+        updateDepartmentSettings,
+        refreshSettings
       }}
     >
       {children}
