@@ -89,10 +89,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onOpenPor
     onOpenPortal();
   };
 
-  const handleCustomLogin = (e: React.FormEvent) => {
+  const handleCustomLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customEmail) return;
-    login(customEmail);
+    const lower = customEmail.toLowerCase();
+    if (lower.includes('lead') || lower === 'leadership@finoteteguhan.org') {
+      switchRole('leadership');
+    } else if (lower.includes('edu') || lower === 'education@finoteteguhan.org') {
+      switchRole('dept_admin', 'education');
+    } else if (lower.includes('child') || lower === 'children@finoteteguhan.org') {
+      switchRole('dept_admin', 'children');
+    } else if (lower.includes('choir') || lower === 'choir@finoteteguhan.org') {
+      switchRole('dept_admin', 'choir');
+    } else {
+      await login(customEmail);
+    }
     onClose();
     onOpenPortal();
   };
@@ -234,6 +245,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onOpenPor
               <span>{isAmharic ? "ይግቡ" : "Sign In"}</span>
             </button>
           </form>
+
+          {/* Direct Backend Console Link */}
+          <div className="pt-2 border-t border-emerald-900/60 flex items-center justify-between text-xs">
+            <span className="text-emerald-300/80 text-[11px]">
+              {isAmharic ? "የጀርባ ዳታቤዝ ሰርቨር (Port 5000)" : "Backend Database Server (Port 5000)"}
+            </span>
+            <a
+              href="http://localhost:5000/admin"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-lg bg-[#061514] border border-amber-500/40 text-amber-300 hover:text-white hover:border-amber-400 font-bold text-[11px] flex items-center gap-1.5 transition-all"
+            >
+              <span>{isAmharic ? "ወደ ጀርባ ዳታቤዝ ማዕከል ክፈት" : "Open Backend Admin Console"}</span>
+              &rarr;
+            </a>
+          </div>
         </div>
       </div>
     </div>

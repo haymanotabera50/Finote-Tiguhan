@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './db';
 import { apiRouter } from './routes';
+import { renderAdminHtml } from './adminHtml';
 
 dotenv.config();
 
@@ -12,7 +13,12 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Mount API routes
+// Visual Admin Portal & Database Gateway (for browser requests)
+app.get(['/', '/admin', '/login', '/dashboard'], (_req, res) => {
+  res.type('html').send(renderAdminHtml());
+});
+
+// Mount API routes (includes GET /api with browser HTML fallback & JSON discovery)
 app.use('/api', apiRouter);
 
 // Health check endpoint

@@ -132,10 +132,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             ) : (
               <button
                 onClick={onOpenAuth}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0a2724] border border-emerald-700/80 hover:border-amber-400 text-emerald-200 hover:text-white text-xs font-semibold transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0a2724] border border-amber-500/50 hover:border-amber-400 text-amber-300 hover:text-white text-xs font-bold transition-all cursor-pointer shadow-sm hover:scale-105"
+                title={isAmharic ? "የአስተዳደርና የተማሪ መግቢያ" : "Admin & Student Sign In"}
               >
                 <LogIn size={13} className="text-amber-400" />
-                <span>{isAmharic ? 'ይግቡ' : 'Sign In'}</span>
+                <span>{isAmharic ? 'ይግቡ / አስተዳደር' : 'Sign In / Admin'}</span>
               </button>
             )}
 
