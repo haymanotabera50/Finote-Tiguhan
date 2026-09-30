@@ -43,9 +43,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
               className="w-full h-full object-cover rounded-full border-4 border-[#081716] shadow-inner"
             />
           </div>
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-extrabold uppercase tracking-widest shadow">
-            1983 ዓ.ም
-          </div>
         </div>
 
         {/* Headings */}
