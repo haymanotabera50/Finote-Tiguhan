@@ -53,11 +53,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           : 'bg-[#061514]/90 backdrop-blur-sm border-b border-emerald-950 py-3.5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+      <div className="max-w-[1440px] mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-3">
           {/* Brand Logo & Parish Identity */}
-          <a href="#hero" className="flex items-center gap-3 group">
-            <div className="relative">
+          <a href="#hero" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+            <div className="relative shrink-0">
               <img
                 src={logoImg}
                 alt="Finote Teguhan Sunday School Logo"
@@ -67,23 +67,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <EthiopianCross size={10} variant="simple" className="text-black" />
               </span>
             </div>
-            <div className="text-left">
-              <div className="text-[11px] sm:text-xs text-amber-400 font-medium tracking-wide flex items-center gap-1.5">
+            <div className="text-left shrink-0">
+              <div className="text-[11px] sm:text-xs text-amber-400 font-medium tracking-wide whitespace-nowrap">
                 <span>{t.churchName}</span>
               </div>
-              <div className="text-xs sm:text-base font-bold text-white tracking-tight group-hover:text-amber-300 transition-colors">
+              <div className="text-xs sm:text-base font-bold text-white tracking-tight group-hover:text-amber-300 transition-colors whitespace-nowrap">
                 {t.sundaySchoolName}
               </div>
             </div>
           </a>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-4 xl:gap-5 text-xs xl:text-sm font-medium">
+          {/* Desktop Nav Links - Single straight line with whitespace-nowrap */}
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3 2xl:gap-4 text-xs xl:text-[13px] 2xl:text-sm font-medium shrink-0">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-emerald-100/80 hover:text-amber-400 transition-colors py-1 relative group"
+                className="text-emerald-100/85 hover:text-amber-400 transition-colors py-1 relative group whitespace-nowrap inline-block"
               >
                 {link.label}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-400 transition-all duration-300 group-hover:w-full" />
@@ -92,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Right Action Controls */}
-          <div className="hidden sm:flex items-center gap-2.5">
+          <div className="hidden sm:flex items-center gap-2 shrink-0">
             {/* Customization Toggle */}
             <button
               onClick={onOpenCustomization}
