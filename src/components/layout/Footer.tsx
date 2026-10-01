@@ -128,9 +128,9 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-emerald-950/80 flex flex-col sm:flex-row items-center justify-between text-xs text-emerald-300/50 gap-4">
-          <div className="flex items-center gap-2">
-            <EthiopianCross size={16} className="text-amber-400/80" />
+        <div className="pt-8 border-t border-emerald-950/80 flex items-center justify-end text-xs text-emerald-300/60">
+          <div className="flex items-center justify-end gap-2 ml-auto text-right">
+            <EthiopianCross size={16} className="text-amber-400/80 shrink-0" />
             <p>{t.footerCopyright}</p>
           </div>
         </div>
