@@ -96,15 +96,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-14 pt-10 border-t border-emerald-800/40">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mt-14 pt-10 border-t border-emerald-800/40">
           <div className="p-4 rounded-2xl bg-[#061514]/85 backdrop-blur-md border border-amber-500/20 hover:border-amber-400/50 transition-all">
             <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 mb-1">{t.statYears}</div>
             <div className="text-xs text-emerald-200/70 font-medium">{t.statYearsLabel}</div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-[#061514]/85 backdrop-blur-md border border-amber-500/20 hover:border-amber-400/50 transition-all">
-            <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 mb-1">{t.statDepartments}</div>
-            <div className="text-xs text-emerald-200/70 font-medium">{t.statDepartmentsLabel}</div>
           </div>
 
           <div className="p-4 rounded-2xl bg-[#061514]/85 backdrop-blur-md border border-amber-500/20 hover:border-amber-400/50 transition-all">
