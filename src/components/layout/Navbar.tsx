@@ -3,7 +3,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { siteContent } from '../../data/translations';
 import { EthiopianCross } from '../common/EthiopianCross';
-import { Menu, X, Globe, UserPlus, Sliders, Shield, User, LogIn, ChevronDown, LogOut } from 'lucide-react';
+import { Menu, X, Globe, UserPlus, Sliders, Shield, User, LogIn, ChevronDown, LogOut, Building2 } from 'lucide-react';
 import logoImg from '../../assets/logo.jpg';
 
 interface NavbarProps {
@@ -117,18 +117,26 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={onOpenPortal}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0a2724] border border-amber-500/50 hover:border-amber-400 text-white text-xs font-bold transition-all cursor-pointer hover:scale-105"
-                  title="የአስተዳደርና የተማሪ ፖርታል"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow-md transition-all cursor-pointer hover:scale-105"
+                  title={isAmharic ? "ወደ 14ቱ ክፍላት ማስተዳደሪያ ገጽ (ሁለተኛ ገጽ)" : "Go to Departments Management Page"}
+                >
+                  <Building2 size={13} />
+                  <span>{isAmharic ? 'የክፍላት አስተዳደር ገጽ' : 'Departments Page'}</span>
+                </button>
+
+                <button
+                  onClick={onOpenPortal}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#0a2724] border border-amber-500/50 hover:border-amber-400 text-white text-xs font-bold transition-all cursor-pointer"
+                  title={currentUser?.name}
                 >
                   {currentUser?.role === 'leadership' ? (
-                    <Shield size={14} className="text-amber-400" />
+                    <Shield size={13} className="text-amber-400" />
                   ) : (
-                    <User size={14} className="text-amber-400" />
+                    <User size={13} className="text-amber-400" />
                   )}
-                  <span className="max-w-[100px] truncate">
+                  <span className="max-w-[75px] truncate">
                     {currentUser?.role === 'leadership' ? (isAmharic ? 'ሥራ አመራር' : 'Leadership') : currentUser?.name}
                   </span>
-                  <ChevronDown size={12} className="text-amber-400" />
                 </button>
 
                 <button
