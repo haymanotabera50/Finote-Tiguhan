@@ -2,88 +2,245 @@ import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { siteContent } from '../../data/translations';
 import { EthiopianCross } from '../common/EthiopianCross';
-import { FileText, Download, Image as ImageIcon, Newspaper, ExternalLink, Sparkles, X, ZoomIn } from 'lucide-react';
+import { 
+  FileText, Download, Image as ImageIcon, Newspaper, ExternalLink, Sparkles, 
+  X, ZoomIn, MapPin, Calendar, Phone, Building, Briefcase, Heart, BookOpen, 
+  Compass, Check, Copy, Tag, Info, ArrowUpRight, Target
+} from 'lucide-react';
 import churchPhoto from '../../assets/church-community.jpg';
 import churchBuildingImg from '../../assets/church-building.jpg';
 import newYearGreetingImg from '../../assets/new-year-greeting-2019.png';
 import socialMediaQrImg from '../../assets/social-media-channels-qr.png';
+import pilgrimageZiqualaImg from '../../assets/pilgrimage-ziquala.jpg';
+import jobVacancyMarketingImg from '../../assets/job-vacancy-marketing.jpg';
+import pilgrimageGishenImg from '../../assets/pilgrimage-gishen.png';
+import charityMaedEnagaraImg from '../../assets/charity-maed-enagara.png';
+import bookEqub11thImg from '../../assets/book-equb-11th.jpg';
+
+interface GalleryItem {
+  id: number;
+  image: string;
+  categoryKey: 'all' | 'pilgrimage' | 'charity' | 'books' | 'jobs' | 'media';
+  titleAm: string;
+  titleEn: string;
+  categoryAm: string;
+  categoryEn: string;
+  purposeBadgeAm: string;
+  purposeBadgeEn: string;
+  purposeDescAm: string;
+  purposeDescEn: string;
+  datesAm?: string;
+  datesEn?: string;
+  locationAm?: string;
+  locationEn?: string;
+  phones?: string[];
+  links?: { label: string; url: string }[];
+  bankDetails?: { bank: string; account: string; name?: string }[];
+}
 
 export const MediaGallery: React.FC = () => {
   const { language, isAmharic } = useLanguage();
   const t = siteContent[language];
 
   const [activeTab, setActiveTab] = useState<'gallery' | 'news' | 'files'>('gallery');
-  const [selectedImage, setSelectedImage] = useState<{
-    image: string;
-    caption: string;
-    category: string;
-  } | null>(null);
+  const [galleryFilter, setGalleryFilter] = useState<'all' | 'pilgrimage' | 'charity' | 'books' | 'jobs' | 'media'>('all');
+  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
+  const [copiedBank, setCopiedBank] = useState<string | null>(null);
 
-  const galleryItems = [
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedBank(id);
+    setTimeout(() => setCopiedBank(null), 2500);
+  };
+
+  const galleryItems: GalleryItem[] = [
     {
       id: 1,
-      image: newYearGreetingImg,
-      captionAm: "እንኳን ለ2019 ዓ.ም አዲስ ዓመት በሰላም አደረሳችሁ (ከዘመነ ማርቆስ ወደ ዘመነ ሉቃስ)",
-      captionEn: "Happy Ethiopian New Year 2019 E.C. (Transition from Mark to Luke)",
-      categoryAm: "የበዓል መልእክት",
-      categoryEn: "New Year Celebration"
+      image: pilgrimageGishenImg,
+      categoryKey: 'pilgrimage',
+      titleAm: "የነግሥ ጉዞ ወደ ግሸን ደብረ ከርቤ ማርያም ገዳም",
+      titleEn: "Spiritual Pilgrimage to Gishen Debre Kerbe Mariam Monastery",
+      categoryAm: "መንፈሳዊ ጉዞ",
+      categoryEn: "Pilgrimage",
+      purposeBadgeAm: "የነግሥ ጉዞ",
+      purposeBadgeEn: "Annual Pilgrimage",
+      purposeDescAm: "በዓለ መስቀልንና የግሸን ደብረ ከርቤ ማርያም ዓመታዊ ክብረ በዓልን በታሪካዊው ገዳም በጸሎት፣ በዝማሬና በበረከት ለማክበር የተዘጋጀ ሳምንታዊ መንፈሳዊ ጉዞ (ማረፊያና ምግብ ጨምሮ)።",
+      purposeDescEn: "A blessed week-long pilgrimage to celebrate the Feast of the Holy Cross and St. Mary at historic Gishen monastery, including lodging and meals.",
+      datesAm: "መነሻ፦ መስከረም 17/2019 ዓ.ም | መመለሻ፦ መስከረም 24/2019 ዓ.ም",
+      datesEn: "Departure: Meskerem 17, 2019 | Return: Meskerem 24, 2019",
+      locationAm: "በላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ፍኖተ ትጉሃን ሰንበት ት/ቤት ሱቅ",
+      locationEn: "Finote Teguhan Sunday School Shop, Lafto St. Michael Church",
+      phones: ["0924242724", "0900568851"]
     },
     {
       id: 2,
-      image: socialMediaQrImg,
-      captionAm: "የፍኖተ ትጉሃን ሰንበት ት/ቤት ይፋዊ የማኅበራዊ ሚዲያ ገጾች (Telegram, Instagram, Facebook)",
-      captionEn: "Official Social Media Channels & QR Codes (Telegram, Instagram, Facebook)",
-      categoryAm: "ማኅበራዊ ሚዲያ",
-      categoryEn: "Social Media"
+      image: pilgrimageZiqualaImg,
+      categoryKey: 'pilgrimage',
+      titleAm: "የነግሥ ጉዞ ወደ ደብረ ከዋክብት ዝቋላ አቡነ ገብረ መንፈስ ቅዱስ አንድነት ገዳም",
+      titleEn: "Pilgrimage to Mount Ziquala Abune Gebre Menfes Qidus Monastery",
+      categoryAm: "መንፈሳዊ ጉዞ",
+      categoryEn: "Pilgrimage",
+      purposeBadgeAm: "የነግሥ ጉዞ",
+      purposeBadgeEn: "Sacred Pilgrimage",
+      purposeDescAm: "በታላቁ አቡነ ገብረ መንፈስ ቅዱስ ገዳም ዓመታዊ ክብረ በዓል ላይ በመገኘት የበረከት ተሳታፊ ለመሆን የተዘጋጀ መንፈሳዊ ጉዞ።",
+      purposeDescEn: "Spiritual journey to participate in the annual feast and receive blessings at historic Mount Ziquala monastery.",
+      datesAm: "መነሻ፦ ረቡዕ ጥቅምት 04/2019 ዓ.ም | መመለሻ፦ ሐሙስ ጥቅምት 05/2019 ዓ.ም",
+      datesEn: "Departure: Tikimt 04, 2019 | Return: Tikimt 05, 2019",
+      locationAm: "በላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ፍኖተ ትጉሃን ሰንበት ት/ቤት ሱቅ",
+      locationEn: "Finote Teguhan Sunday School Shop, Lafto St. Michael Church",
+      phones: ["0924242724", "0900568851"]
     },
     {
       id: 3,
-      image: churchPhoto,
-      captionAm: "የፍኖተ ትጉሃን ሰንበት ትምህርት ቤት አባላትና ምዕመናን በአንድነት",
-      captionEn: "Finote Teguhan Sunday School Members & Parishioners Fellowship",
-      categoryAm: "አገልግሎት",
-      categoryEn: "Ministry"
+      image: charityMaedEnagaraImg,
+      categoryKey: 'charity',
+      titleAm: "«ማዕድ እናጋራ» — የአዲስ ዓመት በዓል የቤት ለቤት ማዕድ የማጋራት ድጋፍ",
+      titleEn: "'Share a Table' — Household Holiday Feast Sharing Charity Campaign",
+      categoryAm: "በጎ አድራጎት",
+      categoryEn: "Charity & Giving",
+      purposeBadgeAm: "ማዕድ እናጋራ",
+      purposeBadgeEn: "Table Sharing",
+      purposeDescAm: "«በቸርነትህ ዓመትን ታቀዳጃለህ።» (መዝ 64:11) — ለአቅመ ደካሞችና ለተቸገሩ ወገኖች በዓሉን በተሟላ ማዕድ እንዲያሳልፉ የቤት ለቤት ማዕድ የማጋራት የገንዘብ እና ዓይነት ድጋፍ ማሰባሰብ (የአንድ ሰው ጥቅል 2,500 ብር፤ በዓይነት፦ ዶሮ፣ ሽንኩርት፣ ዘይት፣ እንቁላልና ስንዴ)።",
+      purposeDescEn: "'You crown the year with Your goodness' (Ps 65:11) — Mobilizing holiday meals for vulnerable households (2,500 ETB package or in-kind: chicken, onions, oil, eggs, wheat).",
+      datesAm: "የአዲስ ዓመት 2019 ዓ.ም በዓል",
+      datesEn: "Ethiopian New Year 2019 E.C.",
+      bankDetails: [
+        { bank: "የኢትዮጵያ ንግድ ባንክ (CBE)", account: "1000568274311", name: "ምትኩ & እየሩሳሌም & ስንታየሁ" },
+        { bank: "አዋሽ ባንክ (Awash Bank)", account: "151123546" },
+        { bank: "ቴሌብር (Telebirr)", account: "0938952971" }
+      ],
+      phones: ["0910472337", "0913492009", "0941600824"]
     },
     {
       id: 4,
+      image: bookEqub11thImg,
+      categoryKey: 'books',
+      titleAm: "11ኛው ዙር የመንፈሳዊ መጻሕፍት እቁብ",
+      titleEn: "11th Round Spiritual Books Equb & Reading Circle",
+      categoryAm: "ትምህርትና መጻሕፍት",
+      categoryEn: "Books & Education",
+      purposeBadgeAm: "የመጻሕፍት እቁብ",
+      purposeBadgeEn: "Book Equb",
+      purposeDescAm: "ምዕመናንና ተማሪዎች መንፈሳዊ፣ ሥርዓታዊና ነገረ መለኮታዊ መጻሕፍትን በየወሩ በዕጣ አማራጮች (ባለ 200፣ 300፣ 500፣ 1,000፣ 2,000 ብር) እንዲያነቡና የንባብ ባህል እንዲዳብር የተዘጋጀ።",
+      purposeDescEn: "Promoting Christian reading by acquiring spiritual, canonical, and doctrinal books through affordable monthly Equb tiers (200, 300, 500, 1000, 2000 ETB).",
+      datesAm: "የምዝገባ ጊዜ፦ ከጷጉሜ 1 – መስከረም 5/2019 ዓ.ም",
+      datesEn: "Registration: Pagumen 1 – Meskerem 5, 2019",
+      locationAm: "በሰንበት ት/ቤት ቤተ መጻሕፍት",
+      locationEn: "Sunday School Library, Lafto St. Michael Church",
+      phones: ["0993751672", "0915580252"]
+    },
+    {
+      id: 5,
+      image: jobVacancyMarketingImg,
+      categoryKey: 'jobs',
+      titleAm: "ትጉሃን ንዋየ ቅድሳት ማምረቻ — የማርኬቲንግ ሠራተኛ ክፍት የሥራ ቦታ",
+      titleEn: "Tiguhan Sacred Vestments — Marketing Officer Job Vacancy",
+      categoryAm: "ልማትና ሥራ",
+      categoryEn: "Careers & Development",
+      purposeBadgeAm: "ክፍት የሥራ ቦታ",
+      purposeBadgeEn: "Job Vacancy",
+      purposeDescAm: "የሰንበት ት/ቤቱ የልማት ተቋም በክርስቲያናዊ ልብስና የቅድሳት እቃዎች ማምረቻ ዘርፍ ለወጣቶች የሥራ ዕድል ለመፍጠር ያወጣው ማስታወቂያ (0 ዓመት ልምድ፣ ደመወዝ በድርድር)።",
+      purposeDescEn: "Career opportunity at the Sunday School's ecclesiastical vestments production enterprise welcoming fresh graduates (0 years experience, negotiable salary).",
+      datesAm: "የማመልከቻ ማብቂያ ቀን፦ እስከ መስከረም 05/2019 ዓ.ም",
+      datesEn: "Application Deadline: Until Meskerem 5, 2019",
+      locationAm: "የፍኖተ ትጉሃን ልማት ተቋም አስተዳደር (አዲስ አበባ)",
+      locationEn: "Finote Teguhan Development Enterprise Admin, Addis Ababa",
+      links: [
+        { label: "Telegram CV Submission", url: "https://t.me/tguhancv" },
+        { label: "Email: amhamezgebu1987@gmail.com", url: "mailto:amhamezgebu1987@gmail.com" }
+      ],
+      phones: ["0949892974", "0913424960"]
+    },
+    {
+      id: 6,
+      image: newYearGreetingImg,
+      categoryKey: 'media',
+      titleAm: "እንኳን ለ2019 ዓ.ም አዲስ ዓመት በሰላም አደረሳችሁ",
+      titleEn: "Happy Ethiopian New Year 2019 E.C. (Transition to St. Luke Year)",
+      categoryAm: "የበዓል መልእክት",
+      categoryEn: "Holiday Greeting",
+      purposeBadgeAm: "የበዓል መልእክት",
+      purposeBadgeEn: "New Year Blessing",
+      purposeDescAm: "«እንኳን ከዘመነ ማርቆስ ወደ ዘመነ ሉቃስ በሰላም አሸጋገራችሁ» — የፍኖተ ትጉሃን ሰንበት ትምህርት ቤት ለመላው ምዕመናን ያስተላለፈው ይፋዊ የሰላምና የበረከት የአዲስ ዓመት መልእክት።",
+      purposeDescEn: "Official holiday blessing from Finote Teguhan Sunday School wishing a joyful transition to the year of St. Luke.",
+      datesAm: "መስከረም 1፣ 2019 ዓ.ም",
+      datesEn: "September 11, 2026"
+    },
+    {
+      id: 7,
+      image: socialMediaQrImg,
+      categoryKey: 'media',
+      titleAm: "የፍኖተ ትጉሃን ሰንበት ት/ቤት ይፋዊ የማኅበራዊ ሚዲያ ገጾች (QR Codes)",
+      titleEn: "Official Social Media Channels & QR Codes (Telegram, Instagram, Facebook)",
+      categoryAm: "ማኅበራዊ ሚዲያ",
+      categoryEn: "Digital Media",
+      purposeBadgeAm: "ዲጂታል ሚዲያ",
+      purposeBadgeEn: "Social QR Codes",
+      purposeDescAm: "የሰንበት ት/ቤቱን ትምህርቶች፣ መዝሙራትና ወቅታዊ ማስታወቂያዎች በቴሌግራም (@tiguhan_media)፣ ኢንስታግራም (@tiguhan_media) እና ፌስቡክ (tiguhan media) በቀላሉ በQR ኮድ ስካን አድርገው ይከታተሉ።",
+      purposeDescEn: "Scan the official QR codes to follow our verified channels: Telegram (@tiguhan_media), Instagram (@tiguhan_media), and Facebook (tiguhan media).",
+      links: [
+        { label: "Telegram: @tiguhan_media", url: "https://t.me/tiguhan_media" },
+        { label: "Instagram: @tiguhan_media", url: "https://instagram.com/tiguhan_media" }
+      ]
+    },
+    {
+      id: 8,
+      image: churchPhoto,
+      categoryKey: 'media',
+      titleAm: "የፍኖተ ትጉሃን ሰንበት ትምህርት ቤት አባላትና ምዕመናን በአንድነት",
+      titleEn: "Finote Teguhan Sunday School Members & Parishioners Fellowship",
+      categoryAm: "አገልግሎት",
+      categoryEn: "Ministry",
+      purposeBadgeAm: "ማኅበራዊ አገልግሎት",
+      purposeBadgeEn: "Parish Fellowship",
+      purposeDescAm: "በላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን በየሳምንቱ የሚከናወን የሕፃናት፣ የወጣቶችና የአባላት መንፈሳዊ ዝማሬ፣ ትምህርትና የአንድነት ጉባኤ።",
+      purposeDescEn: "Weekly choir liturgy, youth education, and parishioner spiritual congregation at Lafto St. Michael Church."
+    },
+    {
+      id: 9,
       image: churchBuildingImg,
-      captionAm: "የላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን ህንፃ",
-      captionEn: "Lafto Debre Teguhan St. Michael Church Building",
+      categoryKey: 'media',
+      titleAm: "የላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን ህንፃ",
+      titleEn: "Lafto Debre Teguhan St. Michael Church Sanctuary",
       categoryAm: "ደብራችን",
-      categoryEn: "Our Parish"
+      categoryEn: "Our Parish",
+      purposeBadgeAm: "የደብሩ ህንፃ",
+      purposeBadgeEn: "Parish Sanctuary",
+      purposeDescAm: "በአዲስ አበባ ደቡብ ምዕራብ ላፍቶ የሚገኘው ታሪካዊውና ግርማ ሞገስ ያለው የደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን ህንፃ።",
+      purposeDescEn: "The beautiful historic cathedral of Debre Teguhan St. Michael in southwest Addis Ababa."
     }
   ];
 
   const newsItems = [
     {
       id: 1,
-      titleAm: "አዲስ መንፈሳዊ መዝሙር ለምዕመናን ተለቀቀ",
-      titleEn: "New Spiritual Hymn Released to Parishioners",
-      dateAm: "መስከረም 2026",
+      titleAm: "የግሸን ደብረ ከርቤና የዝቋላ አቡነ ገብረ መንፈስ ቅዱስ የነግሥ ጉዞ ምዝገባ ተጀመረ",
+      titleEn: "Pilgrimage Registration Opens for Gishen Mariam & Mount Ziquala",
+      dateAm: "መስከረም 2019",
       dateEn: "September 2026",
-      descAm: "የሰንበት ትምህርት ቤታችን መዘምራን ክፍል ያዘጋጀውን አዲስ የሊቀ መላእክት ቅዱስ ሚካኤል የበገና መዝሙር በይፋ ለምዕመናን አቅርቧል።",
-      descEn: "Our choir has released a sacred new Begena hymn dedicated to the Archangel St. Michael.",
-      badge: "ዜና"
+      descAm: "ለ2019 ዓ.ም የመስቀል በዓልና ዓመታዊ ንግሥ ወደ ግሸን ደብረ ከርቤ (መስከረም 17-24) እንዲሁም ወደ ደብረ ከዋክብት ዝቋላ ገዳም (ጥቅምት 4-5) የሚደረጉ መንፈሳዊ የነግሥ ጉዞዎች ምዝገባ በሰንበት ት/ቤቱ ሱቅ ተጀምሯል።",
+      descEn: "Registration is open at the Sunday School shop for spiritual pilgrimages to historic Gishen Debre Kerbe (Meskerem 17-24) and Mount Ziquala (Tikimt 4-5).",
+      badge: "መንፈሳዊ ጉዞ"
     },
     {
       id: 2,
-      titleAm: "የበጎ አድራጎት ክፍሉ የድጋፍ ማሰባሰቢያ መርሐ ግብር",
-      titleEn: "Charity Ministry Completes Fundraising Campaign",
-      dateAm: "ነሐሴ 2026",
-      dateEn: "August 2026",
-      descAm: "በጎ አድራጎት ክፍላችን ለአዲሱ የትምህርት ዘመን ለተቸገሩ ተማሪዎች የደብተርና የትምህርት ቁሳቁስ ድጋፍ ማሰባሰብ በስኬት አጠናቋል።",
-      descEn: "Successful back-to-school educational supply drive for children in vulnerable families.",
+      titleAm: "«ማዕድ እናጋራ» — ለአቅመ ደካሞች የአዲስ ዓመት የበዓል ድጋፍ ማሰባሰብ ተጀመረ",
+      titleEn: "'Share a Table' — New Year Holiday Food Package Drive Launched",
+      dateAm: "መስከረም 2019",
+      dateEn: "September 2026",
+      descAm: "የሰንበት ትምህርት ቤታችን የበጎ አድራጎት ክፍል ለተቸገሩ ወገኖች በዓሉን በተሟላ ማዕድ እንዲያሳልፉ የቤት ለቤት ማዕድ የማጋራት ድጋፍ (የአንድ ሰው ጥቅል 2,500 ብር ወይም በዓይነት) ማሰባሰብ ጀምሯል።",
+      descEn: "Our charity ministry is mobilizing holiday meal packages (2,500 ETB per family or in-kind donations) so vulnerable families can celebrate with joy.",
       badge: "በጎ አድራጎት"
     },
     {
       id: 3,
-      titleAm: "የአብነትና የመዝሙር ተማሪዎች ዓመታዊ የምረቃ በዓል",
-      titleEn: "Annual Graduation of Abnet & Choir Students",
-      dateAm: "ሐምሌ 2026",
-      dateEn: "July 2026",
-      descAm: "የሦስት ዓመታት የዶግማ፣ የዜማና የሥርዓተ ቤተክርስቲያን ትምህርታቸውን ያጠናቀቁ ከ100 በላይ ተማሪዎች ተመርቀዋል።",
-      descEn: "Over 100 students celebrated graduation after completing extensive curricula in liturgy and chant.",
-      badge: "ምረቃ"
+      titleAm: "11ኛው ዙር የመንፈሳዊ መጻሕፍት እቁብ ምዝገባ ተጀመረ",
+      titleEn: "11th Round Spiritual Books Equb Registration Now Open",
+      dateAm: "መስከረም 2019",
+      dateEn: "September 2026",
+      descAm: "ምዕመናንና የሰንበት ት/ቤት ተማሪዎች መንፈሳዊ መጻሕፍትን በየወሩ በዕጣ አማራጮች (ባለ 200 እስከ 2,000 ብር) እንዲያነቡና የንባብ ባህል እንዲያዳብሩ የተዘጋጀው 11ኛው ዙር የመጻሕፍት እቁብ በቤተ መጻሕፍቱ ክፍል እየተመዘገበ ነው።",
+      descEn: "Registration for the 11th round of the spiritual book savings circle (200 to 2,000 ETB shares) is ongoing at the Sunday School library.",
+      badge: "ትምህርት"
     }
   ];
 
@@ -123,7 +280,6 @@ export const MediaGallery: React.FC = () => {
   ];
 
   const triggerDownload = (filename: string) => {
-    // Generate sample text file simulation for instant clean download
     const blob = new Blob([
       `የላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን ፍኖተ ትጉሃን ሰንበት ትምህርት ቤት\nሰነድ፦ ${filename}\nቀን፦ 2026 ዓ.ም\n\nይህ ሰነድ በፍኖተ ትጉሃን ሰንበት ትምህርት ቤት ትምህርትና ስልጠና ክፍል የተዘጋጀ ኦፊሴላዊ መረጃ ነው።`
     ], { type: 'text/plain;charset=utf-8' });
@@ -134,6 +290,11 @@ export const MediaGallery: React.FC = () => {
     link.click();
     URL.revokeObjectURL(url);
   };
+
+  const filteredGallery = galleryItems.filter(item => {
+    if (galleryFilter === 'all') return true;
+    return item.categoryKey === galleryFilter;
+  });
 
   return (
     <section id="media" className="py-24 bg-[#061514] relative overflow-hidden">
@@ -150,13 +311,13 @@ export const MediaGallery: React.FC = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto rounded-full mb-4" />
           <p className="text-emerald-200/80 text-base sm:text-lg">
             {isAmharic 
-              ? "የሰንበት ትምህርት ቤቱን ወቅታዊ ዜናዎች፣ የምስል ማዕከል እና ጠቃሚ የትምህርት ሰነዶች እዚህ ያገኛሉ" 
-              : "Explore recent parish news, photo moments, and downloadable ecclesiastical guides"}
+              ? "የሰንበት ትምህርት ቤቱን ወቅታዊ ማስታወቂያዎች፣ የምስል ማዕከልና ዓላማቸውን እንዲሁም ጠቃሚ ሰነዶችን እዚህ ያገኛሉ" 
+              : "Explore parish announcements, photo moments with their purposes, and ecclesiastical publications"}
           </p>
         </div>
 
-        {/* Tab Buttons */}
-        <div className="flex justify-center mb-12">
+        {/* Primary Tab Buttons */}
+        <div className="flex justify-center mb-10">
           <div className="inline-flex flex-wrap justify-center p-1.5 rounded-full bg-[#0b2422] border border-amber-500/30 shadow-inner gap-1">
             <button
               onClick={() => setActiveTab('gallery')}
@@ -167,7 +328,7 @@ export const MediaGallery: React.FC = () => {
               }`}
             >
               <ImageIcon size={16} />
-              <span>{isAmharic ? "የምስል ማዕከል" : "Photo Gallery"}</span>
+              <span>{isAmharic ? "የምስል ማዕከልና ዓላማቸው" : "Photo Gallery & Purposes"}</span>
             </button>
             <button
               onClick={() => setActiveTab('news')}
@@ -194,42 +355,123 @@ export const MediaGallery: React.FC = () => {
           </div>
         </div>
 
-        {/* Tab 1: Photo Gallery */}
+        {/* Tab 1: Photo Gallery with Purpose Filters */}
         {activeTab === 'gallery' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-            {galleryItems.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => setSelectedImage({
-                  image: item.image,
-                  caption: isAmharic ? item.captionAm : item.captionEn,
-                  category: isAmharic ? item.categoryAm : item.categoryEn
-                })}
-                className="group relative rounded-3xl overflow-hidden border-2 border-amber-500/30 hover:border-amber-400 shadow-xl bg-[#09201e] transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between"
-              >
-                <div className="h-64 sm:h-72 overflow-hidden relative bg-[#041211]">
-                  <img
-                    src={item.image}
-                    alt={isAmharic ? item.captionAm : item.captionEn}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#061514] via-[#061514]/20 to-transparent pointer-events-none" />
-                  <span className="absolute top-3.5 right-3.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500 text-slate-950 shadow">
-                    {isAmharic ? item.categoryAm : item.categoryEn}
-                  </span>
-                  <div className="absolute bottom-3 right-3 p-2 rounded-xl bg-black/70 text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-xs font-medium">
-                    <ZoomIn size={14} />
-                    <span>{isAmharic ? "አጉላ" : "Zoom"}</span>
+          <div className="space-y-8">
+            {/* Gallery Category Filter Chips */}
+            <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl mx-auto">
+              {[
+                { key: 'all', labelAm: 'ሁሉም ፎቶዎች (9)', labelEn: 'All Photos (9)' },
+                { key: 'pilgrimage', labelAm: 'የነግሥ ጉዞ (2)', labelEn: 'Pilgrimages (2)' },
+                { key: 'charity', labelAm: 'በጎ አድራጎት (1)', labelEn: 'Charity (1)' },
+                { key: 'books', labelAm: 'መጻሕፍትና ትምህርት (1)', labelEn: 'Books & Equb (1)' },
+                { key: 'jobs', labelAm: 'ክፍት የሥራ ቦታ (1)', labelEn: 'Job Vacancies (1)' },
+                { key: 'media', labelAm: 'ሚዲያና መልእክቶች (4)', labelEn: 'Media & Feasts (4)' },
+              ].map((f) => (
+                <button
+                  key={f.key}
+                  onClick={() => setGalleryFilter(f.key as any)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    galleryFilter === f.key
+                      ? 'bg-amber-500 text-slate-950 shadow-md font-bold'
+                      : 'bg-[#09201e] border border-emerald-800/80 text-emerald-200/80 hover:text-white hover:border-amber-400/50'
+                  }`}
+                >
+                  {isAmharic ? f.labelAm : f.labelEn}
+                </button>
+              ))}
+            </div>
+
+            {/* Gallery Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+              {filteredGallery.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => setSelectedItem(item)}
+                  className="group relative rounded-3xl overflow-hidden border-2 border-amber-500/30 hover:border-amber-400 shadow-xl bg-[#09201e] transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Image Thumbnail with Overlay */}
+                    <div className="h-64 sm:h-72 overflow-hidden relative bg-[#041211]">
+                      <img
+                        src={item.image}
+                        alt={isAmharic ? item.titleAm : item.titleEn}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#061514] via-[#061514]/20 to-transparent pointer-events-none" />
+
+                      {/* Purpose Tag Badge (Top Left) */}
+                      <span className="absolute top-3 left-3 text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#061514]/90 backdrop-blur-md text-amber-300 border border-amber-500/40 shadow flex items-center gap-1">
+                        <Target size={11} className="text-amber-400" />
+                        <span>{isAmharic ? item.purposeBadgeAm : item.purposeBadgeEn}</span>
+                      </span>
+
+                      {/* Category Badge (Top Right) */}
+                      <span className="absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500 text-slate-950 shadow">
+                        {isAmharic ? item.categoryAm : item.categoryEn}
+                      </span>
+
+                      {/* Hover Indicator */}
+                      <div className="absolute bottom-3 right-3 p-2 rounded-xl bg-black/75 text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-xs font-medium backdrop-blur-sm">
+                        <ZoomIn size={14} />
+                        <span>{isAmharic ? "አጉላና ዓላማውን እይ" : "View Purpose"}</span>
+                      </div>
+                    </div>
+
+                    {/* Card Content & Purpose Highlight */}
+                    <div className="p-5 space-y-3">
+                      <h3 className="text-base font-bold text-white leading-snug group-hover:text-amber-300 transition-colors">
+                        {isAmharic ? item.titleAm : item.titleEn}
+                      </h3>
+
+                      {/* Purpose Box */}
+                      <div className="p-3 rounded-2xl bg-[#051614] border border-amber-500/20 text-xs text-emerald-100/90 space-y-1">
+                        <div className="font-bold text-amber-400 text-[11px] flex items-center gap-1.5">
+                          <Info size={12} className="text-amber-400 shrink-0" />
+                          <span>{isAmharic ? "የዚህ ፎቶ ዋና ዓላማ፦" : "Primary Purpose:"}</span>
+                        </div>
+                        <p className="line-clamp-2 text-emerald-200/90 leading-relaxed">
+                          {isAmharic ? item.purposeDescAm : item.purposeDescEn}
+                        </p>
+                      </div>
+
+                      {/* Key Indicators */}
+                      <div className="space-y-1.5 text-xs text-emerald-300/80 pt-1">
+                        {item.datesAm && (
+                          <div className="flex items-center gap-1.5 truncate">
+                            <Calendar size={13} className="text-amber-400 shrink-0" />
+                            <span className="truncate">{isAmharic ? item.datesAm : item.datesEn}</span>
+                          </div>
+                        )}
+                        {item.locationAm && (
+                          <div className="flex items-center gap-1.5 truncate">
+                            <MapPin size={13} className="text-amber-400 shrink-0" />
+                            <span className="truncate">{isAmharic ? item.locationAm : item.locationEn}</span>
+                          </div>
+                        )}
+                        {item.phones && item.phones.length > 0 && (
+                          <div className="flex items-center gap-1.5">
+                            <Phone size={13} className="text-amber-400 shrink-0" />
+                            <span>{item.phones.join(' | ')}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card Bottom CTA */}
+                  <div className="px-5 pb-5 pt-0">
+                    <button
+                      type="button"
+                      className="w-full py-2.5 rounded-xl bg-[#0e332f] hover:bg-[#12423d] text-amber-300 hover:text-white border border-amber-500/30 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow"
+                    >
+                      <span>{isAmharic ? "ሙሉውን ዓላማና ፎቶ እይ" : "View Purpose & Details"}</span>
+                      <ArrowUpRight size={14} />
+                    </button>
                   </div>
                 </div>
-
-                <div className="p-4 sm:p-5">
-                  <p className="text-sm font-semibold text-white leading-snug group-hover:text-amber-300 transition-colors">
-                    {isAmharic ? item.captionAm : item.captionEn}
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
@@ -308,41 +550,165 @@ export const MediaGallery: React.FC = () => {
         )}
       </div>
 
-      {/* Photo Lightbox Modal */}
-      {selectedImage && (
+      {/* Photo & Purpose Detailed Lightbox Modal */}
+      {selectedItem && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
-          onClick={() => setSelectedImage(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/90 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setSelectedItem(null)}
         >
           <div
-            className="relative max-w-4xl w-full max-h-[92vh] bg-[#071918] border-2 border-amber-400/60 rounded-3xl overflow-hidden shadow-2xl flex flex-col"
+            className="relative max-w-5xl w-full max-h-[94vh] bg-[#071918] border-2 border-amber-400/60 rounded-3xl overflow-hidden shadow-2xl flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
+            {/* Modal Header */}
             <div className="px-5 py-4 border-b border-amber-500/20 flex items-center justify-between bg-[#041211]">
-              <div className="flex items-center gap-2 overflow-hidden pr-2">
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 shrink-0">
-                  {selectedImage.category}
+              <div className="flex items-center gap-2 overflow-hidden pr-3">
+                <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-500 text-slate-950 shrink-0">
+                  {isAmharic ? selectedItem.purposeBadgeAm : selectedItem.purposeBadgeEn}
                 </span>
-                <span className="text-sm font-bold text-white truncate">
-                  {selectedImage.caption}
+                <span className="text-sm sm:text-base font-bold text-white truncate">
+                  {isAmharic ? selectedItem.titleAm : selectedItem.titleEn}
                 </span>
               </div>
               <button
-                onClick={() => setSelectedImage(null)}
-                className="p-1.5 rounded-full hover:bg-emerald-900/60 text-emerald-200 hover:text-white transition-colors cursor-pointer shrink-0"
+                onClick={() => setSelectedItem(null)}
+                className="p-2 rounded-full hover:bg-emerald-900/60 text-emerald-200 hover:text-white transition-colors cursor-pointer shrink-0"
               >
-                <X size={20} />
+                <X size={22} />
               </button>
             </div>
 
-            {/* Image Body */}
-            <div className="p-4 sm:p-6 flex items-center justify-center overflow-auto max-h-[78vh] bg-[#030d0c]">
-              <img
-                src={selectedImage.image}
-                alt={selectedImage.caption}
-                className="max-h-[72vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"
-              />
+            {/* Modal Content: 2 Columns on desktop, scrollable */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 overflow-y-auto max-h-[82vh]">
+              {/* Left Column: Full Image Poster with zoom capability */}
+              <div className="lg:col-span-7 p-4 sm:p-6 bg-[#030d0c] flex items-center justify-center border-b lg:border-b-0 lg:border-r border-amber-500/20">
+                <img
+                  src={selectedItem.image}
+                  alt={isAmharic ? selectedItem.titleAm : selectedItem.titleEn}
+                  className="max-h-[68vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"
+                />
+              </div>
+
+              {/* Right Column: Complete Purpose, Info, and Action details */}
+              <div className="lg:col-span-5 p-5 sm:p-6 space-y-5 text-left bg-[#071918]">
+                {/* Title and Category */}
+                <div>
+                  <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider block mb-1">
+                    {isAmharic ? selectedItem.categoryAm : selectedItem.categoryEn}
+                  </span>
+                  <h3 className="text-xl font-extrabold text-white leading-tight">
+                    {isAmharic ? selectedItem.titleAm : selectedItem.titleEn}
+                  </h3>
+                </div>
+
+                {/* Primary Purpose Detailed Callout */}
+                <div className="p-4 rounded-2xl bg-[#092320] border border-amber-500/30 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-300">
+                    <Target size={15} className="text-amber-400 shrink-0" />
+                    <span>{isAmharic ? "የፎቶውና የአገልግሎቱ ዋና ዓላማ፦" : "Mission & Purpose:"}</span>
+                  </div>
+                  <p className="text-sm text-emerald-100/95 leading-relaxed">
+                    {isAmharic ? selectedItem.purposeDescAm : selectedItem.purposeDescEn}
+                  </p>
+                </div>
+
+                {/* Schedule / Dates if present */}
+                {selectedItem.datesAm && (
+                  <div className="p-3.5 rounded-xl bg-[#051614] border border-emerald-800/80 space-y-1">
+                    <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                      <Calendar size={14} className="text-amber-400 shrink-0" />
+                      <span>{isAmharic ? "ቀንና መርሃ ግብር" : "Date & Schedule"}:</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white font-medium pl-5">
+                      {isAmharic ? selectedItem.datesAm : selectedItem.datesEn}
+                    </p>
+                  </div>
+                )}
+
+                {/* Registration Location if present */}
+                {selectedItem.locationAm && (
+                  <div className="p-3.5 rounded-xl bg-[#051614] border border-emerald-800/80 space-y-1">
+                    <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                      <MapPin size={14} className="text-amber-400 shrink-0" />
+                      <span>{isAmharic ? "የመመዝገቢያ ቦታ" : "Registration Place"}:</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white font-medium pl-5">
+                      {isAmharic ? selectedItem.locationAm : selectedItem.locationEn}
+                    </p>
+                  </div>
+                )}
+
+                {/* Bank Accounts if present (Maed Enagara) */}
+                {selectedItem.bankDetails && selectedItem.bankDetails.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                      <Building size={14} className="text-amber-400 shrink-0" />
+                      <span>{isAmharic ? "የባንክ ሂሳብ ቁጥሮች (ድጋፍ ለማድረግ)" : "Donation Bank Accounts"}:</span>
+                    </div>
+                    <div className="space-y-2">
+                      {selectedItem.bankDetails.map((b, idx) => (
+                        <div
+                          key={idx}
+                          className="p-3 rounded-xl bg-[#051614] border border-emerald-800/80 flex items-center justify-between gap-3 text-xs"
+                        >
+                          <div>
+                            <div className="font-bold text-emerald-200">{b.bank}</div>
+                            <div className="font-mono text-sm text-amber-300 font-bold">{b.account}</div>
+                            {b.name && <div className="text-[11px] text-emerald-400/80">{b.name}</div>}
+                          </div>
+                          <button
+                            onClick={() => copyToClipboard(b.account, `bank-${idx}`)}
+                            className="p-2 rounded-lg bg-emerald-950 border border-emerald-700 text-emerald-200 hover:text-white hover:border-amber-400 transition-all shrink-0 cursor-pointer"
+                            title="Copy Account"
+                          >
+                            {copiedBank === `bank-${idx}` ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Direct Telephone Contact if present */}
+                {selectedItem.phones && selectedItem.phones.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                      <Phone size={14} className="text-amber-400 shrink-0" />
+                      <span>{isAmharic ? "ለበለጠ መረጃ በስልክ ይደውሉ" : "Contact Phone Numbers"}:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedItem.phones.map((phone, idx) => (
+                        <a
+                          key={idx}
+                          href={`tel:${phone}`}
+                          className="px-3.5 py-2 rounded-xl bg-[#0e332f] hover:bg-[#12423d] border border-amber-500/40 text-amber-300 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all"
+                        >
+                          <Phone size={12} className="text-amber-400" />
+                          <span>{phone}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* External links if present (Telegram, Email, etc.) */}
+                {selectedItem.links && selectedItem.links.length > 0 && (
+                  <div className="space-y-2 pt-2">
+                    {selectedItem.links.map((link, idx) => (
+                      <a
+                        key={idx}
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow transition-all"
+                      >
+                        <span>{link.label}</span>
+                        <ExternalLink size={14} />
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -21,7 +21,8 @@ export const DonationSection: React.FC = () => {
       id: 'cbe',
       bankNameAm: 'የኢትዮጵያ ንግድ ባንክ (CBE)',
       bankNameEn: 'Commercial Bank of Ethiopia (CBE)',
-      accountNumber: '1000234567891',
+      accountNumber: '1000568274311',
+      holderAm: 'ምትኩ & እየሩሳሌም & ስንታየሁ',
       icon: Building,
       color: 'border-purple-500/30 hover:border-purple-400',
       badge: 'CBE',
@@ -31,7 +32,8 @@ export const DonationSection: React.FC = () => {
       id: 'telebirr',
       bankNameAm: 'ቴሌብር (Telebirr)',
       bankNameEn: 'Telebirr SuperApp',
-      accountNumber: '0911234567',
+      accountNumber: '0938952971',
+      holderAm: 'ፍኖተ ትጉሃን ሰንበት ት/ቤት',
       icon: Smartphone,
       color: 'border-blue-500/30 hover:border-blue-400',
       badge: 'Telebirr',
@@ -41,7 +43,8 @@ export const DonationSection: React.FC = () => {
       id: 'awash',
       bankNameAm: 'አዋሽ ባንክ (Awash Bank)',
       bankNameEn: 'Awash International Bank',
-      accountNumber: '01320456789000',
+      accountNumber: '151123546',
+      holderAm: 'ፍኖተ ትጉሃን ሰንበት ት/ቤት',
       icon: Building,
       color: 'border-amber-500/30 hover:border-amber-400',
       badge: 'Awash',
@@ -142,9 +145,14 @@ export const DonationSection: React.FC = () => {
                       {isAmharic ? acc.bankNameAm : acc.bankNameEn}
                     </h4>
 
-                    <div className="p-3 rounded-xl bg-[#051413] border border-emerald-900/60 font-mono text-sm sm:text-base font-extrabold text-amber-300 tracking-wider text-center select-all mb-4">
+                    <div className="p-3 rounded-xl bg-[#051413] border border-emerald-900/60 font-mono text-sm sm:text-base font-extrabold text-amber-300 tracking-wider text-center select-all mb-2">
                       {acc.accountNumber}
                     </div>
+                    {acc.holderAm && (
+                      <div className="text-[11px] text-emerald-300/80 text-center mb-3">
+                        <span>{acc.holderAm}</span>
+                      </div>
+                    )}
                   </div>
 
                   <button
