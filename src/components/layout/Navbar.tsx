@@ -36,7 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navLinks = [
     { label: t.navHome, href: "#hero" },
     { label: t.navAbout, href: "#about" },
-    { label: t.navDepartments, href: "#departments" },
+    { label: isAuthenticated ? t.navDepartments : (isAmharic ? "አዲስ ምዝገባ" : "Registration"), href: "#departments" },
     { label: t.navCourses, href: "#courses" },
     { label: t.navCalendar, href: "#calendar" },
     { label: t.navMezmur, href: "#mezmur" },

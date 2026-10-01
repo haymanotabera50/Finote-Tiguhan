@@ -70,16 +70,16 @@ export const Departments: React.FC<DepartmentsProps> = ({
           <div className="text-center max-w-3xl mx-auto mb-14">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">
               <EthiopianCross size={14} variant="simple" />
-              <span>{isAmharic ? "የሰንበት ት/ቤት ክፍላትና አገልግሎት" : "Sunday School Ministries & Enrollment"}</span>
+              <span>{isAmharic ? "የአዲስ ተማሪዎች ምዝገባ" : "New Student Registration"}</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-              {isAmharic ? "የ14ቱ ክፍላትና የትምህርት መርሃ ግብሮች" : "The 14 Active Ministries & Classes"}
+              {isAmharic ? "ይህ ክፍል ለአዲስ ተማሪዎች ምዝገባ የተዘጋጀ ነው" : "This Part is for New Student Registration"}
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto rounded-full mb-4" />
             <p className="text-emerald-200/80 text-base sm:text-lg">
               {isAmharic 
-                ? "የሰንበት ት/ቤታችን 14 ንቁ ክፍላትና ዝርዝር መርሃ ግብሮች ለተመዘገቡ ተማሪዎችና አባላት የተዘጋጁ ናቸው። አዲስ ተማሪዎች እባክዎ አሁኑኑ ይመዝገቡ፤ ነባር ተማሪዎች ደግሞ ወደ መለያዎ ይግቡ።"
-                : "Detailed curricula, class groupings, and schedules across our 14 ministries are reserved for enrolled members. New students may enroll below; existing students please sign in."}
+                ? "ይህ ክፍል ለአዲስ ተማሪዎች ምዝገባ ብቻ የተዘጋጀ ነው። አዲስ ተማሪዎች እባክዎ ከታች ይመዝገቡ፤ ነባር ተማሪዎች ደግሞ ወደ መለያዎ ይግቡ።"
+                : "This section is dedicated exclusively for new student registration. New students please register below, or sign in if already enrolled."}
             </p>
           </div>
 
@@ -150,14 +150,14 @@ export const Departments: React.FC<DepartmentsProps> = ({
                 </h3>
                 <p className="text-sm text-emerald-100/80 leading-relaxed mb-6">
                   {isAmharic
-                    ? "ቀድመው የተመዘገቡ የሰንበት ት/ቤት ተማሪዎች፣ መዘምራንና አገልጋዮች የ14ቱን ክፍላት ሙሉ ዝርዝር፣ መርሃ ግብሮችና ዲጂታል መታወቂያ ካርዳቸውን ለመመልከት እባክዎ ይግቡ።"
-                    : "Already enrolled Sunday School students, choir members, and coordinators: please sign in to unlock full ministry details, class schedules, and your digital ID card."}
+                    ? "ቀድመው የተመዘገቡ የሰንበት ት/ቤት ተማሪዎች፣ መዘምራንና አገልጋዮች የትምህርት መርሃ ግብሮችና ዲጂታል መታወቂያ ካርዳቸውን ለመመልከት እባክዎ ይግቡ።"
+                    : "Already enrolled Sunday School students, choir members, and coordinators: please sign in to view class schedules and your digital ID card."}
                 </p>
 
                 <div className="space-y-2 mb-6 text-xs text-emerald-200">
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-amber-400 shrink-0" />
-                    <span>{isAmharic ? "የ14ቱ ክፍላት ሙሉ መርሃ ግብርና መሪ ቃሎች" : "Curricula & schedules across all 14 ministries"}</span>
+                    <span>{isAmharic ? "የትምህርት መርሃ ግብርና መሪ ቃሎች" : "Curricula & class schedules"}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-amber-400 shrink-0" />
@@ -175,7 +175,7 @@ export const Departments: React.FC<DepartmentsProps> = ({
                 className="w-full py-3.5 rounded-2xl bg-[#0a2b27] hover:bg-[#0e3b35] text-amber-300 hover:text-white border border-amber-500/40 hover:border-amber-400 font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow"
               >
                 <LogIn size={16} className="text-amber-400" />
-                <span>{isAmharic ? "ይግቡና 14ቱን ክፍላት ይመልከቱ" : "Sign In to Unlock Ministries"}</span>
+                <span>{isAmharic ? "ይግቡና መለያዎን ይመልከቱ" : "Sign In to Your Account"}</span>
                 <ArrowRight size={16} />
               </button>
             </div>
@@ -231,8 +231,8 @@ export const Departments: React.FC<DepartmentsProps> = ({
                 <Lock size={12} className="text-amber-400" />
                 <span>
                   {isAmharic
-                    ? "የ14ቱ ክፍላት ሙሉ ዝርዝር፣ መሪ ቃልና የስብሰባ ሰዓታት የተማሪ መለያ አስገብተው ሲገቡ በሙሉ ይከፈታሉ።"
-                    : "Full 14 ministry rosters, mottos, and meeting times unlock upon student sign-in."}
+                    ? "የትምህርት መርሃ ግብሮች፣ መሪ ቃልና የስብሰባ ሰዓታት የተማሪ መለያ አስገብተው ሲገቡ በሙሉ ይከፈታሉ።"
+                    : "Class schedules, mottos, and meeting times unlock upon student sign-in."}
                 </span>
               </span>
             </div>
@@ -634,3 +634,4 @@ export const Departments: React.FC<DepartmentsProps> = ({
     </section>
   );
 };
+

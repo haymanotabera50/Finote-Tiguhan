@@ -79,7 +79,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
             className="px-6 py-3.5 rounded-full bg-[#0d2e2b]/80 hover:bg-[#0d2e2b] border border-amber-500/30 hover:border-amber-400 text-emerald-100 font-semibold text-sm sm:text-base transition-all duration-300 flex items-center gap-2 hover:scale-105"
           >
             <Shield size={18} className="text-amber-400" />
-            <span>{t.heroExploreBtn}</span>
+            <span>{isAmharic ? "የተማሪዎች ምዝገባ" : "Student Registration"}</span>
           </a>
 
           <a
