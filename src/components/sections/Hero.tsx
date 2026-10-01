@@ -17,30 +17,29 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
 
   return (
     <section id="hero" className="relative min-h-[92vh] flex items-center justify-center pt-24 pb-16 overflow-hidden">
-      {/* Authentic Church Photo Background with Liturgical Gradient Overlays */}
+      {/* Authentic Church Photo Background with High Visibility */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img
           src={churchBuildingImg}
           alt="የላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን"
-          className="w-full h-full object-cover object-center filter brightness-[0.34] contrast-[1.12] scale-105"
+          className="w-full h-full object-cover object-center filter brightness-[0.72] contrast-[1.05]"
         />
-        {/* Deep emerald and gold gradient overlays to preserve high contrast and readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#061514]/90 via-[#081716]/82 to-[#081716]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#081716] via-transparent to-[#061514]/70" />
-        {/* Soft Golden Aura Glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[500px] bg-amber-500/10 rounded-full blur-[130px] pointer-events-none" />
+        {/* Lighter, balanced gradient that lets the church photo clearly show through */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#061514]/70 via-[#061514]/30 to-[#081716]/95" />
+        {/* Soft vignette to frame the image and highlight the center */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(6,21,20,0.65)_100%)] pointer-events-none" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full text-center">
         {/* Daily Verse Banner */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0d2e2b] border border-amber-500/40 text-amber-300 text-xs sm:text-sm font-medium mb-8 shadow-lg hover:border-amber-400 transition-all cursor-default">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#061514]/85 backdrop-blur-md border border-amber-500/50 text-amber-300 text-xs sm:text-sm font-medium mb-8 shadow-2xl hover:border-amber-400 transition-all cursor-default">
           <EthiopianCross size={14} variant="simple" className="text-amber-400 animate-pulse" />
           <span>{t.heroDailyVerse}</span>
         </div>
 
         {/* Floating Logo Badge */}
         <div className="relative mx-auto mb-6 w-32 h-32 sm:w-40 sm:h-40">
-          <div className="absolute inset-0 rounded-full bg-amber-400/20 blur-xl animate-pulse" />
+          <div className="absolute inset-0 rounded-full bg-amber-400/25 blur-xl animate-pulse" />
           <div className="relative w-full h-full rounded-full p-1.5 bg-gradient-to-tr from-amber-600 via-amber-300 to-amber-500 shadow-2xl">
             <img
               src={logoImg}
@@ -50,20 +49,20 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
           </div>
         </div>
 
-        {/* Headings */}
+        {/* Headings with Drop Shadow for Maximum Legibility over Church Photo */}
         <div className="max-w-4xl mx-auto space-y-4">
-          <h2 className="text-xs sm:text-sm md:text-base font-semibold text-amber-400 tracking-widest uppercase">
+          <h2 className="text-xs sm:text-sm md:text-base font-semibold text-amber-300 tracking-widest uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
             {t.churchName}
           </h2>
           
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-[1.15] drop-shadow-[0_4px_18px_rgba(0,0,0,0.95)]">
             <span className="block">{t.sundaySchoolName}</span>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-yellow-500">
               {isAmharic ? "መንፈሳዊ የትምህርትና አገልግሎት ማዕከል" : "Spiritual Education & Ministry"}
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-emerald-100/80 max-w-2xl mx-auto leading-relaxed pt-2">
+          <p className="text-base sm:text-lg text-emerald-50 max-w-2xl mx-auto leading-relaxed pt-2 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] font-medium">
             {t.heroDescription}
           </p>
         </div>
@@ -98,22 +97,22 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
 
         {/* Quick Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-14 pt-10 border-t border-emerald-800/40">
-          <div className="p-4 rounded-2xl bg-[#09201e]/80 border border-amber-500/20 hover:border-amber-400/50 transition-all">
+          <div className="p-4 rounded-2xl bg-[#061514]/85 backdrop-blur-md border border-amber-500/20 hover:border-amber-400/50 transition-all">
             <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 mb-1">{t.statYears}</div>
             <div className="text-xs text-emerald-200/70 font-medium">{t.statYearsLabel}</div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#09201e]/80 border border-amber-500/20 hover:border-amber-400/50 transition-all">
+          <div className="p-4 rounded-2xl bg-[#061514]/85 backdrop-blur-md border border-amber-500/20 hover:border-amber-400/50 transition-all">
             <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 mb-1">{t.statDepartments}</div>
             <div className="text-xs text-emerald-200/70 font-medium">{t.statDepartmentsLabel}</div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#09201e]/80 border border-amber-500/20 hover:border-amber-400/50 transition-all">
+          <div className="p-4 rounded-2xl bg-[#061514]/85 backdrop-blur-md border border-amber-500/20 hover:border-amber-400/50 transition-all">
             <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 mb-1">{t.statStudents}</div>
             <div className="text-xs text-emerald-200/70 font-medium">{t.statStudentsLabel}</div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#09201e]/80 border border-amber-500/20 hover:border-amber-400/50 transition-all">
+          <div className="p-4 rounded-2xl bg-[#061514]/85 backdrop-blur-md border border-amber-500/20 hover:border-amber-400/50 transition-all">
             <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 mb-1">{t.statAlumni}</div>
             <div className="text-xs text-emerald-200/70 font-medium">{t.statAlumniLabel}</div>
           </div>
