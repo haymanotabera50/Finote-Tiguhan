@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { departmentsData } from '../../data/departmentsData';
 import { EthiopianCross } from '../common/EthiopianCross';
-import { X, Shield, BookOpen, Baby, Music, User, LogIn, CheckCircle2, Lock, KeyRound } from 'lucide-react';
+import { 
+  X, Shield, User, LogIn, CheckCircle2, Lock, KeyRound, 
+  ChevronRight, Building2, Search, Sparkles
+} from 'lucide-react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -14,77 +18,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onOpenPor
   const { currentUser, switchRole, login } = useAuth();
   const { isAmharic } = useLanguage();
 
+  const [authTab, setAuthTab] = useState<'departments' | 'leadership' | 'student' | 'custom'>('departments');
+  const [deptSearch, setDeptSearch] = useState('');
   const [customEmail, setCustomEmail] = useState('');
   const [password, setPassword] = useState('');
 
   if (!isOpen) return null;
 
-  const rolePresets = [
-    {
-      id: 'leadership',
-      nameAm: 'ሥራ አመራር ክፍል (ዋና አስተዳደር)',
-      nameEn: 'Executive Leadership (Full Admin Oversight)',
-      icon: Shield,
-      color: 'from-amber-600/30 to-amber-900/30 border-amber-500/50',
-      badgeAm: 'ሁሉንም ክፍላት ይመለከታል | የራሱን ብቻ ያርማል',
-      badgeEn: 'Full Oversight to all depts | Self-edit only',
-      descAm: 'በሁሉም 14 ክፍላትና ክፍሎች ላይ የቁጥጥርና የአስተዳደር መብት አለው፤ ነገር ግን ማስተካከል የሚችለው የራሱን ክፍል ብቻ ነው።',
-      descEn: 'Has administrative oversight across all 14 departments; permitted to edit only the leadership department.'
-    },
-    {
-      id: 'education',
-      nameAm: 'ትምህርትና ስልጠና ክፍል',
-      nameEn: 'Education Department Coordinator',
-      icon: BookOpen,
-      color: 'from-blue-600/30 to-blue-900/30 border-blue-500/40',
-      badgeAm: 'የትምህርት ክፍልን ብቻ',
-      badgeEn: 'Education Dept Only',
-      descAm: 'ሥርዓተ-ትምህርትን፣ የክፍል መርሃ ግብርንና የተመዘገቡ ተማሪዎችን በራሱ ክፍል ብቻ ያስተዳድራል።',
-      descEn: 'Manages curricula, class schedules, and enrolled students exclusively for the Education Dept.'
-    },
-    {
-      id: 'children',
-      nameAm: 'ሕጻናት ክፍል አስተባባሪ',
-      nameEn: "Children's Ministry Coordinator",
-      icon: Baby,
-      color: 'from-rose-600/30 to-rose-900/30 border-rose-500/40',
-      badgeAm: 'የሕፃናት ክፍልን ብቻ',
-      badgeEn: 'Children Dept Only',
-      descAm: 'የማቴዎስ፣ ማርቆስና ሉቃስ ምድብ ሕፃናትን ምዝገባና መርሃ ግብር ያስተዳድራል።',
-      descEn: 'Oversees young students in Matthew, Mark, and Luke divisions exclusively.'
-    },
-    {
-      id: 'choir',
-      nameAm: 'መዝሙር ክፍል አስተባባሪ',
-      nameEn: 'Sacred Choir Coordinator',
-      icon: Music,
-      color: 'from-yellow-600/30 to-yellow-900/30 border-yellow-500/40',
-      badgeAm: 'የመዝሙር ክፍልን ብቻ',
-      badgeEn: 'Choir Dept Only',
-      descAm: 'የመዘምራን ልምምድ፣ የበገና ስልጠናና የመዝሙር ቤተ-መጻሕፍትን ያስተዳድራል።',
-      descEn: 'Coordinates choir practices, Begena harp lessons, and hymn catalog.'
-    },
-    {
-      id: 'student',
-      nameAm: 'ተማሪ / የሰንበት ት/ቤት አባል',
-      nameEn: 'Student / Parish Member',
-      icon: User,
-      color: 'from-emerald-600/30 to-emerald-900/30 border-emerald-500/40',
-      badgeAm: 'የግል መገለጫና ካርድ',
-      badgeEn: 'Personal Profile & ID',
-      descAm: 'የግል ዲጂታል መታወቂያ ካርድ፣ የተመዘገቡባቸው ክፍሎችና የትምህርት መርሃ ግብር።',
-      descEn: 'Accesses digital student ID badge, enrolled course schedules, and certifications.'
-    }
-  ];
-
-  const handleSelectRole = (roleId: string) => {
-    if (roleId === 'leadership') {
-      switchRole('leadership');
-    } else if (roleId === 'student') {
-      switchRole('student');
-    } else {
-      switchRole('dept_admin', roleId);
-    }
+  const handleSelectRole = (role: 'leadership' | 'dept_admin' | 'student', deptId?: string) => {
+    switchRole(role, deptId);
     onClose();
     onOpenPortal();
   };
@@ -93,14 +35,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onOpenPor
     e.preventDefault();
     if (!customEmail) return;
     const lower = customEmail.toLowerCase();
+    
+    // Check if matching any department
+    const matchedDept = departmentsData.find(d => 
+      lower.includes(d.id) || 
+      lower === `${d.id}@finoteteguhan.org`
+    );
+
     if (lower.includes('lead') || lower === 'leadership@finoteteguhan.org') {
       switchRole('leadership');
-    } else if (lower.includes('edu') || lower === 'education@finoteteguhan.org') {
-      switchRole('dept_admin', 'education');
-    } else if (lower.includes('child') || lower === 'children@finoteteguhan.org') {
-      switchRole('dept_admin', 'children');
-    } else if (lower.includes('choir') || lower === 'choir@finoteteguhan.org') {
-      switchRole('dept_admin', 'choir');
+    } else if (matchedDept) {
+      switchRole('dept_admin', matchedDept.id);
+    } else if (lower.includes('student') || lower.includes('stud')) {
+      switchRole('student');
     } else {
       await login(customEmail);
     }
@@ -108,24 +55,32 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onOpenPor
     onOpenPortal();
   };
 
+  const filteredDepts = departmentsData.filter(d => 
+    !deptSearch || 
+    d.nameAm.toLowerCase().includes(deptSearch.toLowerCase()) ||
+    d.nameEn.toLowerCase().includes(deptSearch.toLowerCase()) ||
+    d.articleRef.toLowerCase().includes(deptSearch.toLowerCase())
+  );
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
       <div 
-        className="relative w-full max-w-2xl bg-[#09201e] border-2 border-amber-500/40 rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col text-left"
+        className="relative w-full max-w-3xl bg-[#081f1c] border-2 border-amber-500/40 rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col text-left"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#061514] via-[#0f3835] to-[#061514] px-6 py-5 border-b border-amber-500/20 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#041211] via-[#092b27] to-[#041211] px-6 py-4 border-b border-amber-500/30 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
-              <KeyRound size={22} className="text-amber-400" />
+            <div className="p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+              <KeyRound size={22} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <span>{isAmharic ? "የመግቢያና የተጠቃሚ ፈቃድ ማዕከል" : "Access & Authentication Portal"}</span>
+              <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                <span>{isAmharic ? "የ14ቱ ክፍላትና የአስተዳደር መግቢያ" : "Departments & Admin Access Portal"}</span>
+                <Sparkles size={16} className="text-amber-400" />
               </h3>
               <p className="text-xs text-emerald-200/70">
-                {isAmharic ? "እንደ ሥራ አመራር፣ የክፍል አስተባባሪ ወይም ተማሪ ይግቡ" : "Sign in as Leadership, Department Admin, or Student"}
+                {isAmharic ? "ለ14ቱ የአገልግሎት ክፍላት ገጻቸውን የሚያስተዳድሩበት ማዕከል" : "Dedicated portal for the 14 departments to manage their pages"}
               </p>
             </div>
           </div>
@@ -137,130 +92,250 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onOpenPor
           </button>
         </div>
 
+        {/* Top Role Selector Tabs */}
+        <div className="flex border-b border-emerald-900 bg-[#051614] px-4 pt-2 gap-2 overflow-x-auto">
+          <button
+            type="button"
+            onClick={() => setAuthTab('departments')}
+            className={`py-2.5 px-4 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 shrink-0 ${
+              authTab === 'departments'
+                ? 'border-amber-400 text-amber-300 bg-[#081f1c]'
+                : 'border-transparent text-emerald-200/70 hover:text-white'
+            }`}
+          >
+            <Building2 size={14} />
+            <span>{isAmharic ? "የ14ቱ ክፍላት አስተዳዳሪዎች (14 Departments)" : "14 Department Admins"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setAuthTab('leadership')}
+            className={`py-2.5 px-4 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 shrink-0 ${
+              authTab === 'leadership'
+                ? 'border-amber-400 text-amber-300 bg-[#081f1c]'
+                : 'border-transparent text-emerald-200/70 hover:text-white'
+            }`}
+          >
+            <Shield size={14} />
+            <span>{isAmharic ? "ሥራ አመራር ክፍል (ዋና አመራር)" : "Executive Leadership"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setAuthTab('student')}
+            className={`py-2.5 px-4 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 shrink-0 ${
+              authTab === 'student'
+                ? 'border-amber-400 text-amber-300 bg-[#081f1c]'
+                : 'border-transparent text-emerald-200/70 hover:text-white'
+            }`}
+          >
+            <User size={14} />
+            <span>{isAmharic ? "ተማሪ / አባል" : "Student / Member"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setAuthTab('custom')}
+            className={`py-2.5 px-4 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 shrink-0 ${
+              authTab === 'custom'
+                ? 'border-amber-400 text-amber-300 bg-[#081f1c]'
+                : 'border-transparent text-emerald-200/70 hover:text-white'
+            }`}
+          >
+            <LogIn size={14} />
+            <span>{isAmharic ? "በኢሜይል ግባ" : "Email Sign In"}</span>
+          </button>
+        </div>
+
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-6">
-          {/* Quick Switch Preset Cards */}
-          <div>
-            <div className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-              <EthiopianCross size={14} variant="simple" />
-              <span>{isAmharic ? "ሚና ይምረጡ (በአንድ ጠቅታ ይግቡ)" : "Select Account Role (One-Click Sign In)"}</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {rolePresets.map((preset) => {
-                const IconComp = preset.icon;
-                const isCurrent = currentUser?.role === preset.id || (preset.id !== 'leadership' && preset.id !== 'student' && currentUser?.departmentId === preset.id);
-
-                return (
-                  <div
-                    key={preset.id}
-                    onClick={() => handleSelectRole(preset.id)}
-                    className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg ${
-                      isCurrent
-                        ? 'bg-[#123d38] border-amber-400 shadow-md ring-1 ring-amber-400'
-                        : `bg-[#061514] ${preset.color} hover:border-amber-400/70`
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
-                            <IconComp size={18} />
-                          </div>
-                          <span className="text-sm font-bold text-white">
-                            {isAmharic ? preset.nameAm : preset.nameEn}
-                          </span>
-                        </div>
-                        {isCurrent && (
-                          <CheckCircle2 size={16} className="text-amber-400" />
-                        )}
-                      </div>
-
-                      <div className="mb-2">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                          {isAmharic ? preset.badgeAm : preset.badgeEn}
-                        </span>
-                      </div>
-
-                      <p className="text-[11px] text-emerald-200/70 leading-relaxed">
-                        {isAmharic ? preset.descAm : preset.descEn}
-                      </p>
-                    </div>
-
-                    <div className="mt-3 pt-2 border-t border-emerald-900/60 text-right">
-                      <span className="text-[11px] font-bold text-amber-400 hover:underline inline-flex items-center gap-1">
-                        <span>{isAmharic ? "ግባ" : "Select Role"} &rarr;</span>
-                      </span>
-                    </div>
+        <div className="p-6 overflow-y-auto space-y-5 flex-1">
+          {/* TAB 1: 14 DEPARTMENTS ADMIN SELECTION */}
+          {authTab === 'departments' && (
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <EthiopianCross size={14} variant="simple" />
+                    <span>{isAmharic ? "የሚያስተዳድሩትን ክፍል ይምረጡ፦" : "Select Your Department to Manage:"}</span>
                   </div>
-                );
-              })}
-            </div>
-          </div>
+                  <p className="text-[11px] text-emerald-200/70 mt-0.5">
+                    {isAmharic 
+                      ? "የክፍልዎ አስተባባሪ በመሆን ይግቡና የክፍልዎን ገጽ፣ መሪ ቃል፣ ማስታወቂያና ተግባራት ያስተዳድሩ" 
+                      : "Sign in as coordinator to manage your department's page, motto, notices and action tasks"}
+                  </p>
+                </div>
 
-          {/* Divider */}
-          <div className="relative flex py-1 items-center">
-            <div className="flex-grow border-t border-emerald-900" />
-            <span className="flex-shrink mx-4 text-xs text-emerald-400/60 uppercase">
-              {isAmharic ? "ወይም በኢሜይል መግቢያ" : "Or Custom Login"}
-            </span>
-            <div className="flex-grow border-t border-emerald-900" />
-          </div>
-
-          {/* Custom Login Form */}
-          <form onSubmit={handleCustomLogin} className="space-y-3 bg-[#061514] p-4 rounded-2xl border border-emerald-900/80">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[11px] font-semibold text-amber-300 mb-1">
-                  {isAmharic ? "ኢሜይል" : "Email"}
-                </label>
-                <input
-                  type="email"
-                  value={customEmail}
-                  onChange={(e) => setCustomEmail(e.target.value)}
-                  placeholder="name@finoteteguhan.org"
-                  className="w-full px-3 py-2 bg-[#09201e] border border-emerald-800 rounded-xl text-xs text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400"
-                />
+                <div className="relative w-full sm:w-60">
+                  <Search size={14} className="absolute left-3 top-2.5 text-emerald-400/60" />
+                  <input
+                    type="text"
+                    value={deptSearch}
+                    onChange={(e) => setDeptSearch(e.target.value)}
+                    placeholder={isAmharic ? "ክፍል ፈልግ..." : "Filter departments..."}
+                    className="w-full pl-8 pr-3 py-1.5 bg-[#051413] border border-emerald-800 rounded-xl text-xs text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-semibold text-amber-300 mb-1">
-                  {isAmharic ? "የይለፍ ቃል" : "Password"}
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-3 py-2 bg-[#09201e] border border-emerald-800 rounded-xl text-xs text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400"
-                />
+              {/* Grid of All 14 Departments */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                {filteredDepts.map((dept) => {
+                  const isCurrent = currentUser?.role === 'dept_admin' && currentUser?.departmentId === dept.id;
+
+                  return (
+                    <button
+                      key={dept.id}
+                      type="button"
+                      onClick={() => handleSelectRole('dept_admin', dept.id)}
+                      className={`p-3 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between text-left group ${
+                        isCurrent
+                          ? 'bg-[#123d38] border-amber-400 shadow-md ring-1 ring-amber-400'
+                          : 'bg-[#051514] border-emerald-900/80 hover:border-amber-400 hover:bg-[#092420]'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[10px] font-mono text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                            {dept.articleRef.split('፣')[1]?.trim() || dept.articleRef}
+                          </span>
+                          {isCurrent && (
+                            <span className="text-[10px] text-amber-300 font-bold flex items-center gap-1">
+                              <CheckCircle2 size={12} /> {isAmharic ? "ንቁ" : "Active"}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="text-xs font-bold text-white group-hover:text-amber-300 transition-colors">
+                          {isAmharic ? dept.nameAm : dept.nameEn}
+                        </div>
+
+                        <p className="text-[10px] text-emerald-200/70 mt-1 line-clamp-2">
+                          {isAmharic ? dept.descAm : dept.descEn}
+                        </p>
+                      </div>
+
+                      <div className="mt-3 pt-2 border-t border-emerald-950 flex items-center justify-between text-[11px] font-bold text-amber-400">
+                        <span>{isAmharic ? "እንደ አስተባባሪ ግባ" : "Manage Page"}</span>
+                        <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
+          )}
 
-            <button
-              type="submit"
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs hover:from-amber-400 hover:to-amber-500 transition-all flex items-center justify-center gap-2 cursor-pointer shadow"
-            >
-              <LogIn size={14} />
-              <span>{isAmharic ? "ይግቡ" : "Sign In"}</span>
-            </button>
-          </form>
+          {/* TAB 2: EXECUTIVE LEADERSHIP */}
+          {authTab === 'leadership' && (
+            <div className="space-y-4">
+              <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-600/20 to-amber-900/20 border-2 border-amber-500/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3.5">
+                  <div className="p-3 rounded-2xl bg-amber-500 text-slate-950 font-bold shadow-lg">
+                    <Shield size={28} />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-bold text-white mb-1">
+                      {isAmharic ? "ሥራ አመራር ክፍል (ዋና አስተዳደር)" : "Executive Leadership"}
+                    </h4>
+                    <p className="text-xs text-emerald-100/80 leading-relaxed mb-2">
+                      {isAmharic 
+                        ? "በመተዳደሪያ ደንቡ መሠረት በሁሉም 14ቱ ክፍላት ላይ የቁጥጥርና የበላይ አመራር ፈቃድ አለው፤ የራሱን የሥራ አመራር ክፍል ብቻ ያርማል።"
+                        : "Holds overall administrative oversight across all 14 departments; edits strictly the leadership department."}
+                    </p>
+                    <span className="text-[11px] font-mono text-amber-300 bg-amber-500/20 px-2.5 py-1 rounded-full border border-amber-500/30">
+                      📜 ምዕራፍ 3፣ አንቀጽ 3 (ሥራ አመራር)
+                    </span>
+                  </div>
+                </div>
 
-          {/* Direct Backend Console Link */}
-          <div className="pt-2 border-t border-emerald-900/60 flex items-center justify-between text-xs">
-            <span className="text-emerald-300/80 text-[11px]">
-              {isAmharic ? "የጀርባ ዳታቤዝ ሰርቨር (Port 5000)" : "Backend Database Server (Port 5000)"}
-            </span>
-            <a
-              href="http://localhost:5000/admin"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-lg bg-[#061514] border border-amber-500/40 text-amber-300 hover:text-white hover:border-amber-400 font-bold text-[11px] flex items-center gap-1.5 transition-all"
-            >
-              <span>{isAmharic ? "ወደ ጀርባ ዳታቤዝ ማዕከል ክፈት" : "Open Backend Admin Console"}</span>
-              &rarr;
-            </a>
-          </div>
+                <button
+                  type="button"
+                  onClick={() => handleSelectRole('leadership')}
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xs hover:from-amber-400 hover:to-amber-500 transition-all shadow-lg shrink-0 cursor-pointer text-center"
+                >
+                  {isAmharic ? "እንደ ሥራ አመራር ግባ ➔" : "Sign In as Leadership ➔"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: STUDENT / MEMBER */}
+          {authTab === 'student' && (
+            <div className="space-y-4">
+              <div className="p-5 rounded-2xl bg-[#061514] border-2 border-emerald-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3.5">
+                  <div className="p-3 rounded-2xl bg-emerald-500 text-slate-950 font-bold shadow-lg">
+                    <User size={28} />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-bold text-white mb-1">
+                      {isAmharic ? "ተማሪ / የሰንበት ት/ቤት አባል" : "Student / Parish Member"}
+                    </h4>
+                    <p className="text-xs text-emerald-100/80 leading-relaxed mb-2">
+                      {isAmharic 
+                        ? "የግል ዲጂታል መታወቂያ ካርድ፣ የተመዘገቡባቸው ክፍሎችና የትምህርት መርሃ ግብር ማየት ይቻላል።"
+                        : "Access your digital student ID badge, enrolled classes, and curriculum."}
+                    </p>
+                    <span className="text-[11px] font-mono text-emerald-300 bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-500/30">
+                      መታወቂያ፦ FT-849201 (ዮሐንስ ተስፋዬ)
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleSelectRole('student')}
+                  className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shadow-lg shrink-0 cursor-pointer text-center"
+                >
+                  {isAmharic ? "እንደ ተማሪ ግባ ➔" : "Sign In as Student ➔"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: CUSTOM EMAIL LOGIN */}
+          {authTab === 'custom' && (
+            <form onSubmit={handleCustomLogin} className="space-y-3 bg-[#061514] p-5 rounded-2xl border border-emerald-900/80">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-amber-300 mb-1">
+                    {isAmharic ? "ኢሜይል (Email)" : "Email"}
+                  </label>
+                  <input
+                    type="email"
+                    value={customEmail}
+                    onChange={(e) => setCustomEmail(e.target.value)}
+                    placeholder="audit@finoteteguhan.org"
+                    className="w-full px-3.5 py-2.5 bg-[#040e0d] border border-emerald-900 rounded-xl text-xs text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400"
+                    required
+                  />
+                  <span className="text-[10px] text-emerald-400/60 mt-1 block">
+                    {isAmharic ? "ምሳሌ፦ audit@, choir@, media@, leadership@" : "e.g. audit@, choir@, media@"}
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-amber-300 mb-1">
+                    {isAmharic ? "የይለፍ ቃል (Password)" : "Password"}
+                  </label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-3.5 py-2.5 bg-[#040e0d] border border-emerald-900 rounded-xl text-xs text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs transition-all shadow cursor-pointer mt-2"
+              >
+                {isAmharic ? "ግባ (Sign In)" : "Sign In"}
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </div>

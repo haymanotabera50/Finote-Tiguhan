@@ -27,6 +27,11 @@ export interface DepartmentSettings {
   contactPersonEn: string;
   contactPhone: string;
   updatedAt: string;
+  descriptionAm?: string;
+  descriptionEn?: string;
+  objectiveAm?: string;
+  meetingLocationAm?: string;
+  telegramLink?: string;
 }
 
 export interface StudentRegistrationRecord {

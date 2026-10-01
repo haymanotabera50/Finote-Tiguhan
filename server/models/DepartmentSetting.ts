@@ -25,6 +25,11 @@ const DepartmentSettingSchema: Schema = new Schema({
   contactPersonAm: { type: String, default: '' },
   contactPersonEn: { type: String, default: '' },
   contactPhone: { type: String, default: '' },
+  descriptionAm: { type: String, default: '' },
+  descriptionEn: { type: String, default: '' },
+  objectiveAm: { type: String, default: '' },
+  meetingLocationAm: { type: String, default: '' },
+  telegramLink: { type: String, default: '' },
   updatedAt: { type: Date, default: Date.now }
 });
 

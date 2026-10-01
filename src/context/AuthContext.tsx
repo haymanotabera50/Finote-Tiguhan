@@ -22,6 +22,26 @@ interface AuthContextType {
   refreshRegistrations: () => Promise<void>;
 }
 
+import { departmentsData } from '../data/departmentsData';
+
+const defaultDeptCoordinators: Record<string, { name: string; phone: string }> = {
+  leadership: { name: "ዲ/ን ዮሐንስ (ዋና ጸሐፊ)", phone: "+251 91 123 4567" },
+  audit: { name: "አቶ ገብረ ሥላሴ (የኦዲት ሰብሳቢ)", phone: "+251 91 765 4321" },
+  development: { name: "አቶ ሚካኤል (የቦርድ ሰብሳቢ)", phone: "+251 91 876 5432" },
+  education: { name: "መምህር ተስፋዬ (የትምህርት ኃላፊ)", phone: "+251 91 234 5678" },
+  apostolic: { name: "ቀሲስ ሰሎሞን (የሐዋርያዊ አስተባባሪ)", phone: "+251 91 567 8901" },
+  choir: { name: "ዘማሪ አማኑኤል (የመዝሙር መሪ)", phone: "+251 91 456 7890" },
+  charity: { name: "ወ/ሮ ማርታ (የበጎ አድራጎት ኃላፊ)", phone: "+251 91 678 9012" },
+  finance: { name: "አቶ በለጠ (የሒሳብ ኃላፊ)", phone: "+251 91 789 0123" },
+  media: { name: "ዲ/ን ቴዎድሮስ (የሚዲያ ኃላፊ)", phone: "+251 91 890 1234" },
+  counseling: { name: "መምህር ዳንኤል (የምክር አስተባባሪ)", phone: "+251 91 901 2345" },
+  members: { name: "አቶ ኤርሚያስ (የአባላት ጉዳይ ኃላፊ)", phone: "+251 91 012 3456" },
+  children: { name: "እህት ጽዮን (የሕፃናት አስተባባሪ)", phone: "+251 91 345 6789" },
+  abnet: { name: "መምህር ገብረ እግዚአብሔር (የአብነት መምህር)", phone: "+251 91 998 8776" },
+  arts: { name: "ዲ/ን ዮሴፍ (የስነ ጥበባት ኃላፊ)", phone: "+251 91 887 7665" },
+  institutions: { name: "አቶ ሳሙኤል (የተቋማት ኃላፊ)", phone: "+251 91 776 6554" }
+};
+
 const presetUsers: Record<string, User> = {
   leadership: {
     id: "u-lead",
@@ -33,39 +53,9 @@ const presetUsers: Record<string, User> = {
     departmentNameEn: "Executive Leadership",
     phone: "+251 91 123 4567"
   },
-  education: {
-    id: "u-edu",
-    name: "መምህር ተስፋዬ (የትምህርት ክፍል ኃላፊ)",
-    email: "education@finoteteguhan.org",
-    role: "dept_admin",
-    departmentId: "education",
-    departmentNameAm: "ትምህርትና ስልጠና ክፍል",
-    departmentNameEn: "Education & Training",
-    phone: "+251 91 234 5678"
-  },
-  children: {
-    id: "u-child",
-    name: "እህት ጽዮን (የሕፃናት ክፍል አስተባባሪ)",
-    email: "children@finoteteguhan.org",
-    role: "dept_admin",
-    departmentId: "children",
-    departmentNameAm: "ሕጻናት ክፍል",
-    departmentNameEn: "Children Sunday School",
-    phone: "+251 91 345 6789"
-  },
-  choir: {
-    id: "u-choir",
-    name: "ዘማሪ አማኑኤል (የመዝሙር ክፍል መሪ)",
-    email: "choir@finoteteguhan.org",
-    role: "dept_admin",
-    departmentId: "choir",
-    departmentNameAm: "መዝሙር ክፍል",
-    departmentNameEn: "Sacred Choir & Hymnody",
-    phone: "+251 91 456 7890"
-  },
   student: {
     id: "u-stud",
-    name: "ዮሐንስ ተስፋዬ",
+    name: "ዮሐንስ ተስፋዬ (ተማሪ)",
     email: "student@finoteteguhan.org",
     role: "student",
     studentId: "FT-849201",
@@ -166,10 +156,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (role === 'leadership') {
       u = presetUsers.leadership;
     } else if (role === 'dept_admin') {
-      u = presetUsers[deptId] || {
-        ...presetUsers.education,
-        departmentId: deptId,
-        name: `${deptId} ክፍል አስተባባሪ`
+      const deptObj = departmentsData.find(d => d.id === deptId) || departmentsData[0];
+      const coord = defaultDeptCoordinators[deptId] || { 
+        name: `${deptObj.nameAm} አስተባባሪ`, 
+        phone: "+251 91 000 0000" 
+      };
+      u = {
+        id: `u-${deptId}`,
+        name: coord.name,
+        email: `${deptId}@finoteteguhan.org`,
+        role: "dept_admin",
+        departmentId: deptObj.id,
+        departmentNameAm: deptObj.nameAm,
+        departmentNameEn: deptObj.nameEn,
+        phone: coord.phone
       };
     } else {
       u = presetUsers.student;

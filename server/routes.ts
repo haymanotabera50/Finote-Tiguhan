@@ -304,10 +304,13 @@ apiRouter.put('/departments/:deptId', async (req: Request, res: Response) => {
     const { deptId } = req.params;
     const { role, deptId: userDeptId } = getReqUser(req);
 
-    // EXACT RULE REQUESTED BY USER:
-    // "ሥራ አመራር ክፍል this team should have all the admin access to the other classes or departements but can only edit its departement"
-    // "the other departements acces will be only their departemnt"
-    if (role === 'leadership') {
+    // RBAC:
+    // 1. System admin or backend admin console (role === 'admin' or empty role header) has full management access
+    // 2. 'leadership' can inspect all departments but can ONLY edit its own department ('leadership')
+    // 3. 'dept_admin' can only edit their own department
+    if (role === 'admin' || role === 'system_admin' || !role) {
+      // Allowed for backend dashboard
+    } else if (role === 'leadership') {
       if (deptId !== 'leadership') {
         return res.status(403).json({
           error: 'Forbidden: ሥራ አመራር ክፍል can inspect all departments but can ONLY edit its own department (leadership).'
