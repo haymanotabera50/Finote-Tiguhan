@@ -95,6 +95,7 @@ export function AppContent() {
         <Departments 
           onJoinDepartment={(deptId) => handleOpenRegister(deptId)}
           onOpenPortalWithDept={handleOpenPortalWithDept}
+          onOpenAuth={() => setAuthOpen(true)}
         />
         <Courses onEnroll={(courseId) => handleOpenRegister()} />
         <FeastCalendar />

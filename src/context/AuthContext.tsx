@@ -81,7 +81,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('ft_user');
-    return saved ? JSON.parse(saved) : presetUsers.leadership;
+    const isExplicit = localStorage.getItem('ft_explicit_login') === 'true';
+    if (saved && isExplicit) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   });
 
   const [registrations, setRegistrations] = useState<StudentRegistrationRecord[]>(() => {
@@ -112,11 +120,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const user = await api.login(email);
       setCurrentUser(user);
       localStorage.setItem('ft_user', JSON.stringify(user));
+      localStorage.setItem('ft_explicit_login', 'true');
     } catch (err) {
       const matched = Object.values(presetUsers).find((u) => u.email.toLowerCase() === email.toLowerCase());
       if (matched) {
         setCurrentUser(matched);
         localStorage.setItem('ft_user', JSON.stringify(matched));
+        localStorage.setItem('ft_explicit_login', 'true');
         return;
       }
       const newUser: User = {
@@ -129,12 +139,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
       setCurrentUser(newUser);
       localStorage.setItem('ft_user', JSON.stringify(newUser));
+      localStorage.setItem('ft_explicit_login', 'true');
     }
   };
 
   const logout = () => {
     setCurrentUser(null);
     localStorage.removeItem('ft_user');
+    localStorage.removeItem('ft_explicit_login');
   };
 
   const switchRole = (role: 'leadership' | 'dept_admin' | 'student', deptId = 'education') => {
@@ -152,6 +164,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     setCurrentUser(u);
     localStorage.setItem('ft_user', JSON.stringify(u));
+    localStorage.setItem('ft_explicit_login', 'true');
   };
 
   const canViewDepartment = (deptId: string): boolean => {
