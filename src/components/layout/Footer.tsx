@@ -2,7 +2,7 @@ import React from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { siteContent } from '../../data/translations';
 import { EthiopianCross } from '../common/EthiopianCross';
-import { MapPin, Phone, Mail, Clock, Heart, Send } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
 import logoImg from '../../assets/logo.jpg';
 
 export const Footer: React.FC = () => {
@@ -132,10 +132,6 @@ export const Footer: React.FC = () => {
           <div className="flex items-center gap-2">
             <EthiopianCross size={16} className="text-amber-400/80" />
             <p>{t.footerCopyright}</p>
-          </div>
-          <div className="flex items-center gap-1 text-emerald-300/60">
-            <span>በፍቅርና በጸሎት የተዘጋጀ</span>
-            <Heart size={12} className="text-rose-400 inline" />
           </div>
         </div>
       </div>
