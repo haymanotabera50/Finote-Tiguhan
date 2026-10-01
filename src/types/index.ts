@@ -1,5 +1,22 @@
 export type Language = 'am' | 'en';
 
+export interface DepartmentTaskItem {
+  id: string;
+  titleAm: string;
+  titleEn?: string;
+  subUnitAm?: string;
+  subUnitEn?: string;
+  status: 'planned' | 'in_progress' | 'completed';
+  articleRef?: string;
+  descriptionAm?: string;
+}
+
+export interface SubUnitDetailed {
+  nameAm: string;
+  nameEn: string;
+  dutiesAm: string[];
+}
+
 export interface Department {
   id: string;
   nameAm: string;
@@ -11,6 +28,12 @@ export interface Department {
   subSectionsEn: string[];
   icon: string;
   color: string;
+  articleRef: string;
+  objectiveAm: string;
+  objectiveEn?: string;
+  tasksAm: string[];
+  subUnitsDetailed?: SubUnitDetailed[];
+  defaultActionTasks?: DepartmentTaskItem[];
 }
 
 export interface Course {

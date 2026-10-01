@@ -10,7 +10,8 @@ import {
   Shield, TrendingUp, BookOpen, Flame, HeartHandshake, 
   Coins, Video, Sparkles, Users, Baby, Palette, Music, 
   Building2, GraduationCap, Search, ArrowRight, Check, 
-  Clock, Megaphone, Edit3, Eye, Lock, UserPlus, LogIn, KeyRound
+  Clock, Megaphone, Edit3, Eye, Lock, UserPlus, LogIn, KeyRound,
+  ListTodo, Bookmark, Layers, FileText, X, CheckCircle2, ChevronRight
 } from 'lucide-react';
 
 interface DepartmentsProps {
@@ -32,11 +33,12 @@ export const Departments: React.FC<DepartmentsProps> = ({
 }) => {
   const { language, isAmharic } = useLanguage();
   const { currentUser, canEditDepartment } = useAuth();
-  const { departmentSettings } = useCustomization();
+  const { departmentSettings, departmentTasks } = useCustomization();
   const t = siteContent[language];
 
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedBylawDept, setSelectedBylawDept] = useState<Department | null>(null);
 
   const filteredDepartments = useMemo(() => {
     return departmentsData.filter((dept) => {
@@ -47,7 +49,8 @@ export const Departments: React.FC<DepartmentsProps> = ({
         dept.nameAm.toLowerCase().includes(q) ||
         dept.nameEn.toLowerCase().includes(q) ||
         dept.descAm.toLowerCase().includes(q) ||
-        dept.descEn.toLowerCase().includes(q);
+        dept.descEn.toLowerCase().includes(q) ||
+        (dept.articleRef && dept.articleRef.toLowerCase().includes(q));
       return matchesCategory && matchesSearch;
     });
   }, [activeCategory, searchQuery]);
@@ -91,7 +94,7 @@ export const Departments: React.FC<DepartmentsProps> = ({
                     <UserPlus size={26} />
                   </div>
                   <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                    {isAmharic ? "የ2026/2027 ዓ.ም ምዝገባ ክፍት ነው" : "Open Enrollment"}
+                    {isAmharic ? "ምዝገባ ክፍት ነው" : "Open Enrollment"}
                   </span>
                 </div>
 
@@ -99,44 +102,43 @@ export const Departments: React.FC<DepartmentsProps> = ({
                   {isAmharic ? "አዲስ ተማሪዎች ምዝገባ" : "New Student Registration"}
                 </h3>
                 <p className="text-sm text-emerald-100/80 leading-relaxed mb-6">
-                  {isAmharic
-                    ? "የፍኖተ ትጉሃን ሰንበት ትምህርት ቤት አባል በመሆን የኦርቶዶክስ ተዋሕዶ ሃይማኖትን፣ ቀኖናንና ሥርዓትን ይማሩ፤ ወደ ሕፃናት፣ ወጣቶች፣ መዝሙር ወይም ሌሎች ክፍላት ይመደቡ።"
-                    : "Join Finote Teguhan Sunday School to learn Orthodox Tewahedo theology, sacred hymnody, and be assigned to your division."}
+                  {isAmharic 
+                    ? "በፍኖተ ትጉሃን ሰንበት ትምህርት ቤት የሕፃናት፣ የወጣቶች፣ የአብነት ወይም የመዝሙር ክፍል ተማሪ ለመሆን አሁኑኑ በኦንላይን ይመዝገቡ።" 
+                    : "Apply online today to join Sunday School classes, youth divisions, traditional Abnet studies, or sacred choir."}
                 </p>
 
                 <div className="space-y-2 mb-6 text-xs text-emerald-200">
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-amber-400 shrink-0" />
-                    <span>{isAmharic ? "በኦንላይን ፈጣን ምዝገባና ዲጂታል መለያ ኮድ" : "Instant online enrollment & registration code"}</span>
+                    <span>{isAmharic ? "ቀጥታ የዲጂታል ምዝገባ ኮድ ማግኘት" : "Instant registration confirmation code"}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-amber-400 shrink-0" />
-                    <span>{isAmharic ? "ከሕፃናት እስከ አዋቂዎች የተዋረድ ክፍሎች" : "Graded classes from toddlers to young adults"}</span>
+                    <span>{isAmharic ? "በዕድሜ ደረጃ የተከፋፈሉ የመማሪያ ክፍሎች" : "Age-appropriate Orthodox curriculum"}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check size={14} className="text-amber-400 shrink-0" />
-                    <span>{isAmharic ? "የመዝሙር፣ የበገናና የከበሮ ስልጠናዎች" : "Sacred Begena harp, drum, and chant training"}</span>
+                    <span>{isAmharic ? "የመማሪያ መጻሕፍትና መንፈሳዊ ቁሳቁሶች ድጋፍ" : "Access to spiritual books and learning resources"}</span>
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={() => onJoinDepartment()}
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg hover:shadow-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <UserPlus size={16} />
-                <span>{isAmharic ? "አሁኑኑ በኦንላይን ይመዝገቡ" : "Register as New Student"}</span>
+                <span>{isAmharic ? "አሁኑኑ ይመዝገቡ" : "Register Now as New Student"}</span>
                 <ArrowRight size={16} />
               </button>
             </div>
 
-            {/* Card 2: Enrolled Students Sign In */}
-            <div className="rounded-3xl p-8 bg-[#061817] border-2 border-emerald-700/60 hover:border-amber-400/60 shadow-xl flex flex-col justify-between text-left relative overflow-hidden group hover:scale-[1.02] transition-all">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+            {/* Card 2: Enrolled Student Sign In */}
+            <div className="rounded-3xl p-8 bg-gradient-to-b from-[#0a2724] to-[#051614] border border-emerald-700/60 shadow-xl flex flex-col justify-between text-left relative overflow-hidden group hover:scale-[1.02] transition-all">
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="p-3.5 rounded-2xl bg-[#0a2724] border border-amber-500/40 text-amber-400">
-                    <Lock size={26} />
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <LogIn size={26} />
                   </div>
                   <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#0a2724] text-emerald-300 border border-emerald-600/40">
                     {isAmharic ? "የተማሪዎችና አባላት መዳረሻ" : "Members Only Access"}
@@ -196,7 +198,7 @@ export const Departments: React.FC<DepartmentsProps> = ({
                   <Baby size={20} />
                 </div>
                 <h5 className="text-sm font-bold text-white mb-1">{isAmharic ? "ሕፃናትና ታዳጊዎች" : "Children & Youth"}</h5>
-                <p className="text-xs text-emerald-200/70">{isAmharic ? "የማቴዎስ፣ ማርቆስ፣ ሉቃስና ዮሐንስ የተዋረድ ክፍሎች" : "Graded classes from Matthew to John"}</p>
+                <p className="text-xs text-emerald-200/70">{isAmharic ? "የማቴዎስ፣ ማርቆስ፣ ሉቃስ ክፍሎች" : "Graded classes from Matthew to Luke"}</p>
               </div>
 
               <div className="p-4 rounded-2xl bg-[#081f1d] border border-emerald-800/60 text-left">
@@ -304,13 +306,13 @@ export const Departments: React.FC<DepartmentsProps> = ({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={isAmharic ? "ክፍል ይፈልጉ..." : "Search departments..."}
+                placeholder={isAmharic ? "ክፍል ወይም አንቀጽ ይፈልጉ..." : "Search departments..."}
                 className="w-full pl-9 pr-4 py-2 bg-[#051413] border border-emerald-800/80 rounded-full text-xs sm:text-sm text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400 transition-colors"
               />
             </div>
           </div>
 
-          {/* Departments Cards Grid (14 Departments) */}
+          {/* Departments Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredDepartments.map((dept) => {
               const IconComponent = iconMap[dept.icon] || Shield;
@@ -318,6 +320,9 @@ export const Departments: React.FC<DepartmentsProps> = ({
               const settings = departmentSettings[dept.id];
               const canEdit = canEditDepartment(dept.id);
               const isMyDept = currentUser?.departmentId === dept.id;
+              const deptTasks = departmentTasks[dept.id] || [];
+              const completedCount = deptTasks.filter(t => t.status === 'completed').length;
+              const totalTasks = deptTasks.length;
 
               return (
                 <div
@@ -329,7 +334,7 @@ export const Departments: React.FC<DepartmentsProps> = ({
                   }`}
                 >
                   <div>
-                    {/* Top Bar with Icon & Permission Badges */}
+                    {/* Top Bar with Icon, Constitution Article Badge & Permission */}
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
                         <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
@@ -343,9 +348,14 @@ export const Departments: React.FC<DepartmentsProps> = ({
                         )}
                       </div>
 
-                      <span className="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-700/50 text-emerald-300">
-                        {dept.category}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#061514] text-amber-400/90 border border-amber-500/30">
+                          📜 {dept.articleRef.split('፣')[1]?.trim() || dept.articleRef}
+                        </span>
+                        <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-700/50 text-emerald-300">
+                          {dept.category}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Title */}
@@ -381,6 +391,17 @@ export const Departments: React.FC<DepartmentsProps> = ({
                       </div>
                     )}
 
+                    {/* Task Progress Indicator */}
+                    <div className="mb-4 p-2.5 rounded-xl bg-[#061514] border border-emerald-900/60 flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-1.5 text-emerald-200">
+                        <ListTodo size={14} className="text-amber-400" />
+                        <span>{isAmharic ? 'የደንብ ተግባራት አፈጻጸም' : 'Bylaws Tasks'}</span>
+                      </div>
+                      <span className="font-mono text-amber-300 font-bold">
+                        {completedCount}/{totalTasks} ({totalTasks > 0 ? Math.round((completedCount/totalTasks)*100) : 0}%)
+                      </span>
+                    </div>
+
                     {/* Sub Units List */}
                     {subUnits && subUnits.length > 0 && (
                       <div className="pt-3 border-t border-emerald-800/40 mb-4 space-y-1.5">
@@ -403,28 +424,210 @@ export const Departments: React.FC<DepartmentsProps> = ({
                   </div>
 
                   {/* Card Action Buttons */}
-                  <div className="pt-3 flex items-center gap-2">
+                  <div className="pt-3 space-y-2">
+                    {/* View Mandate & Tasks Details Modal Button */}
                     <button
-                      onClick={() => onJoinDepartment(dept.id)}
-                      className="flex-1 py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 hover:border-amber-400 font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      onClick={() => setSelectedBylawDept(dept)}
+                      className="w-full py-2.5 rounded-xl bg-[#061514] hover:bg-[#0a2320] text-amber-300 border border-amber-500/40 font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow"
                     >
-                      <span>{t.departmentsJoinBtn}</span>
-                      <ArrowRight size={14} />
+                      <ListTodo size={14} className="text-amber-400" />
+                      <span>{isAmharic ? 'የደንብ ተግባራትና ዕቅድ ይመልከቱ' : 'View Tasks & Mandates'}</span>
                     </button>
 
-                    {onOpenPortalWithDept && (currentUser?.role === 'leadership' || canEdit) && (
+                    <div className="flex items-center gap-2">
                       <button
-                        onClick={() => onOpenPortalWithDept(dept.id)}
-                        className="px-3 py-2.5 rounded-xl bg-[#061514] border border-emerald-800 hover:border-amber-400 text-emerald-200 hover:text-white text-xs font-semibold transition-all cursor-pointer flex items-center gap-1"
-                        title={canEdit ? (isAmharic ? "ይህንን ክፍል አርም" : "Edit Department") : (isAmharic ? "የሥራ አመራር ቁጥጥር" : "Leadership Oversight")}
+                        onClick={() => onJoinDepartment(dept.id)}
+                        className="flex-1 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30 hover:border-amber-400 font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                       >
-                        {canEdit ? <Edit3 size={14} className="text-amber-400" /> : <Eye size={14} className="text-amber-400" />}
+                        <span>{t.departmentsJoinBtn}</span>
+                        <ArrowRight size={14} />
                       </button>
-                    )}
+
+                      {onOpenPortalWithDept && (currentUser?.role === 'leadership' || canEdit) && (
+                        <button
+                          onClick={() => onOpenPortalWithDept(dept.id)}
+                          className="px-3 py-2 rounded-xl bg-[#061514] border border-emerald-800 hover:border-amber-400 text-emerald-200 hover:text-white text-xs font-semibold transition-all cursor-pointer flex items-center gap-1"
+                          title={canEdit ? (isAmharic ? "ይህንን ክፍል አርም" : "Edit Department") : (isAmharic ? "የሥራ አመራር ቁጥጥር" : "Leadership Oversight")}
+                        >
+                          {canEdit ? <Edit3 size={14} className="text-amber-400" /> : <Eye size={14} className="text-amber-400" />}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 3. DETAILED BYLAWS & TASKS MODAL (When clicking 'View Tasks & Mandates')    */}
+      {/* ========================================================================= */}
+      {selectedBylawDept && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-hidden">
+          <div 
+            className="w-full max-w-3xl bg-[#09201e] border-2 border-amber-500/40 rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative animate-in fade-in zoom-in-95 duration-200 text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-emerald-900 bg-[#061514]">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                  <EthiopianCross size={20} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-white">
+                      {isAmharic ? selectedBylawDept.nameAm : selectedBylawDept.nameEn}
+                    </h3>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                      📜 {selectedBylawDept.articleRef}
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-300/80">
+                    {isAmharic ? 'የላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን ፍኖተ ትጉሃን ሰንበት ት/ቤት መተዳደሪያ ደንብ' : 'Sunday School Official Bylaws Mandate'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setSelectedBylawDept(null)}
+                className="p-1.5 rounded-full text-emerald-300 hover:text-white hover:bg-white/10 cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div className="p-6 overflow-y-auto space-y-5 text-xs text-emerald-100 flex-1">
+              
+              {/* Statutory Objective (ዓላማ) */}
+              <div className="p-4 rounded-2xl bg-[#061514] border border-amber-500/30">
+                <div className="font-bold text-amber-400 mb-1 flex items-center gap-1.5">
+                  <Bookmark size={15} />
+                  <span>{isAmharic ? 'የክፍሉ ሕጋዊ ዓላማ (Objective)፦' : 'Statutory Objective:'}</span>
+                </div>
+                <p className="text-emerald-100/90 leading-relaxed font-serif text-sm">
+                  {isAmharic ? selectedBylawDept.objectiveAm : selectedBylawDept.objectiveEn || selectedBylawDept.objectiveAm}
+                </p>
+              </div>
+
+              {/* Action Tasks Status List */}
+              <div className="space-y-3">
+                <div className="font-bold text-amber-300 text-sm flex items-center gap-1.5">
+                  <ListTodo size={16} />
+                  <span>{isAmharic ? 'የተግባራትና የዕቅድ አፈጻጸም ዝርዝር' : 'Trackable Action Plan Tasks'}</span>
+                </div>
+
+                <div className="space-y-2">
+                  {(departmentTasks[selectedBylawDept.id] || []).map((task) => (
+                    <div 
+                      key={task.id}
+                      className="p-3 rounded-xl bg-[#061514] border border-emerald-900/80 flex items-center justify-between gap-3"
+                    >
+                      <div className="space-y-0.5">
+                        <div className="font-semibold text-white">{task.titleAm}</div>
+                        <div className="flex items-center gap-2 text-[10px] text-emerald-300/70">
+                          {task.subUnitAm && <span className="text-amber-300/80">{task.subUnitAm}</span>}
+                          {task.articleRef && <span>• {task.articleRef}</span>}
+                        </div>
+                      </div>
+
+                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase border shrink-0 ${
+                        task.status === 'completed'
+                          ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
+                          : task.status === 'in_progress'
+                          ? 'bg-blue-950 text-blue-300 border-blue-700'
+                          : 'bg-amber-950 text-amber-300 border-amber-700'
+                      }`}>
+                        {task.status === 'completed' 
+                          ? (isAmharic ? '✓ የተጠናቀቀ' : 'Completed') 
+                          : task.status === 'in_progress'
+                          ? (isAmharic ? '⏳ በሂደት ላይ' : 'In Progress')
+                          : (isAmharic ? '○ የታቀደ' : 'Planned')}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Statutory Core Bylaws Duties (ዋና ዋና ተግባራት) */}
+              <div className="space-y-3 pt-2 border-t border-emerald-900">
+                <div className="font-bold text-amber-300 text-sm flex items-center gap-1.5">
+                  <FileText size={16} />
+                  <span>{isAmharic ? 'ዋና ዋና ተግባራትና ኃላፊነቶች በመተዳደሪያ ደንቡ' : 'Statutory Core Responsibilities'}</span>
+                </div>
+
+                <div className="space-y-2">
+                  {selectedBylawDept.tasksAm.map((duty, idx) => (
+                    <div 
+                      key={idx}
+                      className="p-3 rounded-xl bg-[#061514] border border-emerald-900/60 flex items-start gap-2.5 leading-relaxed"
+                    >
+                      <span className="font-mono text-amber-400 font-bold shrink-0">{idx + 1}.</span>
+                      <span>{duty}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Constituent Sub-Units (ንዑሳን ክፍላት) */}
+              {selectedBylawDept.subUnitsDetailed && selectedBylawDept.subUnitsDetailed.length > 0 && (
+                <div className="space-y-3 pt-2 border-t border-emerald-900">
+                  <div className="font-bold text-amber-300 text-sm flex items-center gap-1.5">
+                    <Layers size={16} />
+                    <span>{isAmharic ? 'ንዑሳን ክፍላትና ዝርዝር የሥራ ድርሻቸው' : 'Constituent Sub-Units & Mandates'}</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {selectedBylawDept.subUnitsDetailed.map((sub, sIdx) => (
+                      <div 
+                        key={sIdx}
+                        className="p-3.5 rounded-2xl bg-[#061514] border border-emerald-900/80 space-y-1.5"
+                      >
+                        <div className="font-bold text-white text-xs border-b border-emerald-950 pb-1 flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-amber-400" />
+                          <span>{sub.nameAm}</span>
+                        </div>
+                        <ul className="space-y-1 text-[11px] text-emerald-200/80">
+                          {sub.dutiesAm.map((d, dIdx) => (
+                            <li key={dIdx} className="flex items-start gap-1.5">
+                              <span className="text-amber-400 shrink-0">•</span>
+                              <span>{d}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-emerald-900 bg-[#061514] flex items-center justify-between gap-3">
+              <button
+                onClick={() => setSelectedBylawDept(null)}
+                className="px-4 py-2 rounded-xl bg-[#09201e] border border-emerald-800 text-emerald-200 text-xs font-semibold cursor-pointer"
+              >
+                {isAmharic ? 'ዝጋ' : 'Close'}
+              </button>
+
+              {onOpenPortalWithDept && (currentUser?.role === 'leadership' || canEditDepartment(selectedBylawDept.id)) && (
+                <button
+                  onClick={() => {
+                    const deptId = selectedBylawDept.id;
+                    setSelectedBylawDept(null);
+                    onOpenPortalWithDept(deptId);
+                  }}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow transition-all cursor-pointer"
+                >
+                  <Edit3 size={14} />
+                  <span>{isAmharic ? 'በፖርታል ውስጥ አስተዳድር' : 'Manage in Portal'}</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

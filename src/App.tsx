@@ -124,6 +124,7 @@ export function AppContent() {
       <PortalDashboard
         isOpen={portalOpen}
         onClose={() => setPortalOpen(false)}
+        initialDeptId={selectedDeptId}
       />
 
       <CustomizationDrawer
