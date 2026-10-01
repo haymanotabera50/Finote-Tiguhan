@@ -5,6 +5,7 @@ import { EthiopianCross } from '../common/EthiopianCross';
 import { Sparkles, ArrowRight, BookOpen, Music, Users, Shield, Award, Calendar } from 'lucide-react';
 import logoImg from '../../assets/logo.jpg';
 import churchPhoto from '../../assets/church-community.jpg';
+import churchBuildingImg from '../../assets/church-building.jpg';
 
 interface HeroProps {
   onOpenRegister: () => void;
@@ -16,14 +17,18 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
 
   return (
     <section id="hero" className="relative min-h-[92vh] flex items-center justify-center pt-24 pb-16 overflow-hidden">
-      {/* Background with Ambient Glow */}
-      <div className="absolute inset-0 bg-[#081716] z-0">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-gradient-to-b from-amber-500/10 via-emerald-600/10 to-transparent rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute -bottom-20 left-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
-        {/* Subtle Orthodox motif watermark */}
-        <div className="absolute right-6 top-28 opacity-5 pointer-events-none hidden xl:block">
-          <EthiopianCross size={380} variant="lalibela" className="text-amber-300" />
-        </div>
+      {/* Authentic Church Photo Background with Liturgical Gradient Overlays */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <img
+          src={churchBuildingImg}
+          alt="የላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን"
+          className="w-full h-full object-cover object-center filter brightness-[0.34] contrast-[1.12] scale-105"
+        />
+        {/* Deep emerald and gold gradient overlays to preserve high contrast and readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#061514]/90 via-[#081716]/82 to-[#081716]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#081716] via-transparent to-[#061514]/70" />
+        {/* Soft Golden Aura Glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[500px] bg-amber-500/10 rounded-full blur-[130px] pointer-events-none" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full text-center">
