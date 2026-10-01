@@ -80,17 +80,27 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('ft_user');
-    const isExplicit = localStorage.getItem('ft_explicit_login') === 'true';
-    if (saved && isExplicit) {
-      try {
+    // Only restore session if the user explicitly logged in during this active browser session
+    try {
+      const saved = sessionStorage.getItem('ft_user');
+      if (saved) {
         return JSON.parse(saved);
-      } catch (e) {
-        return null;
       }
+    } catch (e) {
+      // ignore
     }
     return null;
   });
+
+  // Ensure stale legacy persistent login tokens in localStorage are purged on mount
+  useEffect(() => {
+    try {
+      localStorage.removeItem('ft_user');
+      localStorage.removeItem('ft_explicit_login');
+    } catch (e) {
+      // ignore
+    }
+  }, []);
 
   const [registrations, setRegistrations] = useState<StudentRegistrationRecord[]>(() => {
     const saved = localStorage.getItem('ft_registrations');
@@ -119,14 +129,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const user = await api.login(email);
       setCurrentUser(user);
-      localStorage.setItem('ft_user', JSON.stringify(user));
-      localStorage.setItem('ft_explicit_login', 'true');
+      sessionStorage.setItem('ft_user', JSON.stringify(user));
     } catch (err) {
       const matched = Object.values(presetUsers).find((u) => u.email.toLowerCase() === email.toLowerCase());
       if (matched) {
         setCurrentUser(matched);
-        localStorage.setItem('ft_user', JSON.stringify(matched));
-        localStorage.setItem('ft_explicit_login', 'true');
+        sessionStorage.setItem('ft_user', JSON.stringify(matched));
         return;
       }
       const newUser: User = {
@@ -138,15 +146,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         studentId: 'FT-' + Math.floor(100000 + Math.random() * 900000)
       };
       setCurrentUser(newUser);
-      localStorage.setItem('ft_user', JSON.stringify(newUser));
-      localStorage.setItem('ft_explicit_login', 'true');
+      sessionStorage.setItem('ft_user', JSON.stringify(newUser));
     }
   };
 
   const logout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('ft_user');
-    localStorage.removeItem('ft_explicit_login');
+    try {
+      sessionStorage.removeItem('ft_user');
+      localStorage.removeItem('ft_user');
+      localStorage.removeItem('ft_explicit_login');
+    } catch (e) {
+      // ignore
+    }
   };
 
   const switchRole = (role: 'leadership' | 'dept_admin' | 'student', deptId = 'education') => {
@@ -163,8 +175,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       u = presetUsers.student;
     }
     setCurrentUser(u);
-    localStorage.setItem('ft_user', JSON.stringify(u));
-    localStorage.setItem('ft_explicit_login', 'true');
+    try {
+      sessionStorage.setItem('ft_user', JSON.stringify(u));
+    } catch (e) {
+      // ignore
+    }
   };
 
   const canViewDepartment = (deptId: string): boolean => {

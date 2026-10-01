@@ -10,7 +10,7 @@ export const siteContent = {
     // Nav
     navHome: "ዋና ገጽ",
     navAbout: "ስለ እኛ",
-    navDepartments: "ክፍሎች (14)",
+    navDepartments: "የአገልግሎት ክፍላት",
     navCourses: "ትምህርቶች",
     navCalendar: "የበዓላት ቀን መቁጠሪያ",
     navMezmur: "መዝሙራት",
@@ -23,7 +23,7 @@ export const siteContent = {
     heroWelcome: "እንኳን ወደ ፍኖተ ትጉሃን ሰንበት ት/ቤት በደህና መጡ!",
     heroTitle: "የቅድስት ቤተክርስቲያናችንን እምነትና ሥርዓት ጠብቀን ለትውልድ እናስተላልፋለን",
     heroDescription: "በአዲስ አበባ ደቡብ ምዕራብ ላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል አጥቢያ ለ35 ዓመታት ሕፃናትን፣ ወጣቶችንና አዋቂዎችን በኦርቶዶክሳዊ ትምህርትና አገልግሎት እያንጸ የሚገኝ መንፈሳዊ ተቋም።",
-    heroExploreBtn: "ክፍላትን ያስሱ",
+    heroExploreBtn: "የተማሪዎች ምዝገባ",
     heroCoursesBtn: "ትምህርቶችን ይመልከቱ",
     heroRegisterBtn: "አሁን ይመዝገቡ",
     heroDailyVerse: "«እኔና ቤቴ ግን እግዚአብሔርን እናመልካለን።» (ኢያሱ 24:15)",
@@ -31,8 +31,8 @@ export const siteContent = {
     // Stats
     statYears: "35+",
     statYearsLabel: "ዓመታት በአገልግሎት",
-    statDepartments: "14",
-    statDepartmentsLabel: "ንቁ የአገልግሎት ክፍላት",
+    statDepartments: "50+",
+    statDepartmentsLabel: "መምህራንና አገልጋዮች",
     statStudents: "1,200+",
     statStudentsLabel: "ተማሪዎችና አባላት",
     statAlumni: "5,000+",
@@ -42,7 +42,7 @@ export const siteContent = {
     aboutTitle: "ስለ ሰንበት ትምህርት ቤታችን",
     aboutSubtitle: "የተመሰረተበት ታሪክ፣ ራዕይና ተልዕኮ",
     historyTitle: "የምስረታ ታሪክ",
-    historyDesc: "የላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን ፍኖተ ትጉሃን ሰንበት ትምህርት ቤት የተመሰረተው ሐምሌ 23 ቀን 1983 ዓ.ም በጥቂት ቅን አገልጋዮች አነሳሽነት ነው። ዛሬ ላይ በሺዎች የሚቆጠሩ ምዕመናንን ያፈራ፣ 14 ቋሚ ክፍሎችና በርካታ ንዑሳን ክፍላት ያሉት ግዙፍ የቤተክርስቲያን ምሰሶ ሆኗል።",
+    historyDesc: "የላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን ፍኖተ ትጉሃን ሰንበት ትምህርት ቤት የተመሰረተው ሐምሌ 23 ቀን 1983 ዓ.ም በጥቂት ቅን አገልጋዮች አነሳሽነት ነው። ዛሬ ላይ በሺዎች የሚቆጠሩ ምዕመናንን ያፈራ፣ በርካታ ንቁ የአገልግሎት ክፍላት ያሉት ግዙፍ የቤተክርስቲያን ምሰሶ ሆኗል።",
     visionTitle: "ራዕይ",
     visionDesc: "የቅድስት ቤተ-ክርስቲያንን እምነት፣ ስርዓት፣ ትውፊትና ሀብት ጠብቆ በማስጠበቅ ለመጪው ትውልድ የሚያስረክብ በሥነ-ምግባር፣ በመንፈሳዊና በዘመናዊ እውቀት የበሰለ ክርስቲያን ሲኖር ማየት።",
     missionTitle: "ተልዕኮ",
@@ -53,7 +53,7 @@ export const siteContent = {
     ],
 
     // Departments
-    departmentsTitle: "የሰንበት ትምህርት ቤቱ 14 ክፍላት",
+    departmentsTitle: "የሰንበት ትምህርት ቤቱ የአገልግሎት ክፍላት",
     departmentsSubtitle: "በተለያዩ የአገልግሎት መስኮች ቤተክርስቲያናችንን የሚያገለግሉ ንቁ ክፍሎች",
     departmentsFilterAll: "ሁሉም ክፍላት",
     departmentsFilterLeadership: "አመራርና ልማት",
@@ -148,7 +148,7 @@ export const siteContent = {
     // Nav
     navHome: "Home",
     navAbout: "About Us",
-    navDepartments: "Departments (14)",
+    navDepartments: "Ministries",
     navCourses: "Curriculum",
     navCalendar: "Feast Calendar",
     navMezmur: "Hymns & Audio",
@@ -161,7 +161,7 @@ export const siteContent = {
     heroWelcome: "Welcome to Finote Teguhan Sunday School!",
     heroTitle: "Preserving and Handing Down the Orthodox Christian Faith to Generations",
     heroDescription: "Serving at Lafto Debre Teguhan St. Michael Church in Addis Ababa for 35+ years, nurturing children, youth, and adults through holistic spiritual education and Christian fellowship.",
-    heroExploreBtn: "Explore Departments",
+    heroExploreBtn: "Student Registration",
     heroCoursesBtn: "View Courses",
     heroRegisterBtn: "Register Online",
     heroDailyVerse: "«But as for me and my house, we will serve the Lord.» (Joshua 24:15)",
@@ -169,8 +169,8 @@ export const siteContent = {
     // Stats
     statYears: "35+",
     statYearsLabel: "Years of Service",
-    statDepartments: "14",
-    statDepartmentsLabel: "Active Departments",
+    statDepartments: "50+",
+    statDepartmentsLabel: "Teachers & Servants",
     statStudents: "1,200+",
     statStudentsLabel: "Enrolled Students",
     statAlumni: "5,000+",
@@ -180,7 +180,7 @@ export const siteContent = {
     aboutTitle: "About Our Sunday School",
     aboutSubtitle: "Our Heritage, Vision and Guiding Mission",
     historyTitle: "Our Foundation History",
-    historyDesc: "Finote Teguhan Sunday School was established on July 30, 1991 (Hamle 23, 1983 E.C.) at Lafto Debre Teguhan St. Michael Church by devoted servants. Today, it has grown into a major spiritual pillar with 14 specialized departments and thousands of graduates serving across the globe.",
+    historyDesc: "Finote Teguhan Sunday School was established on July 30, 1991 (Hamle 23, 1983 E.C.) at Lafto Debre Teguhan St. Michael Church by devoted servants. Today, it has grown into a major spiritual pillar with dedicated ministries and thousands of graduates serving across the globe.",
     visionTitle: "Our Vision",
     visionDesc: "To nurture and raise mature Orthodox Christians enriched with moral excellence, spiritual depth, and modern wisdom who preserve the dogma, order, tradition, and sacred heritage of the Holy Church for future generations.",
     missionTitle: "Our Mission",
@@ -191,7 +191,7 @@ export const siteContent = {
     ],
 
     // Departments
-    departmentsTitle: "Our 14 Specialized Departments",
+    departmentsTitle: "Our Specialized Ministries & Departments",
     departmentsSubtitle: "Dedicated ministries driving the spiritual, educational, and charitable life of the parish",
     departmentsFilterAll: "All Departments",
     departmentsFilterLeadership: "Leadership & Growth",

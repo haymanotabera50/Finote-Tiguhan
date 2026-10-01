@@ -84,7 +84,7 @@ export const Departments: React.FC<DepartmentsProps> = ({
           </div>
 
           {/* Public Action Cards: New Student Registration vs Enrolled Student Sign In */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-6">
             {/* Card 1: New Student Registration */}
             <div className="rounded-3xl p-8 bg-gradient-to-b from-[#0e332f] to-[#071d1b] border-2 border-amber-400 shadow-xl shadow-amber-500/10 flex flex-col justify-between text-left relative overflow-hidden group hover:scale-[1.02] transition-all">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
@@ -178,63 +178,6 @@ export const Departments: React.FC<DepartmentsProps> = ({
                 <span>{isAmharic ? "ይግቡና መለያዎን ይመልከቱ" : "Sign In to Your Account"}</span>
                 <ArrowRight size={16} />
               </button>
-            </div>
-          </div>
-
-          {/* 4 Pillars Overview Banner */}
-          <div className="bg-[#051413] border border-emerald-900 rounded-3xl p-6 sm:p-8 max-w-5xl mx-auto">
-            <div className="text-center mb-6">
-              <h4 className="text-base sm:text-lg font-bold text-amber-300">
-                {isAmharic ? "በሰንበት ት/ቤታችን የሚሰጡ ዋና ዋና አገልግሎቶች" : "Core Sunday School Ministry Pillars"}
-              </h4>
-              <p className="text-xs text-emerald-200/60 mt-1">
-                {isAmharic ? "ተማሪዎች ወደ ተመዘገቡበት ክፍል ሲገቡ የሚሳተፉባቸው መስኮች" : "Pillars unlocked upon student enrollment and login"}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-4 rounded-2xl bg-[#081f1d] border border-emerald-800/60 text-left">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-3">
-                  <Baby size={20} />
-                </div>
-                <h5 className="text-sm font-bold text-white mb-1">{isAmharic ? "ሕፃናትና ታዳጊዎች" : "Children & Youth"}</h5>
-                <p className="text-xs text-emerald-200/70">{isAmharic ? "የማቴዎስ፣ ማርቆስ፣ ሉቃስ ክፍሎች" : "Graded classes from Matthew to Luke"}</p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#081f1d] border border-emerald-800/60 text-left">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center mb-3">
-                  <BookOpen size={20} />
-                </div>
-                <h5 className="text-sm font-bold text-white mb-1">{isAmharic ? "ትምህርትና ስልጠና" : "Biblical Education"}</h5>
-                <p className="text-xs text-emerald-200/70">{isAmharic ? "የነገረ መለኮት፣ ሥርዓተ ቤተክርስቲያንና ቋንቋ" : "Theology, church canon, and Ge'ez"}</p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#081f1d] border border-emerald-800/60 text-left">
-                <div className="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 flex items-center justify-center mb-3">
-                  <Music size={20} />
-                </div>
-                <h5 className="text-sm font-bold text-white mb-1">{isAmharic ? "መዝሙርና ዜማ" : "Sacred Hymnody"}</h5>
-                <p className="text-xs text-emerald-200/70">{isAmharic ? "ያሬዳዊ ዜማ፣ የበገናና የከበሮ ስልጠና" : "Yaredic chants, Begena harp, and drum"}</p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#081f1d] border border-emerald-800/60 text-left">
-                <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center justify-center mb-3">
-                  <HeartHandshake size={20} />
-                </div>
-                <h5 className="text-sm font-bold text-white mb-1">{isAmharic ? "አገልግሎትና ፍቅር" : "Fellowship & Charity"}</h5>
-                <p className="text-xs text-emerald-200/70">{isAmharic ? "የሕይወት ምክር፣ ማኅበራዊ አገልግሎትና ልማት" : "Counseling, outreach, and development"}</p>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-emerald-900/60 text-center">
-              <span className="text-xs text-amber-300/80 inline-flex items-center gap-1.5">
-                <Lock size={12} className="text-amber-400" />
-                <span>
-                  {isAmharic
-                    ? "የትምህርት መርሃ ግብሮች፣ መሪ ቃልና የስብሰባ ሰዓታት የተማሪ መለያ አስገብተው ሲገቡ በሙሉ ይከፈታሉ።"
-                    : "Class schedules, mottos, and meeting times unlock upon student sign-in."}
-                </span>
-              </span>
             </div>
           </div>
         </div>

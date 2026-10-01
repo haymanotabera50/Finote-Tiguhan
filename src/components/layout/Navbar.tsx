@@ -3,7 +3,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { siteContent } from '../../data/translations';
 import { EthiopianCross } from '../common/EthiopianCross';
-import { Menu, X, Globe, UserPlus, Sliders, Shield, User, LogIn, ChevronDown } from 'lucide-react';
+import { Menu, X, Globe, UserPlus, Sliders, Shield, User, LogIn, ChevronDown, LogOut } from 'lucide-react';
 import logoImg from '../../assets/logo.jpg';
 
 interface NavbarProps {
@@ -114,21 +114,31 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Authentication / Portal Dashboard Button */}
             {isAuthenticated ? (
-              <button
-                onClick={onOpenPortal}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0a2724] border border-amber-500/50 hover:border-amber-400 text-white text-xs font-bold transition-all cursor-pointer hover:scale-105"
-                title="የአስተዳደርና የተማሪ ፖርታል"
-              >
-                {currentUser?.role === 'leadership' ? (
-                  <Shield size={14} className="text-amber-400" />
-                ) : (
-                  <User size={14} className="text-amber-400" />
-                )}
-                <span className="max-w-[100px] truncate">
-                  {currentUser?.role === 'leadership' ? (isAmharic ? 'ሥራ አመራር' : 'Leadership') : currentUser?.name}
-                </span>
-                <ChevronDown size={12} className="text-amber-400" />
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={onOpenPortal}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0a2724] border border-amber-500/50 hover:border-amber-400 text-white text-xs font-bold transition-all cursor-pointer hover:scale-105"
+                  title="የአስተዳደርና የተማሪ ፖርታል"
+                >
+                  {currentUser?.role === 'leadership' ? (
+                    <Shield size={14} className="text-amber-400" />
+                  ) : (
+                    <User size={14} className="text-amber-400" />
+                  )}
+                  <span className="max-w-[100px] truncate">
+                    {currentUser?.role === 'leadership' ? (isAmharic ? 'ሥራ አመራር' : 'Leadership') : currentUser?.name}
+                  </span>
+                  <ChevronDown size={12} className="text-amber-400" />
+                </button>
+
+                <button
+                  onClick={logout}
+                  className="p-1.5 rounded-full border border-red-500/50 hover:border-red-400 text-red-400 hover:text-white hover:bg-red-500/20 transition-all cursor-pointer"
+                  title={isAmharic ? "ውጣ (Sign Out)" : "Sign Out"}
+                >
+                  <LogOut size={13} />
+                </button>
+              </div>
             ) : (
               <button
                 onClick={onOpenAuth}
@@ -194,16 +204,28 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <div className="pt-3 border-t border-emerald-800/50 flex flex-col gap-2">
             {isAuthenticated ? (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenPortal();
-                }}
-                className="w-full py-2.5 rounded-lg bg-[#0a2724] border border-amber-400 text-amber-300 font-bold text-xs flex items-center justify-center gap-2"
-              >
-                <Shield size={14} />
-                <span>{isAmharic ? 'ወደ አስተዳደር / ተማሪ ፖርታል ግባ' : 'Open Portal Dashboard'}</span>
-              </button>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenPortal();
+                  }}
+                  className="w-full py-2.5 rounded-lg bg-[#0a2724] border border-amber-400 text-amber-300 font-bold text-xs flex items-center justify-center gap-2"
+                >
+                  <Shield size={14} />
+                  <span>{isAmharic ? 'ወደ አስተዳደር / ተማሪ ፖርታል ግባ' : 'Open Portal Dashboard'}</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    logout();
+                  }}
+                  className="w-full py-2 rounded-lg bg-red-950/40 border border-red-500/50 text-red-300 font-semibold text-xs flex items-center justify-center gap-2 hover:bg-red-900/50 transition-colors"
+                >
+                  <LogOut size={14} />
+                  <span>{isAmharic ? 'ከመለያ ውጣ (Sign Out)' : 'Sign Out'}</span>
+                </button>
+              </div>
             ) : (
               <button
                 onClick={() => {
