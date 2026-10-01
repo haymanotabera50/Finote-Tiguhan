@@ -301,7 +301,7 @@ apiRouter.get('/departments', async (_req: Request, res: Response) => {
 
 apiRouter.put('/departments/:deptId', async (req: Request, res: Response) => {
   try {
-    const { deptId } = req.params;
+    const deptId = String(req.params.deptId);
     const { role, deptId: userDeptId } = getReqUser(req);
 
     // RBAC:
