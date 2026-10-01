@@ -4,7 +4,7 @@ import { DepartmentTaskItem } from '../types';
 import { departmentsData } from '../data/departmentsData';
 import { api } from '../services/api';
 
-export type AppTheme = 'teal' | 'gold' | 'crimson';
+export type AppTheme = 'dark' | 'light';
 export type FontSize = 'standard' | 'large';
 
 interface GlobalAnnouncement {
@@ -20,6 +20,8 @@ interface GlobalAnnouncement {
 interface CustomizationContextType {
   theme: AppTheme;
   setTheme: (t: AppTheme) => void;
+  fontScale: number;
+  setFontScale: (s: number | ((prev: number) => number)) => void;
   fontSize: FontSize;
   setFontSize: (s: FontSize) => void;
   announcement: GlobalAnnouncement;
@@ -253,11 +255,25 @@ const CustomizationContext = createContext<CustomizationContextType | undefined>
 
 export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<AppTheme>(() => {
-    return (localStorage.getItem('ft_theme') as AppTheme) || 'teal';
+    const saved = localStorage.getItem('ft_theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return 'dark';
+  });
+
+  const [fontScale, setFontScaleState] = useState<number>(() => {
+    const saved = localStorage.getItem('ft_font_scale');
+    if (saved) {
+      const num = parseInt(saved, 10);
+      if (!isNaN(num) && num >= 75 && num <= 140) return num;
+    }
+    const legacySize = localStorage.getItem('ft_font_size');
+    if (legacySize === 'large') return 115;
+    return 100;
   });
 
   const [fontSize, setFontSizeState] = useState<FontSize>(() => {
-    return (localStorage.getItem('ft_font_size') as FontSize) || 'standard';
+    const legacySize = localStorage.getItem('ft_font_size');
+    return (legacySize as FontSize) || 'standard';
   });
 
   const [announcement, setAnnouncementState] = useState<GlobalAnnouncement>(() => {
@@ -351,9 +367,24 @@ export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem('ft_theme', t);
   };
 
+  const setFontScale = (scaleOrFn: number | ((prev: number) => number)) => {
+    setFontScaleState((prev) => {
+      const nextVal = typeof scaleOrFn === 'function' ? scaleOrFn(prev) : scaleOrFn;
+      const clamped = Math.max(75, Math.min(140, nextVal));
+      localStorage.setItem('ft_font_scale', clamped.toString());
+      const derivedSize: FontSize = clamped >= 115 ? 'large' : 'standard';
+      setFontSizeState(derivedSize);
+      localStorage.setItem('ft_font_size', derivedSize);
+      return clamped;
+    });
+  };
+
   const setFontSize = (s: FontSize) => {
     setFontSizeState(s);
     localStorage.setItem('ft_font_size', s);
+    const newScale = s === 'large' ? 115 : 100;
+    setFontScaleState(newScale);
+    localStorage.setItem('ft_font_scale', newScale.toString());
   };
 
   const updateAnnouncement = async (partial: Partial<GlobalAnnouncement>) => {
@@ -400,18 +431,31 @@ export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    document.body.classList.remove('theme-teal', 'theme-gold', 'theme-crimson');
+    // Theme classes
+    document.body.classList.remove('theme-teal', 'theme-gold', 'theme-crimson', 'theme-dark', 'theme-light');
     document.body.classList.add(`theme-${theme}`);
     
+    if (theme === 'light') {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+    }
+    
+    // Smooth root font scaling for entire website
+    document.documentElement.style.fontSize = `${fontScale}%`;
     document.documentElement.classList.remove('font-standard', 'font-large');
-    document.documentElement.classList.add(`font-${fontSize}`);
-  }, [theme, fontSize]);
+    document.documentElement.classList.add(fontScale >= 115 ? 'font-large' : 'font-standard');
+  }, [theme, fontScale]);
 
   return (
     <CustomizationContext.Provider
       value={{
         theme,
         setTheme,
+        fontScale,
+        setFontScale,
         fontSize,
         setFontSize,
         announcement,

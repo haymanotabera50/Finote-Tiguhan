@@ -21,34 +21,149 @@
   }
 }
 
-/* Theme overrides */
-body.theme-teal {
+/* Theme overrides: Dark (default) and Light */
+body.theme-dark,
+body:not(.theme-light) {
   background-color: #081716;
   color: #e2f1ee;
 }
 
-body.theme-gold {
-  background-color: #140d04;
-  color: #fef3c7;
-}
-body.theme-gold ::-webkit-scrollbar-thumb {
-  background: #78350f;
+body.theme-light {
+  background-color: #f7faf9 !important;
+  color: #0f2c27 !important;
 }
 
-body.theme-crimson {
-  background-color: #16060c;
-  color: #ffe4e6;
-}
-body.theme-crimson ::-webkit-scrollbar-thumb {
-  background: #881337;
+body.theme-light header,
+body.theme-light nav {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom-color: rgba(197, 147, 46, 0.35) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06) !important;
 }
 
-/* Font size overrides */
-html.font-large {
-  font-size: 114%;
+body.theme-light nav a,
+body.theme-light nav button {
+  color: #113832 !important;
 }
-html.font-standard {
-  font-size: 100%;
+
+body.theme-light nav a:hover {
+  color: #b45309 !important;
+}
+
+body.theme-light section {
+  background-color: #f7faf9 !important;
+}
+
+body.theme-light section:nth-of-type(even) {
+  background-color: #edf4f1 !important;
+}
+
+body.theme-light .glass-card,
+body.theme-light [class*="bg-[#09201e]"],
+body.theme-light [class*="bg-[#0b2422]"],
+body.theme-light [class*="bg-[#061514]"],
+body.theme-light [class*="bg-[#051413]"],
+body.theme-light [class*="bg-[#041211]"],
+body.theme-light [class*="bg-[#081b19]"],
+body.theme-light [class*="bg-[#071918]"],
+body.theme-light [class*="bg-[#0a2724]"],
+body.theme-light [class*="bg-[#030d0c]"],
+body.theme-light [class*="bg-[#051614]"],
+body.theme-light [class*="bg-[#092320]"] {
+  background-color: #ffffff !important;
+  border-color: rgba(197, 147, 46, 0.3) !important;
+  box-shadow: 0 4px 18px rgba(15, 45, 40, 0.06) !important;
+}
+
+body.theme-light h1,
+body.theme-light h2,
+body.theme-light h3,
+body.theme-light h4,
+body.theme-light .text-white {
+  color: #0a2420 !important;
+}
+
+body.theme-light .text-emerald-100,
+body.theme-light .text-emerald-200,
+body.theme-light [class*="text-emerald-100"],
+body.theme-light [class*="text-emerald-200"],
+body.theme-light [class*="text-emerald-300"] {
+  color: #17423c !important;
+}
+
+body.theme-light .text-amber-300,
+body.theme-light .text-amber-400 {
+  color: #b45309 !important;
+}
+
+body.theme-light footer {
+  background-color: #e4eeeb !important;
+  border-top-color: rgba(197, 147, 46, 0.3) !important;
+  color: #163d37 !important;
+}
+
+body.theme-light footer p,
+body.theme-light footer h3,
+body.theme-light footer h4,
+body.theme-light footer span {
+  color: #163d37 !important;
+}
+
+body.theme-light footer a {
+  color: #0f5146 !important;
+}
+
+body.theme-light footer a:hover {
+  color: #b45309 !important;
+}
+
+body.theme-light ::-webkit-scrollbar-track {
+  background: #edf3f1;
+}
+
+body.theme-light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+/* Touch-and-Hold Font Size Range Slider */
+.font-size-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  background: #113430;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+
+.font-size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 12px rgba(245, 158, 11, 0.5);
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.font-size-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.2);
+  box-shadow: 0 2px 14px rgba(245, 158, 11, 0.85);
+}
+
+.font-size-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  cursor: grab;
 }
 
 /* Custom subtle scrollbar */
