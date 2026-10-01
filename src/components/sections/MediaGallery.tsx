@@ -2,20 +2,42 @@ import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { siteContent } from '../../data/translations';
 import { EthiopianCross } from '../common/EthiopianCross';
-import { FileText, Download, Image as ImageIcon, Newspaper, ExternalLink, Sparkles } from 'lucide-react';
-import heroImg from '../../assets/hero_illustration_of_happy_children_in_a_garden.png';
-import storyImg from '../../assets/illustration_of_story_time_in_a_classroom.png';
+import { FileText, Download, Image as ImageIcon, Newspaper, ExternalLink, Sparkles, X, ZoomIn } from 'lucide-react';
 import churchPhoto from '../../assets/church-community.jpg';
+import churchBuildingImg from '../../assets/church-building.jpg';
+import newYearGreetingImg from '../../assets/new-year-greeting-2019.png';
+import socialMediaQrImg from '../../assets/social-media-channels-qr.png';
 
 export const MediaGallery: React.FC = () => {
   const { language, isAmharic } = useLanguage();
   const t = siteContent[language];
 
   const [activeTab, setActiveTab] = useState<'gallery' | 'news' | 'files'>('gallery');
+  const [selectedImage, setSelectedImage] = useState<{
+    image: string;
+    caption: string;
+    category: string;
+  } | null>(null);
 
   const galleryItems = [
     {
       id: 1,
+      image: newYearGreetingImg,
+      captionAm: "እንኳን ለ2019 ዓ.ም አዲስ ዓመት በሰላም አደረሳችሁ (ከዘመነ ማርቆስ ወደ ዘመነ ሉቃስ)",
+      captionEn: "Happy Ethiopian New Year 2019 E.C. (Transition from Mark to Luke)",
+      categoryAm: "የበዓል መልእክት",
+      categoryEn: "New Year Celebration"
+    },
+    {
+      id: 2,
+      image: socialMediaQrImg,
+      captionAm: "የፍኖተ ትጉሃን ሰንበት ት/ቤት ይፋዊ የማኅበራዊ ሚዲያ ገጾች (Telegram, Instagram, Facebook)",
+      captionEn: "Official Social Media Channels & QR Codes (Telegram, Instagram, Facebook)",
+      categoryAm: "ማኅበራዊ ሚዲያ",
+      categoryEn: "Social Media"
+    },
+    {
+      id: 3,
       image: churchPhoto,
       captionAm: "የፍኖተ ትጉሃን ሰንበት ትምህርት ቤት አባላትና ምዕመናን በአንድነት",
       captionEn: "Finote Teguhan Sunday School Members & Parishioners Fellowship",
@@ -23,20 +45,12 @@ export const MediaGallery: React.FC = () => {
       categoryEn: "Ministry"
     },
     {
-      id: 2,
-      image: storyImg,
-      captionAm: "የሕፃናትና ታዳጊዎች የመጽሐፍ ቅዱስ ትምህርት ክፍለ ጊዜ",
-      captionEn: "Children Bible Story & Catechism Classroom Time",
-      categoryAm: "ትምህርት",
-      categoryEn: "Education"
-    },
-    {
-      id: 3,
-      image: heroImg,
-      captionAm: "የሰንበት ትምህርት ቤት የሕፃናት ክፍላት የመዝናኛና የዝማሬ ቀን",
-      captionEn: "Sunday School Kids Joyful Fellowship & Singing Day",
-      categoryAm: "ሕፃናት",
-      categoryEn: "Children"
+      id: 4,
+      image: churchBuildingImg,
+      captionAm: "የላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን ህንፃ",
+      captionEn: "Lafto Debre Teguhan St. Michael Church Building",
+      categoryAm: "ደብራችን",
+      categoryEn: "Our Parish"
     }
   ];
 
@@ -182,25 +196,34 @@ export const MediaGallery: React.FC = () => {
 
         {/* Tab 1: Photo Gallery */}
         {activeTab === 'gallery' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
             {galleryItems.map((item) => (
               <div
                 key={item.id}
-                className="group relative rounded-3xl overflow-hidden border-2 border-amber-500/30 hover:border-amber-400 shadow-xl bg-[#09201e] transition-all duration-300 hover:-translate-y-1.5"
+                onClick={() => setSelectedImage({
+                  image: item.image,
+                  caption: isAmharic ? item.captionAm : item.captionEn,
+                  category: isAmharic ? item.categoryAm : item.categoryEn
+                })}
+                className="group relative rounded-3xl overflow-hidden border-2 border-amber-500/30 hover:border-amber-400 shadow-xl bg-[#09201e] transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between"
               >
-                <div className="h-64 overflow-hidden relative">
+                <div className="h-64 sm:h-72 overflow-hidden relative bg-[#041211]">
                   <img
                     src={item.image}
                     alt={isAmharic ? item.captionAm : item.captionEn}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#061514] via-[#061514]/30 to-transparent" />
-                  <span className="absolute top-4 right-4 text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500 text-slate-950 shadow">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#061514] via-[#061514]/20 to-transparent pointer-events-none" />
+                  <span className="absolute top-3.5 right-3.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500 text-slate-950 shadow">
                     {isAmharic ? item.categoryAm : item.categoryEn}
                   </span>
+                  <div className="absolute bottom-3 right-3 p-2 rounded-xl bg-black/70 text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-xs font-medium">
+                    <ZoomIn size={14} />
+                    <span>{isAmharic ? "አጉላ" : "Zoom"}</span>
+                  </div>
                 </div>
 
-                <div className="p-5">
+                <div className="p-4 sm:p-5">
                   <p className="text-sm font-semibold text-white leading-snug group-hover:text-amber-300 transition-colors">
                     {isAmharic ? item.captionAm : item.captionEn}
                   </p>
@@ -284,6 +307,46 @@ export const MediaGallery: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Photo Lightbox Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full max-h-[92vh] bg-[#071918] border-2 border-amber-400/60 rounded-3xl overflow-hidden shadow-2xl flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="px-5 py-4 border-b border-amber-500/20 flex items-center justify-between bg-[#041211]">
+              <div className="flex items-center gap-2 overflow-hidden pr-2">
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 shrink-0">
+                  {selectedImage.category}
+                </span>
+                <span className="text-sm font-bold text-white truncate">
+                  {selectedImage.caption}
+                </span>
+              </div>
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="p-1.5 rounded-full hover:bg-emerald-900/60 text-emerald-200 hover:text-white transition-colors cursor-pointer shrink-0"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Image Body */}
+            <div className="p-4 sm:p-6 flex items-center justify-center overflow-auto max-h-[78vh] bg-[#030d0c]">
+              <img
+                src={selectedImage.image}
+                alt={selectedImage.caption}
+                className="max-h-[72vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
