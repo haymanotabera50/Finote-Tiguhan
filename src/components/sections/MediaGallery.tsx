@@ -16,11 +16,19 @@ import jobVacancyMarketingImg from '../../assets/job-vacancy-marketing.jpg';
 import pilgrimageGishenImg from '../../assets/pilgrimage-gishen.png';
 import charityMaedEnagaraImg from '../../assets/charity-maed-enagara.png';
 import bookEqub11thImg from '../../assets/book-equb-11th.jpg';
+import outreachNetelaImg from '../../assets/outreach-1netela-1temaqi.jpg';
+import choirTrainingImg from '../../assets/choir-trainers-training.png';
+import onlineAbnetImg from '../../assets/online-abnet-education.png';
+import annualMezmurStudyImg from '../../assets/annual-mezmur-study-day.png';
+import monthlyPrayerImg from '../../assets/monthly-prayer-gathering.png';
+import hosannaEveImg from '../../assets/hosanna-eve-special.png';
+import bloodDonationImg from '../../assets/blood-donation-drive.jpg';
+import fridayPrayerImg from '../../assets/friday-regular-prayer.jpg';
 
 interface GalleryItem {
   id: number;
   image: string;
-  categoryKey: 'all' | 'pilgrimage' | 'charity' | 'books' | 'jobs' | 'media';
+  categoryKey: 'all' | 'pilgrimage' | 'charity' | 'books' | 'mezmur' | 'prayer' | 'jobs' | 'media';
   titleAm: string;
   titleEn: string;
   categoryAm: string;
@@ -43,7 +51,7 @@ export const MediaGallery: React.FC = () => {
   const t = siteContent[language];
 
   const [activeTab, setActiveTab] = useState<'gallery' | 'news' | 'files'>('gallery');
-  const [galleryFilter, setGalleryFilter] = useState<'all' | 'pilgrimage' | 'charity' | 'books' | 'jobs' | 'media'>('all');
+  const [galleryFilter, setGalleryFilter] = useState<'all' | 'pilgrimage' | 'charity' | 'books' | 'mezmur' | 'prayer' | 'jobs' | 'media'>('all');
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [copiedBank, setCopiedBank] = useState<string | null>(null);
 
@@ -208,6 +216,148 @@ export const MediaGallery: React.FC = () => {
       purposeBadgeEn: "Parish Sanctuary",
       purposeDescAm: "በአዲስ አበባ ደቡብ ምዕራብ ላፍቶ የሚገኘው ታሪካዊውና ግርማ ሞገስ ያለው የደብረ ትጉሃን ቅዱስ ሚካኤል ቤተክርስቲያን ህንፃ።",
       purposeDescEn: "The beautiful historic cathedral of Debre Teguhan St. Michael in southwest Addis Ababa."
+    },
+    {
+      id: 10,
+      image: outreachNetelaImg,
+      categoryKey: 'charity',
+      titleAm: "«1 ነጠላ ለ 1 ተጠማቂ» — ሐዋርያዊ የጥምቀት ልብስ ድጋፍ ማሰባሰብ",
+      titleEn: "'1 Netela for 1 Baptized' — Apostolic Baptismal Garment Drive",
+      categoryAm: "በጎ አድራጎት",
+      categoryEn: "Charity & Outreach",
+      purposeBadgeAm: "ሐዋርያዊ ዘመቻ",
+      purposeBadgeEn: "Apostolic Garment Drive",
+      purposeDescAm: "በተለያዩ የገጠርና አዳዲስ አጥቢያዎች በወንጌል አምነው ለተጠመቁ ወገኖች የጥምቀት ነጠላ በማሰባሰብ የክርስትና ክብርን ለማልበስ የተዘጋጀ ሐዋርያዊ የበጎ አድራጎት ዘመቻ። ማንኛውም ምእመን አዲስ ወይም ንጹሕ ነጠላ በማበርከት የበረከቱ ተሳታፊ መሆን ይችላል።",
+      purposeDescEn: "An apostolic charity initiative mobilizing white baptismal shawls (Netela) to clothe newly baptized converts in rural outreach parishes with the dignity of Christ.",
+      datesAm: "የዘመቻው ወቅት፦ ቀጣይነት ያለው የበጎ አድራጎት ማሰባሰብ",
+      datesEn: "Ongoing Parish Outreach Campaign",
+      locationAm: "በላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ፍኖተ ትጉሃን ሰንበት ት/ቤት ሱቅና ቢሮ",
+      locationEn: "Finote Teguhan Sunday School Office & Shop, Lafto St. Michael Church",
+      phones: ["0924242724", "0910472337"]
+    },
+    {
+      id: 11,
+      image: choirTrainingImg,
+      categoryKey: 'mezmur',
+      titleAm: "የመዝሙር አሰልጣኞች ስልጠና — የመዝሙር ክፍል",
+      titleEn: "Sacred Choir Instructors Training Program — Hymn Department",
+      categoryAm: "መዝሙርና ስልጠና",
+      categoryEn: "Choir Training",
+      purposeBadgeAm: "የአሰልጣኞች ስልጠና",
+      purposeBadgeEn: "Instructor Course",
+      purposeDescAm: "የመዝሙር አሰልጣኝ ለመሆን ፍላጎትና አቅም ላላቸው የሰንበት ትምህርት ቤት አባላት የያሬዳዊ ዜማ፣ የከበሮ አመታትና የመሪነት ክህሎት ስልጠና ለመስጠት የተዘጋጀ።",
+      purposeDescEn: "Intensive spiritual training program preparing dedicated members in traditional St. Yared canticles, sacred drumming, and liturgical choir leadership.",
+      datesAm: "የምዝገባ ጊዜ፦ ከሚያዝያ 29 እስከ ግንቦት 9",
+      datesEn: "Registration Period: Miazia 29 to Ginbot 9",
+      locationAm: "ፍኖተ ትጉሃን ሰንበት ት/ቤት መዝሙር ክፍል (በGoogle Form ምዝገባ)",
+      locationEn: "Sunday School Choir Dept (Registration via Google Form)",
+      phones: ["0900885161", "0979075782"]
+    },
+    {
+      id: 12,
+      image: onlineAbnetImg,
+      categoryKey: 'books',
+      titleAm: "ኦንላይን አብነት መማር ለምትፈልጉ አባላት (ቃል ንባብ፣ ዜማ፣ ቅዳሴ)",
+      titleEn: "Online Traditional Abnet Theological Education (Zema & Qidase)",
+      categoryAm: "አብነትና ትምህርት",
+      categoryEn: "Online Abnet School",
+      purposeBadgeAm: "የኦንላይን ትምህርት",
+      purposeBadgeEn: "Virtual Abnet Classes",
+      purposeDescAm: "በአገር ውስጥና በውጭ አገር ሆነው በአካል ተገኝተው ለመማር ላልቻሉ አባላት ጥንታዊውን የቤተክርስቲያን ቃል ንባብ፣ ያሬዳዊ ዜማና የቅዳሴ ትምህርት በኦንላይን በምስልና በድምፅ ለማስተማር የተዘጋጀ።",
+      purposeDescEn: "Virtual traditional theological seminary program delivering authentic Ethiopian Orthodox liturgical reading (Qal Nibab), Yaredic chants (Zema), and Divine Liturgy (Qidase) globally.",
+      datesAm: "ትምህርት፦ በቋሚነት በኦንላይን የሚሰጥ",
+      datesEn: "Ongoing Online Classes",
+      locationAm: "በኦንላይን (Telegram / Zoom) — ፍኖተ ትጉሃን ሰንበት ትምህርት ቤት",
+      locationEn: "Online via Telegram & Zoom — Finote Teguhan Sunday School",
+      phones: ["0923642357"],
+      links: [
+        { label: "Telegram: @onABINET", url: "https://t.me/onABINET" }
+      ]
+    },
+    {
+      id: 13,
+      image: annualMezmurStudyImg,
+      categoryKey: 'mezmur',
+      titleAm: "ዓመታዊ የመዝሙር ጥናት ቀን — ኅዳር 7",
+      titleEn: "Annual Sacred Hymn Study & Choral Practice Day — Hidar 7",
+      categoryAm: "መዝሙርና ስልጠና",
+      categoryEn: "Sacred Choir Day",
+      purposeBadgeAm: "ዓመታዊ ጥናት",
+      purposeBadgeEn: "Annual Choral Vigil",
+      purposeDescAm: "በሰንበት ትምህርት ቤቱ አዳራሽ በመዝሙር ክፍል አዘጋጅነት የሚካሄድ፤ ተማሪዎችና ምእመናን አዳዲስና ጥንታዊ ያሬዳዊ ዝማሬዎችን፣ የከበሮና የበገና ስልቶችን በኅብረት የሚያጠኑበት ታላቅ መንፈሳዊ ጉባኤ።",
+      purposeDescEn: "A grand annual spiritual assembly where Sunday school members practice sacred Yaredic hymns, Begena melodies, and liturgical chants in harmony.",
+      datesAm: "ቀን፦ ኅዳር 7 ቀን",
+      datesEn: "Date: Hidar 7",
+      locationAm: "በፍኖተ ትጉሃን ሰንበት ትምህርት ቤቱ አዳራሽ (መዝሙር ክፍል)",
+      locationEn: "Finote Teguhan Sunday School Main Hall (Choir Dept)"
+    },
+    {
+      id: 14,
+      image: bloodDonationImg,
+      categoryKey: 'charity',
+      titleAm: "31ኛ ዙር የደም ልገሳ መርሐ ግብር — «የወገን ደም ለወገን ሕይወት!»",
+      titleEn: "31st Round Community Blood Donation Drive",
+      categoryAm: "በጎ አድራጎት",
+      categoryEn: "Charity & Health",
+      purposeBadgeAm: "የደም ልገሳ",
+      purposeBadgeEn: "Blood Donation Drive",
+      purposeDescAm: "በሕመም ምክንያት ደም ለሚያስፈልጋቸው ወገኖች ፈጥኖ በመድረስ ሕይወት ለማዳን ከኢትዮጵያ ደምና ቲሹ ባንክ አገልግሎት ጋር በመተባበር የተዘጋጀ 31ኛው ዙር የደም ልገሳ ሰብአዊና መንፈሳዊ መርሐ ግብር።",
+      purposeDescEn: "Saving lives through voluntary blood donation in partnership with the Ethiopian Blood and Tissue Bank Service — 31st edition.",
+      datesAm: "እሑድ ፤ መጋቢት 7 ቀን | ከጠዋቱ 02:00 - 07:00 ቀትር",
+      datesEn: "Sunday, Megabit 7 | 8:00 AM - 1:00 PM",
+      locationAm: "ላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቤ/ክ (የፍኖተ ትጉሃን ሰ/ት/ቤት)",
+      locationEn: "Lafto Debre Teguhan St. Michael Church Grounds"
+    },
+    {
+      id: 15,
+      image: monthlyPrayerImg,
+      categoryKey: 'prayer',
+      titleAm: "ወርኃዊ የጸሎት መርሐ ግብር — እሑድ ነሐሴ 18",
+      titleEn: "Monthly Parish Prayer Assembly — Sunday Nehase 18",
+      categoryAm: "ጸሎትና ጉባኤ",
+      categoryEn: "Prayer Gathering",
+      purposeBadgeAm: "ወርኃዊ ጸሎት",
+      purposeBadgeEn: "Monthly Vigil",
+      purposeDescAm: "ምእመናንና የሰንበት ትምህርት ቤት አባላት በኅብረት ወደ አምላካችን የሚያቀርቡት፣ በሊቀ መላእክት ቅዱስ ሚካኤል አማላጅነት የሚከናወን ወርኃዊ የተማፅኖ፣ የምስጋናና የጸሎት መርሐ ግብር።",
+      purposeDescEn: "A solemn monthly prayer and supplication service gathering the parish faithful under the intercession of the Archangel Saint Michael.",
+      datesAm: "እሑድ ነሐሴ 18 ቀን | ጠዋት 04:00 (10:00 AM)",
+      datesEn: "Sunday Nehase 18 | 10:00 AM Morning",
+      locationAm: "በፍኖተ ትጉሃን ሰንበት ት/ቤት አዳራሽ",
+      locationEn: "Finote Teguhan Sunday School Assembly Hall"
+    },
+    {
+      id: 16,
+      image: fridayPrayerImg,
+      categoryKey: 'prayer',
+      titleAm: "ዓርብ መደበኛ የጸሎት መርሐ ግብር — 4 ታኅሣሥ",
+      titleEn: "Regular Friday Evening Prayer Service — Tahsas 4",
+      categoryAm: "ጸሎትና ጉባኤ",
+      categoryEn: "Friday Prayer",
+      purposeBadgeAm: "መደበኛ ጸሎት",
+      purposeBadgeEn: "Regular Service",
+      purposeDescAm: "በየሳምንቱ ዓርብ ምሽት የሚካሄድ፤ ምእመናን የሳምንቱን ድካም በቅዱስ ሚካኤል ጥበቃ ስር አሳልፈው በጸሎትና በምስጋና የሚተጉበት መደበኛ የጸሎት መርሐ ግብር።",
+      purposeDescEn: "Weekly Friday evening prayer gathering for thanksgiving, contemplation, and communal intercession at the Sunday School.",
+      datesAm: "4 ታኅሣሥ | ማታ 12:00 (6:00 PM)",
+      datesEn: "Tahsas 4 | 6:00 PM Evening",
+      locationAm: "በፍኖተ ትጉሃን ሰንበት ት/ቤት አዳራሽ",
+      locationEn: "Finote Teguhan Sunday School Assembly Hall"
+    },
+    {
+      id: 17,
+      image: hosannaEveImg,
+      categoryKey: 'prayer',
+      titleAm: "«ምሽት ሆሳዕና ምን አለ?» — 05 ሚያዝያ የሆሳዕና ዋዜማ መርሐ ግብር",
+      titleEn: "'Hosanna Eve: What Awaits?' — Special Hosanna Vigil Program",
+      categoryAm: "ጸሎትና ጉባኤ",
+      categoryEn: "Feast Vigil",
+      purposeBadgeAm: "የበዓል ዋዜማ",
+      purposeBadgeEn: "Eve Fellowship",
+      purposeDescAm: "በታላቁ የሆሳዕና በዓል ዋዜማ ለወጣቶችና ለምእመናን የተዘጋጀ መንፈሳዊ ትምህርት፣ ጥያቄና መልስ፣ ያሬዳዊ የሆሳዕና ዝማሬና የበዓል ዝግጅት ልዩ መርሐ ግብር።",
+      purposeDescEn: "A joyful and enlightening spiritual eve gathering featuring biblical youth questions, traditional Hosanna hymns, and spiritual reflection.",
+      datesAm: "ቀን፦ 05 ሚያዝያ",
+      datesEn: "Date: Miazia 05",
+      locationAm: "በፍኖተ ትጉሃን ሰንበት ትምህርት ቤት",
+      locationEn: "Finote Teguhan Sunday School Hall"
     }
   ];
 
@@ -241,6 +391,46 @@ export const MediaGallery: React.FC = () => {
       descAm: "ምዕመናንና የሰንበት ት/ቤት ተማሪዎች መንፈሳዊ መጻሕፍትን በየወሩ በዕጣ አማራጮች (ባለ 200 እስከ 2,000 ብር) እንዲያነቡና የንባብ ባህል እንዲያዳብሩ የተዘጋጀው 11ኛው ዙር የመጻሕፍት እቁብ በቤተ መጻሕፍቱ ክፍል እየተመዘገበ ነው።",
       descEn: "Registration for the 11th round of the spiritual book savings circle (200 to 2,000 ETB shares) is ongoing at the Sunday School library.",
       badge: "ትምህርት"
+    },
+    {
+      id: 4,
+      titleAm: "«1 ነጠላ ለ 1 ተጠማቂ» — ሐዋርያዊ የጥምቀት ነጠላ ማሰባሰብ ተጀመረ",
+      titleEn: "'1 Netela for 1 Baptized' — Apostolic Garment Drive Underway",
+      dateAm: "ጥቅምት 2019",
+      dateEn: "October 2026",
+      descAm: "በአዳዲስ አጥቢያዎች በወንጌል አምነው ለተጠመቁ ወገኖች የጥምቀት ነጠላ በማሰባሰብ የክርስትና ክብርን ለማልበስ የተዘጋጀ የበጎ አድራጎት ዘመቻ። ማንኛውም አዲስ ወይም ንጹሕ ነጠላ በፍኖተ ትጉሃን ሰንበት ት/ቤት ሱቅ ማስረከብ ይቻላል።",
+      descEn: "Mobilizing baptismal shawls for newly baptized converts in rural outreach parishes. Donations can be dropped off at the Sunday School shop.",
+      badge: "በጎ አድራጎት"
+    },
+    {
+      id: 5,
+      titleAm: "የመዝሙር አሰልጣኞች ስልጠና ምዝገባ በGoogle Form ተጀመረ",
+      titleEn: "Choir Instructor Leadership Training Registration Open",
+      dateAm: "ሚያዝያ 2019",
+      dateEn: "May 2026",
+      descAm: "የመዝሙር አሰልጣኝ ለመሆን ፍላጎትና ተሰጥዖ ላላቸው አባላት ከሚያዝያ 29 እስከ ግንቦት 9 የሚቆይ የያሬዳዊ ዜማና አመራር ስልጠና ምዝገባ በመዝሙር ክፍሉ ተጀምሯል።",
+      descEn: "Intensive St. Yared hymn training and choral leadership course registration from Miazia 29 to Ginbot 9 via Google Form.",
+      badge: "ስልጠና"
+    },
+    {
+      id: 6,
+      titleAm: "31ኛው ዙር የደም ልገሳ መርሐ ግብር — እሑድ መጋቢት 7",
+      titleEn: "31st Round Blood Donation Campaign — Sunday Megabit 7",
+      dateAm: "መጋቢት 2019",
+      dateEn: "March 2026",
+      descAm: "«የወገን ደም ለወገን ሕይወት!» ከኢትዮጵያ ደምና ቲሹ ባንክ ጋር በመተባበር እሑድ መጋቢት 7 ከጠዋቱ 2:00 እስከ 7:00 በደብረ ትጉሃን ቅዱስ ሚካኤል ቅጥር ግቢ ይካሄዳል።",
+      descEn: "Join us this Sunday Megabit 7 from 8:00 AM to 1:00 PM at St. Michael grounds to save lives through voluntary blood donation.",
+      badge: "ማኅበራዊ"
+    },
+    {
+      id: 7,
+      titleAm: "የኦንላይን አብነት ትምህርት ምዝገባ (ቃል ንባብ፣ ዜማ፣ ቅዳሴ) ተጀመረ",
+      titleEn: "Online Traditional Abnet Education Enrollment Open",
+      dateAm: "ቋሚ መርሐ ግብር",
+      dateEn: "Year-Round",
+      descAm: "በአካል ተገኝተው መማር ላልቻሉ አባላት ጥንታዊውን የቤተክርስቲያን ቃል ንባብ፣ ዜማና ቅዳሴ በTelegram (@onABINET) እና በZoom የሚሰጥ የኦንላይን አብነት ትምህርት ምዝገባ ተጀምሯል።",
+      descEn: "Enrollment is open for virtual traditional theological courses covering liturgical recitation, Yaredic music, and Qidase via Telegram (@onABINET).",
+      badge: "አብነት"
     }
   ];
 
@@ -361,12 +551,14 @@ export const MediaGallery: React.FC = () => {
             {/* Gallery Category Filter Chips */}
             <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl mx-auto">
               {[
-                { key: 'all', labelAm: 'ሁሉም ፎቶዎች (9)', labelEn: 'All Photos (9)' },
+                { key: 'all', labelAm: 'ሁሉም ፎቶዎች (17)', labelEn: 'All Photos (17)' },
                 { key: 'pilgrimage', labelAm: 'የነግሥ ጉዞ (2)', labelEn: 'Pilgrimages (2)' },
-                { key: 'charity', labelAm: 'በጎ አድራጎት (1)', labelEn: 'Charity (1)' },
-                { key: 'books', labelAm: 'መጻሕፍትና ትምህርት (1)', labelEn: 'Books & Equb (1)' },
+                { key: 'charity', labelAm: 'በጎ አድራጎት (3)', labelEn: 'Charity & Giving (3)' },
+                { key: 'mezmur', labelAm: 'መዝሙርና ስልጠና (2)', labelEn: 'Choir & Chants (2)' },
+                { key: 'books', labelAm: 'አብነትና መጻሕፍት (2)', labelEn: 'Abnet & Education (2)' },
+                { key: 'prayer', labelAm: 'ጸሎትና ጉባኤ (3)', labelEn: 'Prayer & Services (3)' },
                 { key: 'jobs', labelAm: 'ክፍት የሥራ ቦታ (1)', labelEn: 'Job Vacancies (1)' },
-                { key: 'media', labelAm: 'ሚዲያና መልእክቶች (4)', labelEn: 'Media & Feasts (4)' },
+                { key: 'media', labelAm: 'ማኅበራዊና ደብራችን (4)', labelEn: 'Media & Fellowship (4)' },
               ].map((f) => (
                 <button
                   key={f.key}

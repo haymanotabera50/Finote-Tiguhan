@@ -139,6 +139,76 @@ export const upcomingEvents: ChurchEvent[] = [
     descAm: "ለአቅመ ደካሞች፣ ለአረጋውያንና ለሕፃናት የምግብ፣ የአልባሳትና የትምህርት ቁሳቁስ ድጋፍ ማሰባሰብና ማከፋፈል።",
     descEn: "Distribution of food, clothing, and educational supplies to underprivileged community families and orphans.",
     category: "charity"
+  },
+  {
+    id: "ev-5",
+    titleAm: "ዓመታዊ የመዝሙር ጥናት ቀን",
+    titleEn: "Annual Sacred Hymn Study & Choral Practice Day",
+    dateAm: "ኅዳር 7 ቀን",
+    dateEn: "November 16 (Hidar 7)",
+    timeAm: "ከጠዋቱ 2:30 ጀምሮ",
+    timeEn: "8:30 AM Onwards",
+    locationAm: "ፍኖተ ትጉሃን ሰንበት ት/ቤት ዋና አዳራሽ",
+    locationEn: "Finote Teguhan Sunday School Main Hall",
+    descAm: "በመዝሙር ክፍል አዘጋጅነት የሚካሄድ፤ ያሬዳዊ ዝማሬዎች፣ የከበሮና የበገና ስልቶች በኅብረት የሚጠኑበት መንፈሳዊ ጉባኤ።",
+    descEn: "Grand choral workshop practicing St. Yared hymns, liturgical drum cadences, and sacred Begena harp canticles.",
+    category: "study"
+  },
+  {
+    id: "ev-6",
+    titleAm: "31ኛው ዙር የደም ልገሳ መርሐ ግብር",
+    titleEn: "31st Round Community Blood Donation Drive",
+    dateAm: "እሑድ ፤ መጋቢት 7 ቀን",
+    dateEn: "Sunday, March 16 (Megabit 7)",
+    timeAm: "ከጠዋቱ 02:00 - 07:00 ቀትር",
+    timeEn: "8:00 AM - 1:00 PM",
+    locationAm: "ላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል ቅጥር ጊቢ",
+    locationEn: "Lafto Debre Teguhan St. Michael Grounds",
+    descAm: "«የወገን ደም ለወገን ሕይወት!» ከኢትዮጵያ ደምና ቲሹ ባንክ አገልግሎት ጋር በመተባበር የተዘጋጀ የደም ልገሳ መርሐ ግብር።",
+    descEn: "Community life-saving blood donation drive organized in partnership with Ethiopian Blood and Tissue Bank.",
+    category: "charity"
+  },
+  {
+    id: "ev-7",
+    titleAm: "የመዝሙር አሰልጣኞች ስልጠና",
+    titleEn: "Sacred Choir Instructors Training Program",
+    dateAm: "ከሚያዝያ 29 እስከ ግንቦት 9",
+    dateEn: "May 7 - May 17 (Miazia 29 - Ginbot 9)",
+    timeAm: "በመደበኛ የስልጠና ሰዓት",
+    timeEn: "Scheduled Training Sessions",
+    locationAm: "ፍኖተ ትጉሃን ሰንበት ት/ቤት መዝሙር ክፍል",
+    locationEn: "Sunday School Choir Dept",
+    descAm: "የመዝሙር አሰልጣኝ ለመሆን ፍላጎት ላላቸው አባላት የሚሰጥ የያሬዳዊ ዜማና የመሪነት ክህሎት ስልጠና።",
+    descEn: "Intensive training course for prospective choir instructors focusing on liturgical melodies and leadership.",
+    category: "study"
+  },
+  {
+    id: "ev-8",
+    titleAm: "ወርኃዊ የጸሎት መርሐ ግብር",
+    titleEn: "Monthly Parish Supplication & Prayer Vigil",
+    dateAm: "እሑድ ነሐሴ 18 ቀን",
+    dateEn: "Sunday, August 24 (Nehase 18)",
+    timeAm: "ከጠዋቱ 04:00 ጀምሮ",
+    timeEn: "10:00 AM Morning",
+    locationAm: "በሰንበት ት/ቤቱ አዳራሽ",
+    locationEn: "Sunday School Assembly Hall",
+    descAm: "ምእመናንና አባላት በቅዱስ ሚካኤል አማላጅነት በኅብረት የሚያቀርቡት ወርኃዊ የጸሎት፣ የምስጋናና የተማፅኖ መርሐ ግብር።",
+    descEn: "Congregational monthly intercessory prayer and thanksgiving gathering under the protection of St. Michael.",
+    category: "worship"
+  },
+  {
+    id: "ev-9",
+    titleAm: "«ምሽት ሆሳዕና ምን አለ?» የበዓል ዋዜማ",
+    titleEn: "'Hosanna Eve' Special Spiritual Vigil",
+    dateAm: "05 ሚያዝያ",
+    dateEn: "Miazia 05 (Palm Sunday Eve)",
+    timeAm: "ከምሽቱ 11:30 ጀምሮ",
+    timeEn: "5:30 PM Onwards",
+    locationAm: "ፍኖተ ትጉሃን ሰንበት ትምህርት ቤት",
+    locationEn: "Finote Teguhan Sunday School Hall",
+    descAm: "በሆሳዕና በዓል ዋዜማ ለወጣቶችና ለምእመናን የተዘጋጀ መንፈሳዊ ትምህርት፣ ጥያቄና መልስና የበዓል ዝማሬ።",
+    descEn: "Special Palm Sunday eve fellowship with spiritual teachings, Bible trivia, and joyful Hosanna hymns.",
+    category: "celebration"
   }
 ];
 
