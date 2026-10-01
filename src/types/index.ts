@@ -102,3 +102,44 @@ export interface NewsItem {
   categoryEn: string;
 }
 
+export interface FrontEndContent {
+  heroDailyVerseAm: string;
+  heroDailyVerseEn: string;
+  heroWelcomeAm: string;
+  heroWelcomeEn: string;
+  heroTitleAm: string;
+  heroTitleEn: string;
+  heroSubtitleAm: string;
+  heroSubtitleEn: string;
+  heroDescriptionAm: string;
+  heroDescriptionEn: string;
+  announcementEnabled: boolean;
+  announcementBadgeAm: string;
+  announcementBadgeEn: string;
+  announcementTextAm: string;
+  announcementTextEn: string;
+  newsHeadlineAm: string;
+  newsHeadlineEn: string;
+  featuredNoticeAm: string;
+  featuredNoticeEn: string;
+  themeMode: 'dark' | 'light';
+  accentTheme: 'gold' | 'emerald' | 'amber';
+  updatedAt: string;
+  publishedBy: string;
+}
+
+export interface CustomizationChangeRequest {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  submittedBy: string;
+  departmentId: 'media';
+  title: string;
+  proposalNote: string;
+  status: 'pending' | 'approved' | 'rejected';
+  proposedContent: FrontEndContent;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  reviewRemarks?: string;
+}
+

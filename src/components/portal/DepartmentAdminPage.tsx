@@ -6,6 +6,9 @@ import { departmentsData } from '../../data/departmentsData';
 import { EthiopianCross } from '../common/EthiopianCross';
 import { DepartmentTaskItem } from '../../types';
 import logoImg from '../../assets/logo.jpg';
+import { FeastCalendar } from '../sections/FeastCalendar';
+import { MezmurPlayer } from '../sections/MezmurPlayer';
+import { MediaFrontEndCMS } from './MediaFrontEndCMS';
 import { 
   Shield, BookOpen, Baby, Music, User, X, CheckCircle2, 
   Clock, AlertTriangle, Edit3, Eye, Lock, Filter, Search, 
@@ -13,7 +16,7 @@ import {
   ListTodo, Check, Plus, Trash2, FileText, Layers, Award,
   CheckCircle, ChevronRight, Bookmark, MapPin, Phone, Send,
   Globe, Building2, Sparkles, ExternalLink, ArrowLeft, Home,
-  Sliders, LogOut, LogIn
+  Sliders, LogOut, LogIn, Calendar
 } from 'lucide-react';
 
 interface DepartmentAdminPageProps {
@@ -48,7 +51,8 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
     departmentTasks,
     updateTaskStatus,
     addTask,
-    deleteTask
+    deleteTask,
+    pendingRequests
   } = useCustomization();
 
   const isLeadership = currentUser?.role === 'leadership';
@@ -62,10 +66,10 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
 
   // Page States
   const [selectedDeptId, setSelectedDeptId] = useState<string>(startingDeptId);
-  const [mainTab, setMainTab] = useState<'departments' | 'registrations' | 'announcements' | 'studentCard'>(
+  const [mainTab, setMainTab] = useState<'departments' | 'calendar' | 'mezmur' | 'registrations' | 'announcements' | 'mediaCMS' | 'studentCard'>(
     isStudent ? 'studentCard' : 'departments'
   );
-  const [deptSubTab, setDeptSubTab] = useState<'content' | 'tasks' | 'students' | 'preview'>('content');
+  const [deptSubTab, setDeptSubTab] = useState<'content' | 'tasks' | 'students' | 'preview' | 'mediaCMS'>('content');
   const [deptSearchQuery, setDeptSearchQuery] = useState('');
   const [taskFilterStatus, setTaskFilterStatus] = useState<'all' | 'planned' | 'in_progress' | 'completed'>('all');
   const [regFilterStatus, setRegFilterStatus] = useState<string>('all');
@@ -375,6 +379,34 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               </span>
             </button>
 
+            {/* TAB: FEAST & FAST CALENDAR */}
+            <button
+              type="button"
+              onClick={() => setMainTab('calendar')}
+              className={`py-2.5 px-4 rounded-xl font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer ${
+                mainTab === 'calendar'
+                  ? 'bg-amber-500 text-slate-950 font-black shadow'
+                  : 'text-emerald-200/80 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Calendar size={16} />
+              <span>{isAmharic ? '📅 የበዓላትና የአጽዋማት ቀን መቁጠሪያ' : 'Feast & Fast Calendar'}</span>
+            </button>
+
+            {/* TAB: SACRED MEZMUR & HYMNS */}
+            <button
+              type="button"
+              onClick={() => setMainTab('mezmur')}
+              className={`py-2.5 px-4 rounded-xl font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer ${
+                mainTab === 'mezmur'
+                  ? 'bg-amber-500 text-slate-950 font-black shadow'
+                  : 'text-emerald-200/80 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Music size={16} />
+              <span>{isAmharic ? '🎵 መንፈሳዊ መዝሙራትና ዝማሬ' : 'Spiritual Mezmur & Hymns'}</span>
+            </button>
+
             {/* TAB: REGISTRATIONS */}
             <button
               type="button"
@@ -389,6 +421,29 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               <span>
                 {isAmharic ? '📋 የተማሪዎች ምዝገባ' : 'Registrations'} ({visibleRegistrations.length})
               </span>
+            </button>
+
+            {/* TAB: FRONT-END CMS & LEADERSHIP APPROVALS */}
+            <button
+              type="button"
+              onClick={() => setMainTab('mediaCMS')}
+              className={`py-2.5 px-4 rounded-xl font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer ${
+                mainTab === 'mediaCMS'
+                  ? 'bg-amber-500 text-slate-950 font-black shadow'
+                  : 'text-emerald-200/80 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              {isLeadership ? <Shield size={16} /> : <Sparkles size={16} />}
+              <span>
+                {isLeadership 
+                  ? (isAmharic ? '✅ የይሁንታ ማጽደቂያ' : 'Front-End Approvals') 
+                  : (isAmharic ? '🎨 የፊት ገጽ ማበጃ (CMS)' : 'Front-End CMS')}
+              </span>
+              {pendingRequests.length > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black animate-pulse">
+                  {pendingRequests.length}
+                </span>
+              )}
             </button>
 
             {/* TAB: GLOBAL ANNOUNCEMENT (Leadership) */}
@@ -437,16 +492,47 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                 </div>
               </div>
 
-              <div className="shrink-0">
+              <div className="shrink-0 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setMainTab('calendar')}
+                  className="px-3 py-1.5 rounded-xl bg-[#061514] hover:bg-[#0a2320] text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm hover:border-amber-400"
+                  title={isAmharic ? "የበዓላትና የአጽዋማት ቀን መቁጠሪያ" : "Feast & Fast Calendar"}
+                >
+                  <Calendar size={13} className="text-amber-400" />
+                  <span>{isAmharic ? 'ቀን መቁጠሪያ' : 'Calendar'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setMainTab('mezmur')}
+                  className="px-3 py-1.5 rounded-xl bg-[#061514] hover:bg-[#0a2320] text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm hover:border-amber-400"
+                  title={isAmharic ? "መንፈሳዊ መዝሙራትና ዝማሬ" : "Sacred Mezmur & Hymns"}
+                >
+                  <Music size={13} className="text-amber-400" />
+                  <span>{isAmharic ? 'መዝሙራት' : 'Mezmur'}</span>
+                </button>
+
+                {selectedDeptId === 'media' && (
+                  <button
+                    type="button"
+                    onClick={() => setMainTab('mediaCMS')}
+                    className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all cursor-pointer ring-1 ring-purple-400/50"
+                  >
+                    <Sparkles size={13} className="text-amber-300" />
+                    <span>{isAmharic ? 'የፊት ገጽ ማበጃ (CMS)' : 'Front-End CMS'}</span>
+                  </button>
+                )}
+
                 {canEditDepartment(selectedDeptId) ? (
-                  <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold shadow">
-                    <Edit3 size={15} />
-                    <span>{isAmharic ? 'የማረም ሙሉ ፈቃድ አለዎት' : 'Editing Rights Granted'}</span>
+                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold shadow">
+                    <Edit3 size={14} />
+                    <span>{isAmharic ? 'የማረም ሙሉ ፈቃድ' : 'Editing Rights'}</span>
                   </div>
                 ) : (
-                  <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold shadow">
-                    <Eye size={15} />
-                    <span>{isAmharic ? 'የሥራ አመራር ቁጥጥር (ማየት ብቻ)' : 'Leadership Oversight (Read-Only)'}</span>
+                  <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold shadow">
+                    <Eye size={14} />
+                    <span>{isAmharic ? 'የሥራ አመራር ቁጥጥር' : 'Leadership Oversight'}</span>
                   </div>
                 )}
               </div>
@@ -511,12 +597,13 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
             )}
 
             {/* Department Management Sub-Tabs */}
-            <div className="flex border-b border-emerald-900 bg-[#041211] rounded-2xl p-1 gap-1">
+            <div className="flex border-b border-emerald-900 bg-[#041211] rounded-2xl p-1 gap-1 overflow-x-auto">
               {[
                 { id: 'content', labelAm: '📝 የገጽ ይዘትና መገለጫ', labelEn: 'Page Profile & Content', icon: Edit3 },
                 { id: 'tasks', labelAm: `📋 የሥራ ዕቅድና ተግባራት (${completedTasksCount}/${totalTasksCount})`, labelEn: 'Tasks & Mandates', icon: ListTodo },
                 { id: 'students', labelAm: `👥 ተመዝጋቢዎች (${deptRegistrations.length})`, labelEn: 'Registrations', icon: UserCheck },
-                { id: 'preview', labelAm: '👁️ የቀጥታ ገጽ እይታ', labelEn: 'Live Preview', icon: Eye }
+                { id: 'preview', labelAm: '👁️ የቀጥታ ገጽ እይታ', labelEn: 'Live Preview', icon: Eye },
+                ...(selectedDeptId === 'media' ? [{ id: 'mediaCMS', labelAm: '🎨 የፊት ገጽ ማበጃ (CMS)', labelEn: 'Front-End CMS', icon: Sparkles }] : [])
               ].map((sub) => {
                 const isActive = deptSubTab === sub.id;
                 const Icon = sub.icon;
@@ -1149,11 +1236,94 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                 </div>
               </div>
             )}
+
+            {/* SUB-TAB 5: MEDIA FRONT-END CUSTOMIZATION CMS */}
+            {deptSubTab === 'mediaCMS' && (
+              <MediaFrontEndCMS onBackToDepartments={() => setDeptSubTab('content')} />
+            )}
           </div>
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 2: GLOBAL REGISTRATIONS (LEADERSHIP)                                  */}
+        {/* TAB: FEAST & FAST CALENDAR (የበዓላትና የአጽዋማት ቀን መቁጠሪያ)                     */}
+        {/* ========================================================================= */}
+        {mainTab === 'calendar' && (
+          <div className="space-y-4 animate-in fade-in duration-200 text-left">
+            <div className="bg-[#041211] p-4 sm:p-5 rounded-3xl border border-emerald-900/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                  <Calendar size={22} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span>{isAmharic ? "የበዓላትና የአጽዋማት ቀን መቁጠሪያ" : "Liturgical Feast & Fast Calendar"}</span>
+                    <Sparkles size={16} className="text-amber-400" />
+                  </h3>
+                  <p className="text-xs text-emerald-200/70">
+                    {isAmharic 
+                      ? "ለ14ቱ ክፍላት የጋራ አገልግሎቶች፣ ዓበይት በዓላትና አጽዋማት ማጣቀሻ የቀረበ" 
+                      : "Official liturgical dates, fasts, and Sunday School feast services for all 14 departments"}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setMainTab('departments')}
+                className="px-4 py-2 rounded-xl bg-[#081f1c] hover:bg-[#0c2f2b] text-amber-300 border border-amber-500/40 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer self-start sm:self-auto shadow"
+              >
+                <ArrowLeft size={14} />
+                <span>{isAmharic ? "ወደ ክፍላት አስተዳደር ተመለስ" : "Back to Departments CMS"}</span>
+              </button>
+            </div>
+
+            <div className="rounded-3xl overflow-hidden border border-emerald-900/60 shadow-2xl bg-[#081716]">
+              <FeastCalendar />
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB: SACRED MEZMUR & HYMNS (መንፈሳዊ መዝሙራትና ዝማሬ)                       */}
+        {/* ========================================================================= */}
+        {mainTab === 'mezmur' && (
+          <div className="space-y-4 animate-in fade-in duration-200 text-left">
+            <div className="bg-[#041211] p-4 sm:p-5 rounded-3xl border border-emerald-900/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                  <Music size={22} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span>{isAmharic ? "መንፈሳዊ መዝሙራትና ዝማሬ" : "Sacred Mezmur & Spiritual Hymns"}</span>
+                    <Sparkles size={16} className="text-amber-400" />
+                  </h3>
+                  <p className="text-xs text-emerald-200/70">
+                    {isAmharic 
+                      ? "የፍኖተ ትጉሃን ሰንበት ት/ቤት የመዘምራን ክፍልና የ14ቱ ክፍላት የዝማሬና ምስጋና ማዕከል" 
+                      : "Sacred Orthodox chants, audio hymns, lyrics, and choir selections for Sunday School departments"}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setMainTab('departments')}
+                className="px-4 py-2 rounded-xl bg-[#081f1c] hover:bg-[#0c2f2b] text-amber-300 border border-amber-500/40 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer self-start sm:self-auto shadow"
+              >
+                <ArrowLeft size={14} />
+                <span>{isAmharic ? "ወደ ክፍላት አስተዳደር ተመለስ" : "Back to Departments CMS"}</span>
+              </button>
+            </div>
+
+            <div className="rounded-3xl overflow-hidden border border-emerald-900/60 shadow-2xl bg-[#081716]">
+              <MezmurPlayer />
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 4: GLOBAL REGISTRATIONS (LEADERSHIP)                                  */}
         {/* ========================================================================= */}
         {mainTab === 'registrations' && !isStudent && (
           <div className="space-y-4 text-left">
@@ -1326,6 +1496,13 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               </div>
             </div>
           </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB: MEDIA FRONT-END CMS & LEADERSHIP APPROVALS                           */}
+        {/* ========================================================================= */}
+        {mainTab === 'mediaCMS' && (
+          <MediaFrontEndCMS onBackToDepartments={() => setMainTab('departments')} />
         )}
 
       </main>

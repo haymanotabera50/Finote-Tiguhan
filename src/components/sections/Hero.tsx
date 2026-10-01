@@ -1,5 +1,5 @@
-import React from 'react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useCustomization } from '../../context/CustomizationContext';
 import { siteContent } from '../../data/translations';
 import { EthiopianCross } from '../common/EthiopianCross';
 import { Sparkles, ArrowRight, BookOpen, Music, Users, Shield, Award, Calendar } from 'lucide-react';
@@ -13,7 +13,20 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
   const { language, isAmharic } = useLanguage();
+  const { frontEndContent } = useCustomization();
   const t = siteContent[language];
+
+  const dailyVerse = isAmharic 
+    ? (frontEndContent?.heroDailyVerseAm || t.heroDailyVerse)
+    : (frontEndContent?.heroDailyVerseEn || t.heroDailyVerse);
+
+  const heroSubtitle = isAmharic 
+    ? (frontEndContent?.heroSubtitleAm || "መንፈሳዊ የትምህርትና አገልግሎት ማዕከል")
+    : (frontEndContent?.heroSubtitleEn || "Spiritual Education & Ministry");
+
+  const heroDescription = isAmharic 
+    ? (frontEndContent?.heroDescriptionAm || t.heroDescription)
+    : (frontEndContent?.heroDescriptionEn || t.heroDescription);
 
   return (
     <section id="hero" className="relative min-h-[92vh] flex items-center justify-center pt-24 pb-16 overflow-hidden">
@@ -34,7 +47,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
         {/* Daily Verse Banner */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#061514]/85 backdrop-blur-md border border-amber-500/50 text-amber-300 text-xs sm:text-sm font-medium mb-8 shadow-2xl hover:border-amber-400 transition-all cursor-default">
           <EthiopianCross size={14} variant="simple" className="text-amber-400 animate-pulse" />
-          <span>{t.heroDailyVerse}</span>
+          <span>{dailyVerse}</span>
         </div>
 
         {/* Floating Logo Badge */}
@@ -58,12 +71,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-[1.15] drop-shadow-[0_4px_18px_rgba(0,0,0,0.95)]">
             <span className="block">{t.sundaySchoolName}</span>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-yellow-500">
-              {isAmharic ? "መንፈሳዊ የትምህርትና አገልግሎት ማዕከል" : "Spiritual Education & Ministry"}
+              {heroSubtitle}
             </span>
           </h1>
 
           <p className="text-base sm:text-lg text-emerald-50 max-w-2xl mx-auto leading-relaxed pt-2 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] font-medium">
-            {t.heroDescription}
+            {heroDescription}
           </p>
         </div>
 

@@ -52,7 +52,7 @@ export function AppContent() {
           switchRole('leadership');
         } else if (loginParam === 'student') {
           switchRole('student');
-        } else if (['education', 'children', 'choir', 'counseling', 'deacons', 'development', 'youth', 'art', 'holy_books', 'spiritual_court', 'preaching', 'auditing', 'public_relations'].includes(loginParam)) {
+        } else if (['education', 'children', 'choir', 'counseling', 'deacons', 'development', 'youth', 'art', 'holy_books', 'spiritual_court', 'preaching', 'auditing', 'public_relations', 'media'].includes(loginParam)) {
           switchRole('dept_admin', loginParam);
           setSelectedDeptId(loginParam);
         } else {

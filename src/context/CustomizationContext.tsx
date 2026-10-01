@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DepartmentSettings } from '../types/auth';
-import { DepartmentTaskItem } from '../types';
+import { DepartmentTaskItem, FrontEndContent, CustomizationChangeRequest } from '../types';
 import { departmentsData } from '../data/departmentsData';
 import { api } from '../services/api';
 
@@ -16,6 +16,54 @@ interface GlobalAnnouncement {
   updatedBy: string;
   updatedAt: string;
 }
+
+export const defaultFrontEndContent: FrontEndContent = {
+  heroDailyVerseAm: "«እኔና ቤቴ ግን እግዚአብሔርን እናመልካለን።» (ኢያሱ 24:15)",
+  heroDailyVerseEn: "«As for me and my household, we will serve the Lord.» (Joshua 24:15)",
+  heroWelcomeAm: "እንኳን ወደ ፍኖተ ትጉሃን ሰንበት ት/ቤት በደህና መጡ!",
+  heroWelcomeEn: "Welcome to Finote Teguhan Sunday School!",
+  heroTitleAm: "ፍኖተ ትጉሃን ሰንበት ትምህርት ቤት",
+  heroTitleEn: "Finote Teguhan Sunday School",
+  heroSubtitleAm: "መንፈሳዊ የትምህርትና አገልግሎት ማዕከል",
+  heroSubtitleEn: "Spiritual Education & Ministry",
+  heroDescriptionAm: "በአዲስ አበባ ደቡብ ምዕራብ ላፍቶ ደብረ ትጉሃን ቅዱስ ሚካኤል አጥቢያ ለ35 ዓመታት ሕፃናትን፣ ወጣቶችንና አዋቂዎችን በኦርቶዶክሳዊ ትምህርትና አገልግሎት እያንጸ የሚገኝ መንፈሳዊ ተቋም።",
+  heroDescriptionEn: "A sacred educational institution established 35 years ago at Lafto Debre Teguhan St. Michael Church, nurturing children, youth, and adults in Ethiopian Orthodox faith.",
+  announcementEnabled: true,
+  announcementBadgeAm: "አስቸኳይ ማስታወቂያ",
+  announcementBadgeEn: "PARISH NOTICE",
+  announcementTextAm: "የአዲስ የሰንበት ት/ቤት ተማሪዎች ምዝገባ በይፋ ተጀምሯል! በድረ-ገጻችን አሁኑኑ ይመዝገቡ።",
+  announcementTextEn: "Enrollment for the Sunday School Academic Year is now open! Register online today.",
+  newsHeadlineAm: "የሰንበት ትምህርት ቤታችን 35ኛ ዓመት የምስረታ በዓል ዝግጅት በታላቅ ድምቀት እየተካሄደ ነው",
+  newsHeadlineEn: "35th Anniversary Celebration preparations underway with spiritual solemnity",
+  featuredNoticeAm: "የሕፃናትና የወጣቶች የአብነትና የመዝሙር ትምህርት ምዝገባ ክፍት ነው።",
+  featuredNoticeEn: "Open enrollment for Children & Youth Abnet & Sacred Choir classes.",
+  themeMode: "dark",
+  accentTheme: "gold",
+  updatedAt: "2026-10-01",
+  publishedBy: "ሥራ አመራር ክፍል"
+};
+
+export const initialChangeRequests: CustomizationChangeRequest[] = [
+  {
+    id: "req-init-1",
+    createdAt: "2026-10-01T08:30:00Z",
+    updatedAt: "2026-10-01T08:30:00Z",
+    submittedBy: "መገናኛ ብዙኃን ክፍል (ዲ/ን አሸናፊ)",
+    departmentId: "media",
+    title: "የጥቅምት ወር የመስቀልና የመታሰቢያ በዓላት የፊት ገጽ መሪ ቃል ማሻሻያ",
+    proposalNote: "ለመስቀል በዓልና ለጥቅምት ወር ጉባኤያት የሚመጥን አዲስ ዕለታዊ ጥቅስና ማስታወቂያ በኤዲቶሪያል ቦርድ ተዘጋጅቶ ቀርቧል።",
+    status: "pending",
+    proposedContent: {
+      ...defaultFrontEndContent,
+      heroDailyVerseAm: "«የመስቀሉ ቃል ለሚጠፉት ሞኝነት፥ ለእኛ ለምንድን ግን የእግዚአብሔር ኃይል ነው።» (1ቆሮ. 1:18)",
+      heroDailyVerseEn: "«For the message of the cross is foolishness to those who are perishing, but to us who are being saved it is the power of God.» (1 Cor. 1:18)",
+      announcementBadgeAm: "የበዓል ልዩ ጥሪ",
+      announcementTextAm: "የመስቀል ደመራና የጥቅምት ሚካኤል ዓመታዊ ክብረ በዓል ልዩ የመዝሙርና የትምህርት መርሃ ግብር ይከታተሉ!",
+      newsHeadlineAm: "የመስቀል ደመራ በዓልና የወጣቶች ዝማሬ በደብራችን በልዩ ድምቀት ይከበራል",
+      featuredNoticeAm: "የመገናኛ ብዙኃን ክፍል የቀጥታ ስርጭት መርሃ ግብር በዩቲዩብና በቴሌግራም ይተላለፋል።"
+    }
+  }
+];
 
 interface CustomizationContextType {
   theme: AppTheme;
@@ -33,6 +81,16 @@ interface CustomizationContextType {
   addTask: (deptId: string, task: Omit<DepartmentTaskItem, 'id'>) => void;
   deleteTask: (deptId: string, taskId: string) => void;
   refreshSettings: () => Promise<void>;
+  
+  // Front-End CMS & Media / Leadership Approval Workflow
+  frontEndContent: FrontEndContent;
+  updateFrontEndContent: (content: Partial<FrontEndContent>) => void;
+  changeRequests: CustomizationChangeRequest[];
+  pendingRequests: CustomizationChangeRequest[];
+  submitChangeRequest: (title: string, note: string, draft: FrontEndContent, submittedBy?: string) => void;
+  approveChangeRequest: (requestId: string, reviewerName?: string, remarks?: string) => void;
+  rejectChangeRequest: (requestId: string, reviewerName?: string, remarks?: string) => void;
+  directPublishFrontEndContent: (content: FrontEndContent, publisherName?: string) => void;
 }
 
 const initialAnnouncement: GlobalAnnouncement = {
@@ -309,6 +367,153 @@ export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({
     return buildInitialTasks();
   });
 
+  // Front-End Content & Media Customization Workflow State
+  const [frontEndContent, setFrontEndContentState] = useState<FrontEndContent>(() => {
+    const saved = localStorage.getItem('ft_frontend_content');
+    if (saved) {
+      try {
+        return { ...defaultFrontEndContent, ...JSON.parse(saved) };
+      } catch (e) {
+        return defaultFrontEndContent;
+      }
+    }
+    return defaultFrontEndContent;
+  });
+
+  const [changeRequests, setChangeRequestsState] = useState<CustomizationChangeRequest[]>(() => {
+    const saved = localStorage.getItem('ft_customization_requests');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return initialChangeRequests;
+      }
+    }
+    return initialChangeRequests;
+  });
+
+  const pendingRequests = changeRequests.filter(r => r.status === 'pending');
+
+  const updateFrontEndContent = (content: Partial<FrontEndContent>) => {
+    setFrontEndContentState(prev => {
+      const updated = { ...prev, ...content };
+      localStorage.setItem('ft_frontend_content', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const submitChangeRequest = (
+    title: string, 
+    note: string, 
+    draft: FrontEndContent, 
+    submittedBy = "መገናኛ ብዙኃን ክፍል"
+  ) => {
+    const newReq: CustomizationChangeRequest = {
+      id: `req-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      submittedBy,
+      departmentId: 'media',
+      title: title.trim() || "የፊት ገጽ ይዘት ማሻሻያ ጥያቄ",
+      proposalNote: note.trim() || "በመገናኛ ብዙኃን ክፍል የተዘጋጀ የፊት ገጽ ማሻሻያ ረቂቅ",
+      status: 'pending',
+      proposedContent: { ...draft, updatedAt: new Date().toISOString() }
+    };
+    setChangeRequestsState(prev => {
+      const updated = [newReq, ...prev];
+      localStorage.setItem('ft_customization_requests', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const approveChangeRequest = (
+    requestId: string, 
+    reviewerName = "ሥራ አመራር ክፍል", 
+    remarks = "በሥራ አመራር ክፍል ጸድቆ በድረ-ገጹ ላይ በቀጥታ ታትሟል።"
+  ) => {
+    setChangeRequestsState(prev => {
+      const target = prev.find(r => r.id === requestId);
+      if (!target) return prev;
+
+      const updatedReq: CustomizationChangeRequest = {
+        ...target,
+        status: 'approved',
+        reviewedBy: reviewerName,
+        reviewedAt: new Date().toISOString(),
+        reviewRemarks: remarks,
+        updatedAt: new Date().toISOString()
+      };
+
+      // Instantly apply proposed changes to live front end!
+      setFrontEndContentState(target.proposedContent);
+      localStorage.setItem('ft_frontend_content', JSON.stringify(target.proposedContent));
+
+      // Synchronize announcement banner if changed
+      setAnnouncementState(curr => ({
+        ...curr,
+        enabled: target.proposedContent.announcementEnabled,
+        badgeAm: target.proposedContent.announcementBadgeAm,
+        badgeEn: target.proposedContent.announcementBadgeEn,
+        textAm: target.proposedContent.announcementTextAm,
+        textEn: target.proposedContent.announcementTextEn,
+        updatedBy: reviewerName,
+        updatedAt: new Date().toISOString().split('T')[0]
+      }));
+
+      const updatedList = prev.map(r => r.id === requestId ? updatedReq : r);
+      localStorage.setItem('ft_customization_requests', JSON.stringify(updatedList));
+      return updatedList;
+    });
+  };
+
+  const rejectChangeRequest = (
+    requestId: string, 
+    reviewerName = "ሥራ አመራር ክፍል", 
+    remarks = "ማስተካከያ ተጠይቆበታል።"
+  ) => {
+    setChangeRequestsState(prev => {
+      const target = prev.find(r => r.id === requestId);
+      if (!target) return prev;
+
+      const updatedReq: CustomizationChangeRequest = {
+        ...target,
+        status: 'rejected',
+        reviewedBy: reviewerName,
+        reviewedAt: new Date().toISOString(),
+        reviewRemarks: remarks,
+        updatedAt: new Date().toISOString()
+      };
+
+      const updatedList = prev.map(r => r.id === requestId ? updatedReq : r);
+      localStorage.setItem('ft_customization_requests', JSON.stringify(updatedList));
+      return updatedList;
+    });
+  };
+
+  const directPublishFrontEndContent = (
+    content: FrontEndContent, 
+    publisherName = "ሥራ አመራር ክፍል"
+  ) => {
+    const published = {
+      ...content,
+      publishedBy: publisherName,
+      updatedAt: new Date().toISOString()
+    };
+    setFrontEndContentState(published);
+    localStorage.setItem('ft_frontend_content', JSON.stringify(published));
+
+    setAnnouncementState(curr => ({
+      ...curr,
+      enabled: published.announcementEnabled,
+      badgeAm: published.announcementBadgeAm,
+      badgeEn: published.announcementBadgeEn,
+      textAm: published.announcementTextAm,
+      textEn: published.announcementTextEn,
+      updatedBy: publisherName,
+      updatedAt: new Date().toISOString().split('T')[0]
+    }));
+  };
+
   const updateTaskStatus = (deptId: string, taskId: string, status: 'planned' | 'in_progress' | 'completed') => {
     setDepartmentTasksState((prev) => {
       const list = prev[deptId] || [];
@@ -466,7 +671,15 @@ export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({
         updateTaskStatus,
         addTask,
         deleteTask,
-        refreshSettings
+        refreshSettings,
+        frontEndContent,
+        updateFrontEndContent,
+        changeRequests,
+        pendingRequests,
+        submitChangeRequest,
+        approveChangeRequest,
+        rejectChangeRequest,
+        directPublishFrontEndContent
       }}
     >
       {children}
