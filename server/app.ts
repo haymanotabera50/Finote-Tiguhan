@@ -9,7 +9,35 @@ dotenv.config();
 export const app = express();
 
 app.use(cors());
-app.use(express.json());
+
+// Safe body-parser middleware compatible with both standalone Express and Vercel Serverless Function
+app.use((req, res, next) => {
+  if (req.body !== undefined && typeof req.body === 'object') {
+    return next();
+  }
+  if (req.body && typeof req.body === 'string') {
+    try {
+      req.body = JSON.parse(req.body);
+      return next();
+    } catch (e) {
+      // not JSON string, continue
+    }
+  }
+  express.json()(req, res, (err) => {
+    // If stream was already consumed by serverless runtime, ignore body-parser stream error
+    if (err) {
+      return next();
+    }
+    next();
+  });
+});
+
+app.use((req, res, next) => {
+  if (req.body !== undefined && typeof req.body === 'object') {
+    return next();
+  }
+  express.urlencoded({ extended: true })(req, res, () => next());
+});
 
 // Visual Admin Portal & Database Gateway (for browser requests)
 app.get(['/', '/admin', '/login', '/dashboard'], (_req, res) => {

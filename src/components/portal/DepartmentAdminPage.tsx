@@ -16,7 +16,7 @@ import {
   ListTodo, Check, Plus, Trash2, FileText, Layers, Award,
   CheckCircle, ChevronRight, Bookmark, MapPin, Phone, Send,
   Globe, Building2, Sparkles, ExternalLink, ArrowLeft, Home,
-  Sliders, LogOut, LogIn, Calendar
+  Sliders, LogOut, LogIn, Calendar, RefreshCw
 } from 'lucide-react';
 
 interface DepartmentAdminPageProps {
@@ -39,7 +39,8 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
     canEditDepartment, 
     registrations,
     updateRegistrationStatus,
-    canManageRegistration
+    canManageRegistration,
+    refreshRegistrations
   } = useAuth();
 
   const { isAmharic, toggleLanguage } = useLanguage();
@@ -73,6 +74,9 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
   const [deptSearchQuery, setDeptSearchQuery] = useState('');
   const [taskFilterStatus, setTaskFilterStatus] = useState<'all' | 'planned' | 'in_progress' | 'completed'>('all');
   const [regFilterStatus, setRegFilterStatus] = useState<string>('all');
+  const [selectedRegDeptFilter, setSelectedRegDeptFilter] = useState<string>('all');
+  const [regSearchQuery, setRegSearchQuery] = useState<string>('');
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   // New task form state
@@ -212,18 +216,52 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
   const plannedTasksCount = currentTasks.filter(t => t.status === 'planned').length;
   const progressPct = totalTasksCount > 0 ? Math.round((completedTasksCount / totalTasksCount) * 100) : 0;
 
-  const deptRegistrations = registrations.filter(r => {
-    const matchesDept = r.departmentId === selectedDeptId || (selectedDeptId === 'children' && r.category === 'children');
-    if (regFilterStatus === 'all') return matchesDept;
-    return matchesDept && r.status === regFilterStatus;
-  });
+  const deptRegistrations = useMemo(() => {
+    return registrations.filter(r => {
+      const matchesDept = r.departmentId === selectedDeptId || (selectedDeptId === 'children' && r.category === 'children');
+      if (regFilterStatus === 'all') return matchesDept;
+      return matchesDept && r.status === regFilterStatus;
+    });
+  }, [registrations, selectedDeptId, regFilterStatus]);
 
-  const allFilteredRegistrations = registrations.filter(r => {
-    if (regFilterStatus === 'all') return true;
-    return r.status === regFilterStatus;
-  });
+  const visibleRegistrations = useMemo(() => {
+    let list = [...registrations];
 
-  const visibleRegistrations = isLeadership ? allFilteredRegistrations : deptRegistrations;
+    // Filter by department if chosen
+    if (selectedRegDeptFilter !== 'all') {
+      list = list.filter(r => r.departmentId === selectedRegDeptFilter || (selectedRegDeptFilter === 'children' && r.category === 'children'));
+    }
+
+    // Filter by status if chosen
+    if (regFilterStatus !== 'all') {
+      list = list.filter(r => r.status === regFilterStatus);
+    }
+
+    // Filter by search query (name, code, phone, address)
+    if (regSearchQuery.trim()) {
+      const q = regSearchQuery.toLowerCase();
+      list = list.filter(r => 
+        r.fullName?.toLowerCase().includes(q) ||
+        r.christianName?.toLowerCase().includes(q) ||
+        r.regCode?.toLowerCase().includes(q) ||
+        r.phone?.includes(q) ||
+        r.address?.toLowerCase().includes(q)
+      );
+    }
+
+    return list;
+  }, [registrations, selectedRegDeptFilter, regFilterStatus, regSearchQuery]);
+
+  const handleSyncWithBackend = async () => {
+    setIsSyncing(true);
+    try {
+      await refreshRegistrations();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setTimeout(() => setIsSyncing(false), 500);
+    }
+  };
 
   const selectableDepts = departmentsData.filter(d => 
     !deptSearchQuery ||
@@ -419,7 +457,7 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
             >
               <UserCheck size={16} />
               <span>
-                {isAmharic ? '📋 የተማሪዎች ምዝገባ' : 'Registrations'} ({visibleRegistrations.length})
+                {isAmharic ? '📋 የተማሪዎች ምዝገባ' : 'Registrations'} ({registrations.length})
               </span>
             </button>
 
@@ -1323,90 +1361,208 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 4: GLOBAL REGISTRATIONS (LEADERSHIP)                                  */}
+        {/* TAB 4: STUDENT REGISTRATIONS & REGISTRY OVERVIEW                           */}
         {/* ========================================================================= */}
         {mainTab === 'registrations' && !isStudent && (
-          <div className="space-y-4 text-left">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-emerald-900 pb-3">
+          <div className="space-y-5 text-left animate-in fade-in duration-200">
+            {/* Header & Sync */}
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-emerald-900 pb-4">
               <div>
-                <h4 className="text-lg font-bold text-white">
-                  {isLeadership 
-                    ? (isAmharic ? 'የጠቅላላ ተማሪዎች ምዝገባ ቁጥጥር' : 'All Student Registrations Oversight')
-                    : (isAmharic ? `የ${currentDeptObj.nameAm} ተማሪዎች ምዝገባ` : 'Department Registrations')}
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider">
+                    {isAmharic ? 'የተማሪዎች ምዝገባ አስተዳደር' : 'Student Registry & Management'}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
+                    {isAmharic ? 'ቀጥታ ከሰርቨር' : 'Live Database'}
+                  </span>
+                </div>
+                <h4 className="text-xl font-black text-white flex items-center gap-2">
+                  <span>{isAmharic ? 'የጠቅላላ ተማሪዎች ምዝገባ ቁጥጥር' : 'Student Registrations Oversight'}</span>
+                  <Sparkles size={16} className="text-amber-400" />
                 </h4>
                 <p className="text-xs text-emerald-200/70">
-                  {isLeadership 
-                    ? (isAmharic ? 'ሥራ አመራር ክፍል በሁሉም ክፍላት ያሉ ተማሪዎችን ማየትና ማጽደቅ ይችላል' : 'Leadership can inspect and approve enrollments across all divisions')
-                    : (isAmharic ? 'የእርስዎ ክፍል ተማሪዎች ዝርዝር' : 'Applicants to your department')}
+                  {isAmharic 
+                    ? 'በድረ-ገጹ በኩል የተመዘገቡ ተማሪዎችን መረጃ እዚህ ይመልከቱ፣ ያጽድቁና ይመድቡ' 
+                    : 'Review, approve, and manage applicant registrations submitted through the portal'}
                 </p>
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs">
-                {['all', 'pending', 'approved', 'enrolled'].map((st) => (
+              {/* Sync with Backend & Action Buttons */}
+              <div className="flex items-center gap-2 self-stretch md:self-auto justify-end">
+                <button
+                  type="button"
+                  onClick={handleSyncWithBackend}
+                  disabled={isSyncing}
+                  className="px-3.5 py-2 rounded-xl bg-[#09201e] hover:bg-[#0c2f2b] text-amber-300 border border-amber-500/40 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow hover:border-amber-400 disabled:opacity-50"
+                  title="ከBackend ዳታቤዝ አዳዲስ ምዝገባዎችን አድስ"
+                >
+                  <RefreshCw size={14} className={isSyncing ? "animate-spin text-amber-400" : "text-amber-400"} />
+                  <span>{isSyncing ? (isAmharic ? 'እየታደሰ ነው...' : 'Syncing...') : (isAmharic ? 'ከሰርቨር አድስ' : 'Sync Server')}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Metric KPI Counter Badges */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-3.5 rounded-2xl bg-[#09201e] border border-amber-500/30">
+                <div className="text-[11px] text-emerald-300/80 font-medium">{isAmharic ? 'ጠቅላላ ተመዝጋቢዎች' : 'Total Registered'}</div>
+                <div className="text-xl font-black text-amber-400 mt-1">{registrations.length}</div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-[#09201e] border border-amber-500/30">
+                <div className="text-[11px] text-amber-300/80 font-medium">{isAmharic ? 'ማረጋገጫ የሚጠብቁ' : 'Pending Review'}</div>
+                <div className="text-xl font-black text-amber-300 mt-1">
+                  {registrations.filter(r => r.status === 'pending').length}
+                </div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-[#09201e] border border-emerald-500/30">
+                <div className="text-[11px] text-emerald-300/80 font-medium">{isAmharic ? 'የጸደቁ ተማሪዎች' : 'Approved'}</div>
+                <div className="text-xl font-black text-emerald-400 mt-1">
+                  {registrations.filter(r => r.status === 'approved').length}
+                </div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-[#09201e] border border-blue-500/30">
+                <div className="text-[11px] text-blue-300/80 font-medium">{isAmharic ? 'የተመዘገቡ (Enrolled)' : 'Enrolled'}</div>
+                <div className="text-xl font-black text-blue-400 mt-1">
+                  {registrations.filter(r => r.status === 'enrolled').length}
+                </div>
+              </div>
+            </div>
+
+            {/* Filter and Search Bar */}
+            <div className="p-4 rounded-2xl bg-[#041211] border border-emerald-900/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2 flex-1">
+                {/* Search */}
+                <div className="relative flex-1 min-w-[200px]">
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400/60" />
+                  <input
+                    type="text"
+                    value={regSearchQuery}
+                    onChange={(e) => setRegSearchQuery(e.target.value)}
+                    placeholder={isAmharic ? "በስም፣ በኮድ ወይም በስልክ ፈልግ..." : "Search name, code, phone..."}
+                    className="w-full pl-9 pr-3 py-1.5 bg-[#09201e] border border-emerald-800 rounded-xl text-xs text-white placeholder-emerald-600 focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+
+                {/* Department Dropdown Filter */}
+                <select
+                  value={selectedRegDeptFilter}
+                  onChange={(e) => setSelectedRegDeptFilter(e.target.value)}
+                  className="px-3 py-1.5 bg-[#09201e] border border-emerald-800 rounded-xl text-xs text-amber-300 font-semibold focus:outline-none focus:border-amber-400 cursor-pointer"
+                >
+                  <option value="all">{isAmharic ? "🏛️ ሁሉም ክፍላት (All Departments)" : "All Departments"}</option>
+                  {departmentsData.map(d => (
+                    <option key={d.id} value={d.id}>
+                      {isAmharic ? d.nameAm : d.nameEn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Status Filter Buttons */}
+              <div className="flex items-center gap-1.5 text-xs overflow-x-auto pb-1 md:pb-0">
+                {[
+                  { id: 'all', labelAm: 'ሁሉም', labelEn: 'All' },
+                  { id: 'pending', labelAm: 'ማረጋገጫ የሚጠብቅ', labelEn: 'Pending' },
+                  { id: 'approved', labelAm: 'የጸደቀ', labelEn: 'Approved' },
+                  { id: 'enrolled', labelAm: 'የተመዘገበ', labelEn: 'Enrolled' }
+                ].map((st) => (
                   <button
-                    key={st}
+                    key={st.id}
                     type="button"
-                    onClick={() => setRegFilterStatus(st)}
-                    className={`px-3 py-1 rounded-xl font-semibold capitalize transition-all cursor-pointer ${
-                      regFilterStatus === st
-                        ? 'bg-amber-500 text-slate-950 font-bold shadow'
+                    onClick={() => setRegFilterStatus(st.id)}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap text-xs ${
+                      regFilterStatus === st.id
+                        ? 'bg-amber-500 text-slate-950 shadow'
                         : 'bg-[#09201e] text-emerald-200/80 border border-emerald-900/80 hover:text-white'
                     }`}
                   >
-                    {st}
+                    {isAmharic ? st.labelAm : st.labelEn}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="space-y-2.5">
+            {/* Registration Items List */}
+            <div className="space-y-3">
               {visibleRegistrations.map((reg) => {
-                const canManage = canManageRegistration(reg);
+                const targetDept = departmentsData.find(d => d.id === reg.departmentId);
+                const deptLabel = isAmharic ? (targetDept?.nameAm || reg.departmentId) : (targetDept?.nameEn || reg.departmentId);
 
                 return (
                   <div 
                     key={reg.id}
-                    className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="p-4 sm:p-5 rounded-2xl bg-[#09201e] border border-amber-500/20 hover:border-amber-500/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 shadow"
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-bold text-xs shrink-0">
-                        {reg.category === 'children' ? <Baby size={18} /> : <User size={18} />}
+                    <div className="flex items-start gap-3.5">
+                      <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold shrink-0">
+                        {reg.category === 'children' ? <Baby size={22} /> : <User size={22} />}
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-white text-xs">{reg.fullName}</span>
-                          <span className="text-[10px] font-mono text-emerald-400/80">{reg.regCode}</span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-900/60 text-emerald-300">
-                            {reg.category}
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h5 className="font-bold text-white text-sm sm:text-base">{reg.fullName}</h5>
+                          <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-[#041211] text-amber-300 border border-amber-500/30 font-bold">
+                            {reg.regCode}
+                          </span>
+                          <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700/80 font-bold">
+                            {deptLabel}
                           </span>
                         </div>
-                        <div className="text-[11px] text-emerald-200/70 mt-0.5">
-                          {reg.christianName && <span>ክርስትና ስም፦ {reg.christianName} • </span>}
-                          <span>ዕድሜ፦ {reg.age} • </span>
-                          <span>ስልክ፦ {reg.phone} • </span>
-                          <span>አድራሻ፦ {reg.address}</span>
+
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-emerald-200/80">
+                          {reg.christianName && (
+                            <span>ክርስትና ስም፦ <strong className="text-amber-200 font-normal">{reg.christianName}</strong></span>
+                          )}
+                          <span>ዕድሜ፦ <strong>{reg.age}</strong></span>
+                          <span>ጾታ፦ <strong>{reg.gender === 'female' ? 'ሴት' : 'ወንድ'}</strong></span>
+                          <span>ስልክ፦ <strong className="text-white font-mono">{reg.phone}</strong></span>
+                          {reg.address && <span>አድራሻ፦ {reg.address}</span>}
+                          {reg.registeredAt && <span className="text-emerald-400/60 font-mono text-[11px]">ቀን፦ {reg.registeredAt}</span>}
                         </div>
+
+                        {reg.notes && (
+                          <div className="text-[11px] text-amber-300/80 italic mt-1">
+                            ማስታወሻ፦ {reg.notes}
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase border ${
-                        reg.status === 'approved' || reg.status === 'enrolled'
+                    {/* Status & Action Buttons */}
+                    <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+                      <span className={`text-[11px] font-bold px-3 py-1 rounded-full uppercase border ${
+                        reg.status === 'enrolled'
+                          ? 'bg-blue-950 text-blue-300 border-blue-700'
+                          : reg.status === 'approved'
                           ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
                           : reg.status === 'pending'
                           ? 'bg-amber-950 text-amber-300 border-amber-700'
                           : 'bg-rose-950 text-rose-300 border-rose-700'
                       }`}>
-                        {reg.status}
+                        {reg.status === 'enrolled' ? (isAmharic ? 'የተመዘገበ' : 'Enrolled') :
+                         reg.status === 'approved' ? (isAmharic ? 'የጸደቀ' : 'Approved') :
+                         reg.status === 'pending' ? (isAmharic ? 'ማረጋገጫ የሚጠብቅ' : 'Pending') : reg.status}
                       </span>
 
-                      {canManage && reg.status === 'pending' && (
+                      {/* Quick Action Controls */}
+                      {reg.status === 'pending' && (
                         <button
                           type="button"
-                          onClick={() => updateRegistrationStatus(reg.id, 'approved', 'በአስተዳደር ጸድቋል')}
-                          className="px-3 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs cursor-pointer"
+                          onClick={() => updateRegistrationStatus(reg.id, 'approved', 'በሥራ አመራር ክፍል ጸድቋል')}
+                          className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-bold text-xs shadow transition-all cursor-pointer flex items-center gap-1"
                         >
-                          {isAmharic ? 'አጽድቅ' : 'Approve'}
+                          <Check size={13} />
+                          <span>{isAmharic ? 'አጽድቅ' : 'Approve'}</span>
+                        </button>
+                      )}
+
+                      {reg.status === 'approved' && (
+                        <button
+                          type="button"
+                          onClick={() => updateRegistrationStatus(reg.id, 'enrolled', 'ወደ ክፍል ተመድቧል')}
+                          className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold text-xs shadow transition-all cursor-pointer flex items-center gap-1"
+                        >
+                          <Award size={13} />
+                          <span>{isAmharic ? 'መዝግብ' : 'Enroll'}</span>
                         </button>
                       )}
                     </div>
@@ -1415,8 +1571,16 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               })}
 
               {visibleRegistrations.length === 0 && (
-                <div className="py-8 text-center text-xs text-emerald-300/60 bg-[#09201e] rounded-2xl border border-dashed border-emerald-900">
-                  {isAmharic ? 'ምንም የተመዘገበ ተማሪ አልተገኘም።' : 'No registrations found.'}
+                <div className="py-12 text-center text-xs text-emerald-300/70 bg-[#09201e] rounded-3xl border border-dashed border-emerald-900 space-y-2">
+                  <UserCheck size={28} className="mx-auto text-emerald-500/40" />
+                  <p className="font-semibold text-sm text-white">
+                    {isAmharic ? 'ምንም የተመዘገበ ተማሪ አልተገኘም።' : 'No registrations found.'}
+                  </p>
+                  <p className="text-emerald-300/60 max-w-sm mx-auto">
+                    {isAmharic 
+                      ? 'የተመረጠውን ማጣሪያ ይቀይሩ ወይም «ከሰርቨር አድስ» የሚለውን ቁልፍ ተጭነው አዳዲስ ምዝገባዎችን ያምጡ' 
+                      : 'Change the filter or click "Sync Server" to fetch recent applicants'}
+                  </p>
                 </div>
               )}
             </div>
