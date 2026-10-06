@@ -15,6 +15,16 @@ export interface User {
   avatarUrl?: string;
 }
 
+export interface SignupData {
+  name: string;
+  email: string;
+  password: string;
+  role?: UserRole;
+  departmentId?: string;
+  phone?: string;
+  christianName?: string;
+}
+
 export interface DepartmentSettings {
   id: string;
   mottoAm: string;

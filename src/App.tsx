@@ -27,8 +27,15 @@ export function AppContent() {
   const [portalOpen, setPortalOpen] = useState(false);
   const [customizationOpen, setCustomizationOpen] = useState(false);
   const [selectedDeptId, setSelectedDeptId] = useState<string | undefined>(undefined);
+  const [authInitialMode, setAuthInitialMode] = useState<'login' | 'signup'>('login');
 
   const { switchRole, login } = useAuth();
+
+  const handleOpenAuth = (mode: 'login' | 'signup' = 'login', deptId?: string) => {
+    setAuthInitialMode(mode);
+    if (deptId) setSelectedDeptId(deptId);
+    setAuthOpen(true);
+  };
 
   // Support query params and direct paths/hash like #departments, #admin, /admin, /portal, ?login=leadership
   useEffect(() => {
@@ -141,7 +148,7 @@ export function AppContent() {
           onBackToHome={handleBackToHome}
           initialDeptId={selectedDeptId}
           onOpenCustomization={() => setCustomizationOpen(true)}
-          onOpenAuth={() => setAuthOpen(true)}
+          onOpenAuth={handleOpenAuth}
         />
 
         {/* Parish Footer */}
@@ -158,6 +165,8 @@ export function AppContent() {
           isOpen={authOpen}
           onClose={() => setAuthOpen(false)}
           onOpenPortal={handleOpenDepartmentsAdmin}
+          initialMode={authInitialMode}
+          preselectedDeptId={selectedDeptId}
         />
 
         <CustomizationDrawer
@@ -179,7 +188,7 @@ export function AppContent() {
       {/* Sticky Navigation Bar */}
       <Navbar
         onOpenRegister={() => handleOpenRegister()}
-        onOpenAuth={() => setAuthOpen(true)}
+        onOpenAuth={() => handleOpenAuth('login')}
         onOpenPortal={handleOpenDepartmentsAdmin}
         onOpenCustomization={() => setCustomizationOpen(true)}
       />
@@ -191,7 +200,7 @@ export function AppContent() {
         <Departments 
           onJoinDepartment={(deptId) => handleOpenRegister(deptId)}
           onOpenPortalWithDept={handleOpenPortalWithDept}
-          onOpenAuth={() => setAuthOpen(true)}
+          onOpenAuth={() => handleOpenAuth('login')}
         />
         <Courses onEnroll={(courseId) => handleOpenRegister()} />
         <FeastCalendar />
@@ -215,6 +224,8 @@ export function AppContent() {
         isOpen={authOpen}
         onClose={() => setAuthOpen(false)}
         onOpenPortal={handleOpenDepartmentsAdmin}
+        initialMode={authInitialMode}
+        preselectedDeptId={selectedDeptId}
       />
 
       <PortalDashboard

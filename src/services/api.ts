@@ -1,16 +1,32 @@
-import { StudentRegistrationRecord, DepartmentSettings, User } from '../types/auth';
+import { StudentRegistrationRecord, DepartmentSettings, User, SignupData } from '../types/auth';
 
 const API_BASE = '/api';
 
 export const api = {
   // 1. Auth & Users
-  login: async (email: string): Promise<User> => {
+  signup: async (data: SignupData): Promise<User> => {
+    const res = await fetch(`${API_BASE}/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Signup failed');
+    }
+    return res.json();
+  },
+
+  login: async (email: string, password = 'orthodox1983'): Promise<User> => {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email, password })
     });
-    if (!res.ok) throw new Error('Login failed');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Login failed');
+    }
     return res.json();
   },
 

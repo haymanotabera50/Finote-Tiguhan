@@ -17,14 +17,15 @@ import {
   ListTodo, Check, Plus, Trash2, FileText, Layers, Award,
   CheckCircle, ChevronRight, Bookmark, MapPin, Phone, Send,
   Globe, Building2, Sparkles, ExternalLink, ArrowLeft, Home,
-  Sliders, LogOut, LogIn, Calendar, RefreshCw, MessageSquare, Reply
+  Sliders, LogOut, LogIn, Calendar, RefreshCw, MessageSquare, Reply,
+  UserPlus
 } from 'lucide-react';
 
 interface DepartmentAdminPageProps {
   onBackToHome: () => void;
   initialDeptId?: string;
   onOpenCustomization: () => void;
-  onOpenAuth?: () => void;
+  onOpenAuth?: (mode?: 'login' | 'signup', deptId?: string) => void;
 }
 
 export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
@@ -432,13 +433,24 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                 <span className="hidden sm:inline">{isAmharic ? "ውጣ" : "Sign Out"}</span>
               </button>
             ) : onOpenAuth ? (
-              <button
-                onClick={onOpenAuth}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold text-xs shadow transition-all cursor-pointer"
-              >
-                <LogIn size={13} className="text-amber-400" />
-                <span>{isAmharic ? "ይግቡ" : "Sign In"}</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => onOpenAuth('login', selectedDeptId)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow transition-all cursor-pointer"
+                >
+                  <LogIn size={13} />
+                  <span>{isAmharic ? "ግባ" : "Sign In"}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onOpenAuth('signup', selectedDeptId)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0a2723] border border-amber-500/40 hover:border-amber-400 text-amber-300 font-bold text-xs transition-all cursor-pointer"
+                >
+                  <UserPlus size={13} />
+                  <span>{isAmharic ? "ተመዝገብ" : "Sign Up"}</span>
+                </button>
+              </div>
             ) : null}
           </div>
         </div>
@@ -449,28 +461,41 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
 
         {/* Guest Banner if not signed in */}
         {!currentUser && (
-          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400">
-                <Lock size={18} />
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-950/40 via-[#0a2723] to-[#041210] border-2 border-amber-500/50 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">
+                <Lock size={22} />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white">
-                  {isAmharic ? "የክፍልዎን ገጽ ለማረምና ለማስተዳደር እባክዎ ይግቡ" : "Please sign in to edit and manage department pages"}
+                <h4 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                  <span>{isAmharic ? "የክፍላት አስተዳደር ሥርዓት (መግባት ወይም መመዝገብ ግዴታ ነው)" : "Department Management Access (Sign In or Sign Up Required)"}</span>
                 </h4>
-                <p className="text-xs text-emerald-200/70">
-                  {isAmharic ? "የ14ቱ ክፍላት አስተዳዳሪዎችና የሥራ አመራር አባላት በመለያቸው ገብተው ማስታወቂያና መርሃ ግብር ማስተካከል ይችላሉ።" : "Coordinators and leadership can sign in with their department account."}
+                <p className="text-xs text-emerald-200/80 mt-0.5">
+                  {isAmharic 
+                    ? "የክፍልዎን ገጽ ለማረም፣ ማስታወቂያ ለመለጠፍና ተማሪዎችን ለማጽደቅ እባክዎ በይለፍ ቃል ይግቡ፤ አዲስ ከሆኑ አስቀድመው ይመዝገቡ።" 
+                    : "To edit department pages, post notices, and approve students, sign in with password or sign up first."}
                 </p>
               </div>
             </div>
             {onOpenAuth && (
-              <button
-                onClick={onOpenAuth}
-                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shrink-0 flex items-center justify-center gap-1.5 cursor-pointer shadow"
-              >
-                <LogIn size={14} />
-                <span>{isAmharic ? "የክፍላት መግቢያ" : "Department Login"}</span>
-              </button>
+              <div className="flex items-center gap-2.5 shrink-0 self-start md:self-center">
+                <button
+                  type="button"
+                  onClick={() => onOpenAuth('login', selectedDeptId)}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow transition-all hover:scale-105"
+                >
+                  <LogIn size={14} />
+                  <span>{isAmharic ? "በይለፍ ቃል ግባ" : "Sign In with Password"}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onOpenAuth('signup', selectedDeptId)}
+                  className="px-4 py-2.5 rounded-xl bg-[#092b26] hover:bg-[#0d3b34] text-amber-300 hover:text-white border border-amber-500/40 font-bold text-xs flex items-center gap-1.5 cursor-pointer transition-all hover:scale-105"
+                >
+                  <UserPlus size={14} />
+                  <span>{isAmharic ? "አስቀድመህ ተመዝገብ" : "Sign Up First"}</span>
+                </button>
+              </div>
             )}
           </div>
         )}
@@ -1250,6 +1275,36 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                   </div>
                 </div>
 
+                {/* Auth Gate Reminder for Approving Students */}
+                {!currentUser && (
+                  <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-2.5 text-amber-300">
+                      <Lock size={16} className="text-amber-400 shrink-0" />
+                      <span>{isAmharic ? "🔒 ተማሪዎችን ለማጽደቅ ወይም ለመመደብ እባክዎ አስቀድመው በይለፍ ቃል ይግቡ፤ መለያ ከሌለዎት ይመዝገቡ።" : "Please sign in with password or sign up first to approve applicants."}</span>
+                    </div>
+                    {onOpenAuth && (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => onOpenAuth('login', selectedDeptId)}
+                          className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1 cursor-pointer shadow"
+                        >
+                          <LogIn size={13} />
+                          <span>{isAmharic ? "ግባ" : "Sign In"}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onOpenAuth('signup', selectedDeptId)}
+                          className="px-3.5 py-1.5 rounded-xl bg-[#092b26] border border-amber-500/40 text-amber-300 font-bold text-xs flex items-center gap-1 cursor-pointer"
+                        >
+                          <UserPlus size={13} />
+                          <span>{isAmharic ? "ተመዝገብ" : "Sign Up"}</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="space-y-3">
                   {deptRegistrations.map((reg) => {
                     const targetDept = departmentsData.find(d => d.id === reg.departmentId);
@@ -1316,7 +1371,13 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                           {reg.status === 'pending' && (
                             <button
                               type="button"
-                              onClick={() => updateRegistrationStatus(reg.id, 'approved', 'በትምህርትና ስልጠና ክፍል ጸድቋል')}
+                              onClick={() => {
+                                if (!currentUser) {
+                                  if (onOpenAuth) onOpenAuth('login', selectedDeptId);
+                                  return;
+                                }
+                                updateRegistrationStatus(reg.id, 'approved', 'በትምህርትና ስልጠና ክፍል ጸድቋል');
+                              }}
                               className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-bold text-xs shadow transition-all cursor-pointer flex items-center gap-1"
                             >
                               <Check size={13} />
@@ -1327,7 +1388,13 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                           {reg.status === 'approved' && (
                             <button
                               type="button"
-                              onClick={() => updateRegistrationStatus(reg.id, 'enrolled', 'ወደ ክፍል ተመድቧል')}
+                              onClick={() => {
+                                if (!currentUser) {
+                                  if (onOpenAuth) onOpenAuth('login', selectedDeptId);
+                                  return;
+                                }
+                                updateRegistrationStatus(reg.id, 'enrolled', 'ወደ ክፍል ተመድቧል');
+                              }}
                               className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold text-xs shadow transition-all cursor-pointer flex items-center gap-1"
                             >
                               <Award size={13} />

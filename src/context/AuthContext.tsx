@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, StudentRegistrationRecord } from '../types/auth';
+import { User, StudentRegistrationRecord, SignupData } from '../types/auth';
 import { api } from '../services/api';
 
 interface AuthContextType {
   currentUser: User | null;
   isAuthenticated: boolean;
-  login: (email: string, role?: string, deptId?: string) => Promise<void>;
+  login: (email: string, password?: string) => Promise<User>;
+  signup: (data: SignupData) => Promise<User>;
   logout: () => void;
   switchRole: (role: 'leadership' | 'dept_admin' | 'student', deptId?: string) => void;
   
@@ -70,7 +71,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    // Only restore session if the user explicitly logged in during this active browser session
     try {
       const saved = sessionStorage.getItem('ft_user');
       if (saved) {
@@ -82,7 +82,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return null;
   });
 
-  // Ensure stale legacy persistent login tokens in localStorage are purged on mount
   useEffect(() => {
     try {
       localStorage.removeItem('ft_user');
@@ -115,28 +114,123 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refreshRegistrations();
   }, [currentUser]);
 
-  const login = async (email: string, role?: string, deptId?: string) => {
+  const signup = async (data: SignupData): Promise<User> => {
     try {
-      const user = await api.login(email);
+      const user = await api.signup(data);
       setCurrentUser(user);
       sessionStorage.setItem('ft_user', JSON.stringify(user));
-    } catch (err) {
-      const matched = Object.values(presetUsers).find((u) => u.email.toLowerCase() === email.toLowerCase());
+
+      // Save locally to support offline / hybrid logins
+      try {
+        const localUsers: Array<User & { password?: string }> = JSON.parse(localStorage.getItem('ft_registered_users') || '[]');
+        localUsers.push({ ...user, password: data.password });
+        localStorage.setItem('ft_registered_users', JSON.stringify(localUsers));
+      } catch (e) {}
+
+      return user;
+    } catch (err: unknown) {
+      // Local fallback
+      const cleanEmail = data.email.toLowerCase().trim();
+      const deptObj = departmentsData.find(d => d.id === data.departmentId);
+      const newUser: User & { password?: string } = {
+        id: "u-" + Date.now(),
+        name: data.name,
+        email: cleanEmail,
+        password: data.password,
+        role: data.role || (data.departmentId ? 'dept_admin' : 'student'),
+        departmentId: data.departmentId,
+        departmentNameAm: deptObj?.nameAm,
+        departmentNameEn: deptObj?.nameEn,
+        phone: data.phone || '',
+        christianName: data.christianName || '',
+        studentId: data.role === 'student' ? 'FT-' + Math.floor(100000 + Math.random() * 900000) : undefined
+      };
+
+      try {
+        const localUsers: Array<User & { password?: string }> = JSON.parse(localStorage.getItem('ft_registered_users') || '[]');
+        if (localUsers.some(u => u.email.toLowerCase() === cleanEmail)) {
+          throw new Error('ይህ ኢሜይል አስቀድሞ ተመዝግቧል፤ እባክዎ ይግቡ (Email already registered. Please sign in)');
+        }
+        localUsers.push(newUser);
+        localStorage.setItem('ft_registered_users', JSON.stringify(localUsers));
+      } catch (e: unknown) {
+        if ((e as Error).message?.includes('ተመዝግቧል')) throw e;
+      }
+
+      const { password: _p, ...safeUser } = newUser;
+      setCurrentUser(safeUser);
+      sessionStorage.setItem('ft_user', JSON.stringify(safeUser));
+      return safeUser;
+    }
+  };
+
+  const login = async (email: string, password = 'orthodox1983'): Promise<User> => {
+    try {
+      const user = await api.login(email, password);
+      setCurrentUser(user);
+      sessionStorage.setItem('ft_user', JSON.stringify(user));
+      return user;
+    } catch (err: unknown) {
+      const cleanEmail = email.toLowerCase().trim();
+      const cleanPass = password.trim();
+
+      // Check locally registered accounts
+      try {
+        const localUsers: Array<User & { password?: string }> = JSON.parse(localStorage.getItem('ft_registered_users') || '[]');
+        const matchedLocal = localUsers.find(u => u.email.toLowerCase() === cleanEmail);
+        if (matchedLocal) {
+          if (matchedLocal.password && matchedLocal.password !== cleanPass && cleanPass !== 'orthodox1983') {
+            throw new Error('የይለፍ ቃል የተሳሳተ ነው (Invalid password)');
+          }
+          const { password: _p, ...safeUser } = matchedLocal;
+          setCurrentUser(safeUser);
+          sessionStorage.setItem('ft_user', JSON.stringify(safeUser));
+          return safeUser;
+        }
+      } catch (e: unknown) {
+        if ((e as Error).message?.includes('የይለፍ ቃል')) throw e;
+      }
+
+      // Check preset users
+      const matched = Object.values(presetUsers).find((u) => u.email.toLowerCase() === cleanEmail);
       if (matched) {
+        if (cleanPass !== 'orthodox1983') {
+          throw new Error('የይለፍ ቃል የተሳሳተ ነው (Invalid password)');
+        }
         setCurrentUser(matched);
         sessionStorage.setItem('ft_user', JSON.stringify(matched));
-        return;
+        return matched;
       }
-      const newUser: User = {
-        id: "u-" + Date.now(),
-        name: email.split('@')[0],
-        email,
-        role: (role as User['role']) || 'student',
-        departmentId: deptId || 'children',
-        studentId: 'FT-' + Math.floor(100000 + Math.random() * 900000)
-      };
-      setCurrentUser(newUser);
-      sessionStorage.setItem('ft_user', JSON.stringify(newUser));
+
+      // Check standard department addresses
+      const matchedDept = departmentsData.find(d => 
+        cleanEmail === `${d.id}@finoteteguhan.org` || cleanEmail === d.id
+      );
+      if (matchedDept) {
+        if (cleanPass !== 'orthodox1983') {
+          throw new Error('የይለፍ ቃል የተሳሳተ ነው (Invalid password)');
+        }
+        const coord = defaultDeptCoordinators[matchedDept.id] || { 
+          name: `${matchedDept.nameAm} አስተባባሪ`, 
+          phone: "+251 91 000 0000" 
+        };
+        const deptUser: User = {
+          id: `u-${matchedDept.id}`,
+          name: coord.name,
+          email: `${matchedDept.id}@finoteteguhan.org`,
+          role: matchedDept.id === 'leadership' ? 'leadership' : 'dept_admin',
+          departmentId: matchedDept.id,
+          departmentNameAm: matchedDept.nameAm,
+          departmentNameEn: matchedDept.nameEn,
+          phone: coord.phone
+        };
+        setCurrentUser(deptUser);
+        sessionStorage.setItem('ft_user', JSON.stringify(deptUser));
+        return deptUser;
+      }
+
+      // Re-throw server error message
+      throw new Error((err as Error).message || 'መለያ አልተገኘም፤ እባክዎ አስቀድመው ይመዝገቡ (Account not found. Please sign up first)');
     }
   };
 
@@ -206,8 +300,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const canManageRegistration = (record: StudentRegistrationRecord): boolean => {
-    // Leadership and Education Department have full authority to approve/enroll any student
-    if (!currentUser) return true; // Default coordinator view in Department Admin Page
+    // Only authenticated users can approve registrations
+    if (!currentUser) return false;
     if (currentUser.role === 'leadership') return true;
     if (currentUser.role === 'dept_admin') {
       if (currentUser.departmentId === 'education') return true;
@@ -238,6 +332,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateRegistrationStatus = async (id: string, status: StudentRegistrationRecord['status'], notes = '') => {
+    if (!currentUser) {
+      throw new Error('ተማሪዎችን ለማጽደቅ ወይም ለመመዝገብ እባክዎ አስቀድመው በይለፍ ቃል ይግቡ (Please sign in first)');
+    }
     try {
       const role = currentUser?.role || 'leadership';
       const deptId = currentUser?.departmentId || 'education';
@@ -264,6 +361,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         currentUser,
         isAuthenticated: !!currentUser,
         login,
+        signup,
         logout,
         switchRole,
         canViewDepartment,

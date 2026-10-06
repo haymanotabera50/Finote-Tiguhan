@@ -17,7 +17,7 @@ import {
 interface DepartmentsProps {
   onJoinDepartment: (deptId?: string) => void;
   onOpenPortalWithDept?: (deptId: string) => void;
-  onOpenAuth?: () => void;
+  onOpenAuth?: (mode?: 'login' | 'signup', deptId?: string) => void;
 }
 
 const iconMap: Record<string, React.ElementType> = {

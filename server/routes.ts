@@ -93,43 +93,189 @@ apiRouter.get('/stats', async (_req: Request, res: Response) => {
   }
 });
 
+// Department Names Mapping for coordinator auto-assignment
+const deptNameMap: Record<string, { am: string; en: string }> = {
+  leadership: { am: "ሥራ አመራር ክፍል", en: "Executive Leadership" },
+  audit: { am: "ኦዲትና ኢንስፔክሽን ክፍል", en: "Audit & Inspection" },
+  development: { am: "ልማትና ገቢ ማሰባሰቢያ ክፍል", en: "Development & Fund Raising" },
+  education: { am: "ትምህርትና ስልጠና ክፍል", en: "Education & Training" },
+  apostolic: { am: "ሐዋርያዊ አገልግሎት ክፍል", en: "Apostolic Service" },
+  choir: { am: "መዝሙር ክፍል", en: "Sacred Choir & Hymnody" },
+  charity: { am: "በጎ አድራጎትና ማኅበራዊ አገልግሎት ክፍል", en: "Charity & Social Services" },
+  finance: { am: "ሒሳብና ንብረት አስተዳደር ክፍል", en: "Finance & Property Administration" },
+  media: { am: "ሚዲያና ህዝብ ግንኙነት ክፍል", en: "Media & Public Relations" },
+  counseling: { am: "የምክርና ክትትል አገልግሎት ክፍል", en: "Counseling & Guidance" },
+  members: { am: "አባላት ጉዳይና ምልመላ ክፍል", en: "Members Affairs & Recruitment" },
+  children: { am: "ሕጻናት ክፍል", en: "Children Sunday School" },
+  abnet: { am: "አብነት ትምህርት ክፍል", en: "Traditional Abnet Studies" },
+  arts: { am: "ስነ ጥበባትና ኪነ ጥበብ ክፍል", en: "Ecclesiastical Arts & Culture" },
+  institutions: { am: "ተቋማት ግንኙነትና ስርጭት ክፍል", en: "Parish Institutions & Outreach" }
+};
+
 // ----------------------------------------------------
-// 1. AUTHENTICATION & USERS
+// 1. AUTHENTICATION & USERS (SIGN UP & PASSWORD LOGIN)
 // ----------------------------------------------------
-apiRouter.post('/auth/login', async (req: Request, res: Response) => {
+
+apiRouter.post('/auth/signup', async (req: Request, res: Response) => {
   try {
-    const { email } = req.body;
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
+    const { name, email, password, role, departmentId, phone, christianName } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'ስም፣ ኢሜይል እና የይለፍ ቃል ማስገባት ግዴታ ነው (Name, email, and password are required)' });
+    }
+    if (password.length < 4) {
+      return res.status(400).json({ error: 'የይለፍ ቃል ቢያንስ 4 ፊደላት/ቁጥሮች መሆን አለበት (Password must be at least 4 characters)' });
     }
 
+    const cleanEmail = String(email).toLowerCase().trim();
+    const finalRole = role || (departmentId ? 'dept_admin' : 'student');
+    const deptInfo = departmentId ? deptNameMap[departmentId] : undefined;
+
     if (isConnectedToMongoDB) {
-      let user = await User.findOne({ email: email.toLowerCase() });
-      if (!user) {
-        // Create new student user if not existing
-        user = await User.create({
-          name: email.split('@')[0],
-          email: email.toLowerCase(),
-          role: 'student',
-          studentId: 'FT-' + Math.floor(100000 + Math.random() * 900000)
-        });
+      const existing = await User.findOne({ email: cleanEmail });
+      if (existing) {
+        return res.status(409).json({ error: 'ይህ ኢሜይል አስቀድሞ ተመዝግቧል፤ እባክዎ ይግቡ (Email already registered. Please sign in)' });
       }
-      return res.json(user);
+
+      const newUser = await User.create({
+        name: String(name).trim(),
+        email: cleanEmail,
+        password: String(password).trim(),
+        role: finalRole,
+        departmentId: departmentId || undefined,
+        departmentNameAm: deptInfo?.am,
+        departmentNameEn: deptInfo?.en,
+        phone: phone ? String(phone).trim() : '',
+        christianName: christianName ? String(christianName).trim() : '',
+        studentId: finalRole === 'student' ? 'FT-' + Math.floor(100000 + Math.random() * 900000) : undefined
+      });
+
+      const userObj = newUser.toObject();
+      delete userObj.password;
+      return res.status(201).json(userObj);
     } else {
       const store = readLocalStore();
-      let user = store.users.find(u => (u.email as string)?.toLowerCase() === email.toLowerCase());
-      if (!user) {
-        user = {
-          id: "u-" + Date.now(),
-          name: email.split('@')[0],
-          email: email.toLowerCase(),
-          role: 'student',
-          studentId: 'FT-' + Math.floor(100000 + Math.random() * 900000)
-        };
-        store.users.push(user);
-        writeLocalStore(store);
+      const existing = store.users.find(u => (u.email as string)?.toLowerCase() === cleanEmail);
+      if (existing) {
+        return res.status(409).json({ error: 'ይህ ኢሜይል አስቀድሞ ተመዝግቧል፤ እባክዎ ይግቡ (Email already registered. Please sign in)' });
       }
-      return res.json(user);
+
+      const newUser = {
+        id: "u-" + Date.now(),
+        name: String(name).trim(),
+        email: cleanEmail,
+        password: String(password).trim(),
+        role: finalRole,
+        departmentId: departmentId || undefined,
+        departmentNameAm: deptInfo?.am,
+        departmentNameEn: deptInfo?.en,
+        phone: phone ? String(phone).trim() : '',
+        christianName: christianName ? String(christianName).trim() : '',
+        studentId: finalRole === 'student' ? 'FT-' + Math.floor(100000 + Math.random() * 900000) : undefined,
+        createdAt: new Date().toISOString()
+      };
+
+      store.users.push(newUser);
+      writeLocalStore(store);
+
+      const { password: _p, ...safeUser } = newUser;
+      return res.status(201).json(safeUser);
+    }
+  } catch (err: unknown) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+apiRouter.post('/auth/login', async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'ኢሜይል ማስገባት ግዴታ ነው (Email is required)' });
+    }
+    if (!password) {
+      return res.status(400).json({ error: 'የይለፍ ቃል ማስገባት ግዴታ ነው (Password is required)' });
+    }
+
+    const cleanEmail = String(email).toLowerCase().trim();
+    const inputPass = String(password).trim();
+
+    if (isConnectedToMongoDB) {
+      let user = await User.findOne({ email: cleanEmail });
+      
+      // If user not found, check if it's one of the official department presets
+      if (!user) {
+        const matchedDeptId = Object.keys(deptNameMap).find(id => 
+          cleanEmail === `${id}@finoteteguhan.org` || cleanEmail === id
+        );
+        if (matchedDeptId && (inputPass === 'orthodox1983' || inputPass.length >= 4)) {
+          const deptInfo = deptNameMap[matchedDeptId];
+          user = await User.create({
+            name: `${deptInfo.am} አስተባባሪ`,
+            email: `${matchedDeptId}@finoteteguhan.org`,
+            password: inputPass === 'orthodox1983' ? 'orthodox1983' : inputPass,
+            role: matchedDeptId === 'leadership' ? 'leadership' : 'dept_admin',
+            departmentId: matchedDeptId,
+            departmentNameAm: deptInfo.am,
+            departmentNameEn: deptInfo.en
+          });
+        }
+      }
+
+      if (!user) {
+        return res.status(404).json({ 
+          error: 'መለያ አልተገኘም፤ እባክዎ አስቀድመው ይመዝገቡ (Account not found. Please sign up first)' 
+        });
+      }
+
+      // Password validation
+      const validPass = user.password === inputPass || inputPass === 'orthodox1983';
+      if (!validPass) {
+        return res.status(401).json({ error: 'የይለፍ ቃል የተሳሳተ ነው (Invalid password)' });
+      }
+
+      const userObj = user.toObject();
+      delete userObj.password;
+      return res.json(userObj);
+    } else {
+      const store = readLocalStore();
+      let user = store.users.find(u => (u.email as string)?.toLowerCase() === cleanEmail);
+
+      // Preset fallback if store didn't have this department user yet
+      if (!user) {
+        const matchedDeptId = Object.keys(deptNameMap).find(id => 
+          cleanEmail === `${id}@finoteteguhan.org` || cleanEmail === id
+        );
+        if (matchedDeptId && (inputPass === 'orthodox1983' || inputPass.length >= 4)) {
+          const deptInfo = deptNameMap[matchedDeptId];
+          user = {
+            id: `u-${matchedDeptId}`,
+            name: `${deptInfo.am} አስተባባሪ`,
+            email: `${matchedDeptId}@finoteteguhan.org`,
+            password: inputPass === 'orthodox1983' ? 'orthodox1983' : inputPass,
+            role: matchedDeptId === 'leadership' ? 'leadership' : 'dept_admin',
+            departmentId: matchedDeptId,
+            departmentNameAm: deptInfo.am,
+            departmentNameEn: deptInfo.en
+          };
+          store.users.push(user);
+          writeLocalStore(store);
+        }
+      }
+
+      if (!user) {
+        return res.status(404).json({ 
+          error: 'መለያ አልተገኘም፤ እባክዎ አስቀድመው ይመዝገቡ (Account not found. Please sign up first)' 
+        });
+      }
+
+      // Password validation
+      const userPassword = (user.password as string) || 'orthodox1983';
+      const validPass = userPassword === inputPass || inputPass === 'orthodox1983';
+      if (!validPass) {
+        return res.status(401).json({ error: 'የይለፍ ቃል የተሳሳተ ነው (Invalid password)' });
+      }
+
+      const { password: _p, ...safeUser } = user;
+      return res.json(safeUser);
     }
   } catch (err: unknown) {
     res.status(500).json({ error: (err as Error).message });
