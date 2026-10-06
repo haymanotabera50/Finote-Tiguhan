@@ -102,14 +102,38 @@ export const api = {
     return res.json();
   },
 
-  // 5. Contact Inquiries
-  sendContactMessage: async (data: { name: string; contactInfo: string; subject: string; message: string }) => {
+  // 5. Contact Inquiries & Believers' Feedback
+  sendContactMessage: async (data: { name: string; contactInfo: string; subject: string; message: string; departmentId?: string }) => {
     const res = await fetch(`${API_BASE}/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
     if (!res.ok) throw new Error('Failed to send message');
+    return res.json();
+  },
+
+  getContactMessages: async () => {
+    const res = await fetch(`${API_BASE}/contact`);
+    if (!res.ok) throw new Error('Failed to fetch contact messages');
+    return res.json();
+  },
+
+  updateContactStatus: async (id: string, status: 'unread' | 'read' | 'replied') => {
+    const res = await fetch(`${API_BASE}/contact/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    if (!res.ok) throw new Error('Failed to update message status');
+    return res.json();
+  },
+
+  deleteContactMessage: async (id: string) => {
+    const res = await fetch(`${API_BASE}/contact/${id}`, {
+      method: 'DELETE'
+    });
+    if (!res.ok) throw new Error('Failed to delete message');
     return res.json();
   }
 };

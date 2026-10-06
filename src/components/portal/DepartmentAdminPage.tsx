@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useCustomization } from '../../context/CustomizationContext';
@@ -9,6 +9,7 @@ import logoImg from '../../assets/logo.jpg';
 import { FeastCalendar } from '../sections/FeastCalendar';
 import { MezmurPlayer } from '../sections/MezmurPlayer';
 import { MediaFrontEndCMS } from './MediaFrontEndCMS';
+import { api } from '../../services/api';
 import { 
   Shield, BookOpen, Baby, Music, User, X, CheckCircle2, 
   Clock, AlertTriangle, Edit3, Eye, Lock, Filter, Search, 
@@ -16,7 +17,7 @@ import {
   ListTodo, Check, Plus, Trash2, FileText, Layers, Award,
   CheckCircle, ChevronRight, Bookmark, MapPin, Phone, Send,
   Globe, Building2, Sparkles, ExternalLink, ArrowLeft, Home,
-  Sliders, LogOut, LogIn, Calendar, RefreshCw
+  Sliders, LogOut, LogIn, Calendar, RefreshCw, MessageSquare, Reply
 } from 'lucide-react';
 
 interface DepartmentAdminPageProps {
@@ -67,7 +68,7 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
 
   // Page States
   const [selectedDeptId, setSelectedDeptId] = useState<string>(startingDeptId);
-  const [mainTab, setMainTab] = useState<'departments' | 'calendar' | 'mezmur' | 'registrations' | 'announcements' | 'mediaCMS' | 'studentCard'>(
+  const [mainTab, setMainTab] = useState<'departments' | 'calendar' | 'mezmur' | 'registrations' | 'feedback' | 'announcements' | 'mediaCMS' | 'studentCard'>(
     isStudent ? 'studentCard' : 'departments'
   );
   const [deptSubTab, setDeptSubTab] = useState<'content' | 'tasks' | 'students' | 'preview' | 'mediaCMS'>('content');
@@ -78,6 +79,79 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
   const [regSearchQuery, setRegSearchQuery] = useState<string>('');
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Feedback / Inquiries state
+  interface FeedbackMessageItem {
+    id?: string;
+    _id?: string;
+    name: string;
+    contactInfo: string;
+    subject: string;
+    message: string;
+    departmentId?: string;
+    status: 'unread' | 'read' | 'replied';
+    createdAt: string;
+  }
+  const [feedbackList, setFeedbackList] = useState<FeedbackMessageItem[]>([]);
+  const [isSyncingFeedback, setIsSyncingFeedback] = useState<boolean>(false);
+  const [feedbackFilterStatus, setFeedbackFilterStatus] = useState<string>('all');
+  const [feedbackSearchQuery, setFeedbackSearchQuery] = useState<string>('');
+
+  const fetchFeedback = async () => {
+    setIsSyncingFeedback(true);
+    try {
+      const msgs = await api.getContactMessages();
+      setFeedbackList(Array.isArray(msgs) ? msgs : []);
+    } catch (e) {
+      console.error('Failed to load feedback:', e);
+    } finally {
+      setTimeout(() => setIsSyncingFeedback(false), 300);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeedback();
+  }, []);
+
+  const handleUpdateFeedbackStatus = async (id: string, status: 'unread' | 'read' | 'replied') => {
+    try {
+      await api.updateContactStatus(id, status);
+      setFeedbackList(prev => prev.map(m => (m.id === id || m._id === id) ? { ...m, status } : m));
+    } catch (e) {
+      console.error('Failed to update feedback status:', e);
+    }
+  };
+
+  const handleDeleteFeedback = async (id: string) => {
+    if (!window.confirm(isAmharic ? 'ይህንን አስተያየት/ጥያቄ መሰረዝ እርግጠኛ ነዎት?' : 'Are you sure you want to delete this message?')) return;
+    try {
+      await api.deleteContactMessage(id);
+      setFeedbackList(prev => prev.filter(m => m.id !== id && m._id !== id));
+    } catch (e) {
+      console.error('Failed to delete feedback message:', e);
+    }
+  };
+
+  const unreadFeedbackCount = useMemo(() => {
+    return feedbackList.filter(f => f.status === 'unread').length;
+  }, [feedbackList]);
+
+  const visibleFeedback = useMemo(() => {
+    let list = [...feedbackList];
+    if (feedbackFilterStatus !== 'all') {
+      list = list.filter(f => f.status === feedbackFilterStatus);
+    }
+    if (feedbackSearchQuery.trim()) {
+      const q = feedbackSearchQuery.toLowerCase();
+      list = list.filter(f => 
+        f.name?.toLowerCase().includes(q) ||
+        f.contactInfo?.toLowerCase().includes(q) ||
+        f.subject?.toLowerCase().includes(q) ||
+        f.message?.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [feedbackList, feedbackFilterStatus, feedbackSearchQuery]);
 
   // New task form state
   const [showAddTaskForm, setShowAddTaskForm] = useState(false);
@@ -459,6 +533,34 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               <span>
                 {isAmharic ? '📋 የተማሪዎች ምዝገባ' : 'Registrations'} ({registrations.length})
               </span>
+            </button>
+
+            {/* TAB: FEEDBACK & INQUIRIES INBOX */}
+            <button
+              type="button"
+              onClick={() => {
+                setMainTab('feedback');
+                fetchFeedback();
+              }}
+              className={`py-2.5 px-4 rounded-xl font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer ${
+                mainTab === 'feedback'
+                  ? 'bg-amber-500 text-slate-950 font-black shadow'
+                  : 'text-emerald-200/80 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <MessageSquare size={16} />
+              <span>
+                {isAmharic ? '💬 አስተያየትና ጥያቄዎች' : 'Feedback & Inbox'}
+              </span>
+              {unreadFeedbackCount > 0 ? (
+                <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black animate-pulse">
+                  {unreadFeedbackCount} አዲስ
+                </span>
+              ) : (
+                <span className="text-[11px] opacity-75">
+                  ({feedbackList.length})
+                </span>
+              )}
             </button>
 
             {/* TAB: FRONT-END CMS & LEADERSHIP APPROVALS */}
@@ -1580,6 +1682,247 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                     {isAmharic 
                       ? 'የተመረጠውን ማጣሪያ ይቀይሩ ወይም «ከሰርቨር አድስ» የሚለውን ቁልፍ ተጭነው አዳዲስ ምዝገባዎችን ያምጡ' 
                       : 'Change the filter or click "Sync Server" to fetch recent applicants'}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 4.5: BELIEVERS' FEEDBACK & INQUIRIES INBOX                            */}
+        {/* ========================================================================= */}
+        {mainTab === 'feedback' && !isStudent && (
+          <div className="space-y-5 text-left animate-in fade-in duration-200">
+            {/* Header & Sync */}
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-emerald-900 pb-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className="text-xl font-black text-white flex items-center gap-2">
+                    <MessageSquare size={22} className="text-amber-400" />
+                    <span>{isAmharic ? 'የምዕመናን አስተያየትና ጥያቄዎች ሳጥን' : 'Feedback & Inquiries Inbox'}</span>
+                  </h4>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 text-xs font-bold font-mono">
+                    {feedbackList.length} {isAmharic ? 'መልዕክቶች' : 'Messages'}
+                  </span>
+                </div>
+                <p className="text-xs text-emerald-200/70">
+                  {isAmharic 
+                    ? 'በድረ-ገጹ ላይ ከምዕመናን እና ከተማሪዎች በቀጥታ የተላኩ አስተያየቶች፣ ጥያቄዎችና ማሳሰቢያዎች' 
+                    : 'Manage incoming questions, feedback, and inquiries submitted by visitors'}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={fetchFeedback}
+                disabled={isSyncingFeedback}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs shadow-lg transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                <RefreshCw size={14} className={isSyncingFeedback ? 'animate-spin' : ''} />
+                <span>{isSyncingFeedback ? (isAmharic ? 'በመጫን ላይ...' : 'Syncing...') : (isAmharic ? 'ከሰርቨር አድስ' : 'Sync Server')}</span>
+              </button>
+            </div>
+
+            {/* KPI Metric Summary Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80 shadow">
+                <span className="text-[11px] font-bold text-emerald-300/80 block uppercase">
+                  {isAmharic ? 'ጠቅላላ መልዕክት' : 'Total Messages'}
+                </span>
+                <span className="text-2xl font-black text-white font-mono">{feedbackList.length}</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-[#09201e] border border-rose-500/30 shadow">
+                <span className="text-[11px] font-bold text-rose-300 block uppercase">
+                  {isAmharic ? 'ያልተነበበ / አዲስ' : 'Unread'}
+                </span>
+                <span className="text-2xl font-black text-rose-400 font-mono">{unreadFeedbackCount}</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-[#09201e] border border-blue-500/30 shadow">
+                <span className="text-[11px] font-bold text-blue-300 block uppercase">
+                  {isAmharic ? 'የተነበበ' : 'Read'}
+                </span>
+                <span className="text-2xl font-black text-blue-400 font-mono">
+                  {feedbackList.filter(f => f.status === 'read').length}
+                </span>
+              </div>
+              <div className="p-4 rounded-2xl bg-[#09201e] border border-emerald-500/30 shadow">
+                <span className="text-[11px] font-bold text-emerald-400 block uppercase">
+                  {isAmharic ? 'ምላሽ የተሰጠው' : 'Replied'}
+                </span>
+                <span className="text-2xl font-black text-emerald-400 font-mono">
+                  {feedbackList.filter(f => f.status === 'replied').length}
+                </span>
+              </div>
+            </div>
+
+            {/* Filters & Search Toolbar */}
+            <div className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow">
+              {/* Search Box */}
+              <div className="relative flex-1">
+                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-400/60" />
+                <input
+                  type="text"
+                  value={feedbackSearchQuery}
+                  onChange={(e) => setFeedbackSearchQuery(e.target.value)}
+                  placeholder={isAmharic ? 'በስም፣ በስልክ፣ በርዕስ ወይም በመልዕክት ይፈልጉ...' : 'Search by name, contact, subject, or message...'}
+                  className="w-full pl-9 pr-4 py-2 bg-[#041211] border border-emerald-800 rounded-xl text-xs text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400 transition-colors"
+                />
+              </div>
+
+              {/* Status Filters */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {(['all', 'unread', 'read', 'replied'] as const).map(st => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => setFeedbackFilterStatus(st)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      feedbackFilterStatus === st
+                        ? 'bg-amber-500 text-slate-950 font-black shadow'
+                        : 'bg-[#041211] text-emerald-200/70 hover:text-white border border-emerald-800/80'
+                    }`}
+                  >
+                    {st === 'all' ? (isAmharic ? 'ሁሉም' : 'All') :
+                     st === 'unread' ? (isAmharic ? 'ያልተነበበ' : 'Unread') :
+                     st === 'read' ? (isAmharic ? 'የተነበበ' : 'Read') : (isAmharic ? 'ምላሽ የተሰጠው' : 'Replied')}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Messages Cards Feed */}
+            <div className="space-y-3">
+              {visibleFeedback.map((item, idx) => {
+                const targetDept = departmentsData.find(d => d.id === item.departmentId);
+                const deptLabel = targetDept 
+                  ? (isAmharic ? targetDept.nameAm : targetDept.nameEn)
+                  : (isAmharic ? 'አጠቃላይ / ሥራ አመራር' : 'General / Leadership');
+
+                return (
+                  <div
+                    key={item.id || item._id || idx}
+                    className={`p-5 rounded-2xl bg-[#09201e] border transition-all ${
+                      item.status === 'unread' 
+                        ? 'border-amber-500/60 shadow-lg shadow-amber-500/5 bg-gradient-to-r from-[#09201e] via-[#09201e] to-amber-950/20' 
+                        : 'border-emerald-900/70 hover:border-emerald-700'
+                    }`}
+                  >
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-3 mb-3">
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h5 className="font-bold text-white text-base flex items-center gap-2">
+                            {item.name}
+                            {item.status === 'unread' && (
+                              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+                            )}
+                          </h5>
+                          <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#041211] text-amber-300 border border-amber-500/30 font-bold">
+                            🏛️ {deptLabel}
+                          </span>
+                          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase border ${
+                            item.status === 'replied'
+                              ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
+                              : item.status === 'read'
+                              ? 'bg-blue-950 text-blue-300 border-blue-700'
+                              : 'bg-rose-950 text-rose-300 border-rose-700'
+                          }`}>
+                            {item.status === 'replied' ? (isAmharic ? 'ምላሽ ተሰጥቷል' : 'Replied') :
+                             item.status === 'read' ? (isAmharic ? 'የተነበበ' : 'Read') : (isAmharic ? 'አዲስ / ያልተነበበ' : 'Unread')}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-emerald-200/80">
+                          <span>
+                            ግንኙነት፦ <strong className="text-white font-mono">{item.contactInfo}</strong>
+                          </span>
+                          {item.createdAt && (
+                            <span className="text-emerald-400/60 font-mono text-[11px]">
+                              ቀን፦ {new Date(item.createdAt).toLocaleString(isAmharic ? 'am-ET' : 'en-US')}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-2 shrink-0">
+                        {item.status === 'unread' && (
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateFeedbackStatus(item.id || item._id || '', 'read')}
+                            className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow transition-all cursor-pointer flex items-center gap-1"
+                          >
+                            <Check size={13} />
+                            <span>{isAmharic ? 'አንብቤዋለሁ' : 'Mark Read'}</span>
+                          </button>
+                        )}
+
+                        {item.status !== 'replied' && (
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateFeedbackStatus(item.id || item._id || '', 'replied')}
+                            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 text-slate-950 font-black text-xs shadow transition-all cursor-pointer flex items-center gap-1"
+                          >
+                            <Reply size={13} />
+                            <span>{isAmharic ? 'ምላሽ ተሰጥቷል' : 'Mark Replied'}</span>
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteFeedback(item.id || item._id || '')}
+                          className="p-1.5 rounded-xl bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-rose-300 transition-colors cursor-pointer"
+                          title={isAmharic ? 'መልዕክቱን ሰርዝ' : 'Delete Message'}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Subject & Message Content Box */}
+                    <div className="p-3.5 rounded-xl bg-[#041211] border border-emerald-900/60 space-y-1.5">
+                      <div className="text-xs font-bold text-amber-300">
+                        ርዕስ፦ {item.subject}
+                      </div>
+                      <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed whitespace-pre-wrap">
+                        {item.message}
+                      </p>
+                    </div>
+
+                    {/* Quick Follow-Up Actions */}
+                    <div className="mt-3 pt-2.5 border-t border-emerald-950/80 flex items-center gap-3 text-xs">
+                      {item.contactInfo.includes('@') ? (
+                        <a
+                          href={`mailto:${item.contactInfo}?subject=Re: ${encodeURIComponent(item.subject)}`}
+                          className="text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold"
+                        >
+                          <Send size={12} />
+                          <span>{isAmharic ? 'በኢሜይል ምላሽ ስጥ' : 'Reply via Email'}</span>
+                        </a>
+                      ) : (
+                        <a
+                          href={`tel:${item.contactInfo.replace(/\s+/g, '')}`}
+                          className="text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold"
+                        >
+                          <Phone size={12} />
+                          <span>{isAmharic ? 'በስልክ ደውል' : 'Call Phone'}</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {visibleFeedback.length === 0 && (
+                <div className="py-12 text-center text-xs text-emerald-300/70 bg-[#09201e] rounded-3xl border border-dashed border-emerald-900 space-y-2">
+                  <MessageSquare size={28} className="mx-auto text-emerald-500/40" />
+                  <p className="font-semibold text-sm text-white">
+                    {isAmharic ? 'ምንም የተቀበሉት አስተያየት ወይም ጥያቄ የለም።' : 'No feedback or inquiries found.'}
+                  </p>
+                  <p className="text-emerald-300/60 max-w-sm mx-auto">
+                    {isAmharic 
+                      ? 'ምዕመናን በድረ-ገጹ ላይ መልዕክት ሲልኩ እዚህ ጋር በቅጽበት ይደርሰዎታል' 
+                      : 'Incoming messages from believers will appear here in real time'}
                   </p>
                 </div>
               )}

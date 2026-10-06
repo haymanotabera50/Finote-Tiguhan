@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { siteContent } from '../../data/translations';
 import { EthiopianCross } from '../common/EthiopianCross';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
+import { api } from '../../services/api';
+import { departmentsData } from '../../data/departmentsData';
 
 export const Contact: React.FC = () => {
   const { language, isAmharic } = useLanguage();
@@ -12,17 +14,46 @@ export const Contact: React.FC = () => {
   const [contactInfo, setContactInfo] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [departmentId, setDepartmentId] = useState('general');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [sent, setSent] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => {
+    if (!name.trim() || !contactInfo.trim() || !message.trim()) {
+      setErrorMessage(isAmharic ? 'እባክዎ አስፈላጊ መስኮችን በሙሉ ይሙሉ' : 'Please fill all required fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    try {
+      await api.sendContactMessage({
+        name: name.trim(),
+        contactInfo: contactInfo.trim(),
+        subject: subject.trim() || (isAmharic ? 'አጠቃላይ አስተያየትና ጥያቄ' : 'General Inquiry / Feedback'),
+        message: message.trim(),
+        departmentId
+      });
+
+      setSent(true);
       setName('');
       setContactInfo('');
       setSubject('');
       setMessage('');
-    }, 400);
+      setDepartmentId('general');
+    } catch (err: unknown) {
+      console.error('Contact submission error:', err);
+      setErrorMessage(
+        isAmharic
+          ? 'መልዕክቱን ወደ ሰርቨር መላክ አልተቻለም። እባክዎ እንደገና ይሞክሩ።'
+          : 'Failed to record feedback to the server. Please try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -136,6 +167,13 @@ export const Contact: React.FC = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {errorMessage && (
+                  <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-500/50 text-rose-200 text-xs flex items-center gap-2">
+                    <AlertCircle size={16} className="text-rose-400 shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-amber-300 mb-1.5">
@@ -166,18 +204,38 @@ export const Contact: React.FC = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-amber-300 mb-1.5">
-                    {t.contactFormSubject} *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    placeholder={isAmharic ? "ምሳሌ፦ ስለ አዲስ ተማሪዎች ምዝገባ ጥያቄ" : "e.g. Inquiries about student enrollment"}
-                    className="w-full px-3 py-2.5 bg-[#051413] border border-emerald-800 rounded-xl text-sm text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400 transition-colors"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-amber-300 mb-1.5">
+                      {isAmharic ? "መልዕክቱ የሚመለከተው ክፍል" : "Target Department"}
+                    </label>
+                    <select
+                      value={departmentId}
+                      onChange={(e) => setDepartmentId(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-[#051413] border border-emerald-800 rounded-xl text-xs sm:text-sm text-amber-200 focus:outline-none focus:border-amber-400 transition-colors cursor-pointer"
+                    >
+                      <option value="general">{isAmharic ? "🌟 አጠቃላይ አስተያየት / ለሥራ አመራር" : "🌟 General / Leadership"}</option>
+                      {departmentsData.map(d => (
+                        <option key={d.id} value={d.id}>
+                          {isAmharic ? d.nameAm : d.nameEn}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-amber-300 mb-1.5">
+                      {t.contactFormSubject} *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                      placeholder={isAmharic ? "ምሳሌ፦ ስለ አዲስ ተማሪዎች ምዝገባ" : "e.g. Inquiries about student enrollment"}
+                      className="w-full px-3 py-2.5 bg-[#051413] border border-emerald-800 rounded-xl text-sm text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400 transition-colors"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -189,17 +247,27 @@ export const Contact: React.FC = () => {
                     required
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder={isAmharic ? "መልዕክትዎን እዚህ ይጻፉ..." : "Write your message here..."}
+                    placeholder={isAmharic ? "አስተያየትዎን ወይም ጥያቄዎን እዚህ በዝርዝር ይጻፉ..." : "Write your feedback or inquiry here..."}
                     className="w-full px-3 py-2.5 bg-[#051413] border border-emerald-800 rounded-xl text-sm text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400 transition-colors"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-slate-950 font-bold text-sm shadow-xl hover:from-amber-400 hover:to-amber-500 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
+                  disabled={isSubmitting}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-slate-950 font-bold text-sm shadow-xl hover:from-amber-400 hover:to-amber-500 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <Send size={16} />
-                  <span>{t.contactFormSend}</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      <span>{isAmharic ? "መልዕክቱ በመላክ ላይ..." : "Recording Feedback..."}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={16} />
+                      <span>{t.contactFormSend}</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}

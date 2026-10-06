@@ -403,11 +403,11 @@ apiRouter.put('/announcement', async (req: Request, res: Response) => {
 });
 
 // ----------------------------------------------------
-// 5. CONTACT MESSAGES
+// 5. CONTACT MESSAGES / FEEDBACK
 // ----------------------------------------------------
 apiRouter.post('/contact', async (req: Request, res: Response) => {
   try {
-    const { name, contactInfo, subject, message } = req.body;
+    const { name, contactInfo, subject, message, departmentId } = req.body;
     if (!name || !contactInfo || !message) {
       return res.status(400).json({ error: 'Missing required contact fields' });
     }
@@ -416,8 +416,10 @@ apiRouter.post('/contact', async (req: Request, res: Response) => {
       const msg = await ContactMessage.create({
         name,
         contactInfo,
-        subject,
+        subject: subject || 'አጠቃላይ አስተያየትና ጥያቄ',
         message,
+        departmentId: departmentId || 'general',
+        status: 'unread',
         createdAt: new Date()
       });
       return res.status(201).json(msg);
@@ -427,11 +429,13 @@ apiRouter.post('/contact', async (req: Request, res: Response) => {
         id: "msg-" + Date.now(),
         name,
         contactInfo,
-        subject,
+        subject: subject || 'አጠቃላይ አስተያየትና ጥያቄ',
         message,
+        departmentId: departmentId || 'general',
         status: 'unread',
         createdAt: new Date().toISOString()
       };
+      if (!store.contactMessages) store.contactMessages = [];
       store.contactMessages.unshift(msg);
       writeLocalStore(store);
       return res.status(201).json(msg);
@@ -449,6 +453,62 @@ apiRouter.get('/contact', async (_req: Request, res: Response) => {
     } else {
       const store = readLocalStore();
       return res.json(store.contactMessages || []);
+    }
+  } catch (err: unknown) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+apiRouter.patch('/contact/:id/status', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    if (!status) {
+      return res.status(400).json({ error: 'Status is required' });
+    }
+
+    if (isConnectedToMongoDB) {
+      const msg = await ContactMessage.findById(id);
+      if (!msg) {
+        return res.status(404).json({ error: 'Message not found' });
+      }
+      msg.status = status;
+      await msg.save();
+      return res.json(msg);
+    } else {
+      const store = readLocalStore();
+      const msg = (store.contactMessages || []).find(m => m.id === id || (m._id as string) === id);
+      if (!msg) {
+        return res.status(404).json({ error: 'Message not found' });
+      }
+      msg.status = status;
+      writeLocalStore(store);
+      return res.json(msg);
+    }
+  } catch (err: unknown) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+apiRouter.delete('/contact/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (isConnectedToMongoDB) {
+      const deleted = await ContactMessage.findByIdAndDelete(id);
+      if (!deleted) {
+        return res.status(404).json({ error: 'Message not found' });
+      }
+      return res.json({ success: true, id });
+    } else {
+      const store = readLocalStore();
+      const initialLength = (store.contactMessages || []).length;
+      store.contactMessages = (store.contactMessages || []).filter(m => m.id !== id && (m._id as string) !== id);
+      if (store.contactMessages.length === initialLength) {
+        return res.status(404).json({ error: 'Message not found' });
+      }
+      writeLocalStore(store);
+      return res.json({ success: true, id });
     }
   } catch (err: unknown) {
     res.status(500).json({ error: (err as Error).message });

@@ -72,6 +72,12 @@ export const Footer: React.FC = () => {
                   {t.navDonate}
                 </a>
               </li>
+              <li>
+                <a href="#contact" className="hover:text-amber-300 transition-colors text-amber-300/90 font-semibold flex items-center gap-1">
+                  <span>💬</span>
+                  <span>{language === 'am' ? 'አስተያየትና ጥያቄ መስጫ' : 'Feedback & Inquiries'}</span>
+                </a>
+              </li>
             </ul>
           </div>
 
