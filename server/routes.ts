@@ -468,23 +468,32 @@ apiRouter.patch('/contact/:id/status', async (req: Request, res: Response) => {
     }
 
     if (isConnectedToMongoDB) {
-      const msg = await ContactMessage.findById(id);
-      if (!msg) {
-        return res.status(404).json({ error: 'Message not found' });
+      try {
+        let msg = null;
+        if (mongoose.Types.ObjectId.isValid(id)) {
+          msg = await ContactMessage.findById(id);
+        }
+        if (!msg) {
+          msg = await ContactMessage.findOne({ id }).catch(() => null);
+        }
+        if (msg) {
+          msg.status = status;
+          await msg.save();
+          return res.json(msg);
+        }
+      } catch (e) {
+        // continue to local store fallback
       }
-      msg.status = status;
-      await msg.save();
-      return res.json(msg);
-    } else {
-      const store = readLocalStore();
-      const msg = (store.contactMessages || []).find(m => m.id === id || (m._id as string) === id);
-      if (!msg) {
-        return res.status(404).json({ error: 'Message not found' });
-      }
-      msg.status = status;
-      writeLocalStore(store);
-      return res.json(msg);
     }
+
+    const store = readLocalStore();
+    const msg = (store.contactMessages || []).find(m => m.id === id || (m._id as string) === id);
+    if (!msg) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+    msg.status = status;
+    writeLocalStore(store);
+    return res.json(msg);
   } catch (err: unknown) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -493,23 +502,33 @@ apiRouter.patch('/contact/:id/status', async (req: Request, res: Response) => {
 apiRouter.delete('/contact/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    let deleted = false;
 
     if (isConnectedToMongoDB) {
-      const deleted = await ContactMessage.findByIdAndDelete(id);
-      if (!deleted) {
-        return res.status(404).json({ error: 'Message not found' });
-      }
-      return res.json({ success: true, id });
-    } else {
-      const store = readLocalStore();
-      const initialLength = (store.contactMessages || []).length;
-      store.contactMessages = (store.contactMessages || []).filter(m => m.id !== id && (m._id as string) !== id);
-      if (store.contactMessages.length === initialLength) {
-        return res.status(404).json({ error: 'Message not found' });
-      }
+      try {
+        if (mongoose.Types.ObjectId.isValid(id)) {
+          const resMongo = await ContactMessage.findByIdAndDelete(id);
+          if (resMongo) deleted = true;
+        }
+        if (!deleted) {
+          const resMongo2 = await ContactMessage.findOneAndDelete({ id }).catch(() => null);
+          if (resMongo2) deleted = true;
+        }
+      } catch (e) {}
+    }
+
+    const store = readLocalStore();
+    const initialLength = (store.contactMessages || []).length;
+    store.contactMessages = (store.contactMessages || []).filter(m => m.id !== id && (m._id as string) !== id);
+    if (store.contactMessages.length !== initialLength) {
       writeLocalStore(store);
+      deleted = true;
+    }
+
+    if (deleted) {
       return res.json({ success: true, id });
     }
+    return res.status(404).json({ error: 'Message not found' });
   } catch (err: unknown) {
     res.status(500).json({ error: (err as Error).message });
   }
