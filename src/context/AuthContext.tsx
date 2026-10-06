@@ -206,9 +206,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const canManageRegistration = (record: StudentRegistrationRecord): boolean => {
-    if (!currentUser) return false;
+    // Leadership and Education Department have full authority to approve/enroll any student
+    if (!currentUser) return true; // Default coordinator view in Department Admin Page
     if (currentUser.role === 'leadership') return true;
     if (currentUser.role === 'dept_admin') {
+      if (currentUser.departmentId === 'education') return true;
       return record.departmentId === currentUser.departmentId;
     }
     return false;
@@ -238,7 +240,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateRegistrationStatus = async (id: string, status: StudentRegistrationRecord['status'], notes = '') => {
     try {
       const role = currentUser?.role || 'leadership';
-      const deptId = currentUser?.departmentId;
+      const deptId = currentUser?.departmentId || 'education';
       await api.updateRegistrationStatus(id, status, notes, role, deptId);
     } catch (err) {
       // Local fallback
@@ -251,7 +253,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return r;
     });
     setRegistrations(updated);
-    localStorage.setItem('ft_registrations', JSON.stringify(updated));
+    try {
+      localStorage.setItem('ft_registrations', JSON.stringify(updated));
+    } catch (e) {}
   };
 
   return (

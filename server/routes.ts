@@ -159,7 +159,7 @@ apiRouter.get('/registrations', async (req: Request, res: Response) => {
 
     if (isConnectedToMongoDB) {
       let query: Record<string, unknown> = {};
-      if (role === 'dept_admin' && deptId) {
+      if (role === 'dept_admin' && deptId && deptId !== 'education') {
         query = { departmentId: deptId };
       }
       const records = await StudentRegistration.find(query).sort({ registeredAt: -1 });
@@ -167,7 +167,7 @@ apiRouter.get('/registrations', async (req: Request, res: Response) => {
     } else {
       const store = readLocalStore();
       let records = store.registrations;
-      if (role === 'dept_admin' && deptId) {
+      if (role === 'dept_admin' && deptId && deptId !== 'education') {
         records = records.filter(r => r.departmentId === deptId);
       }
       return res.json(records);
@@ -219,8 +219,8 @@ apiRouter.patch('/registrations/:id/status', async (req: Request, res: Response)
         return res.status(404).json({ error: 'Registration record not found' });
       }
 
-      // Permission check: Leadership can update any, dept_admin only their department
-      if (role !== 'leadership' && record.departmentId !== deptId) {
+      // Permission check: Leadership and Education department can approve registrations, other dept_admin only their department
+      if (role !== 'leadership' && deptId !== 'education' && record.departmentId !== deptId) {
         return res.status(403).json({ error: 'Unauthorized: You can only manage registrations for your department' });
       }
 
@@ -236,7 +236,7 @@ apiRouter.patch('/registrations/:id/status', async (req: Request, res: Response)
       }
 
       const rec = store.registrations[idx];
-      if (role !== 'leadership' && rec.departmentId !== deptId) {
+      if (role !== 'leadership' && deptId !== 'education' && rec.departmentId !== deptId) {
         return res.status(403).json({ error: 'Unauthorized: You can only manage registrations for your department' });
       }
 
