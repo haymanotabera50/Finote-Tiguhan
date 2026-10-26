@@ -18,7 +18,7 @@ import {
   CheckCircle, ChevronRight, Bookmark, MapPin, Phone, Send,
   Globe, Building2, Sparkles, ExternalLink, ArrowLeft, Home,
   Sliders, LogOut, LogIn, Calendar, RefreshCw, MessageSquare, Reply,
-  UserPlus, FileSpreadsheet, LayoutGrid, Table
+  UserPlus, FileSpreadsheet, LayoutGrid, Table, BarChart3, ShieldCheck, Activity, TrendingUp, CheckCheck
 } from 'lucide-react';
 
 interface DepartmentAdminPageProps {
@@ -72,7 +72,11 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
   const [mainTab, setMainTab] = useState<'departments' | 'calendar' | 'mezmur' | 'registrations' | 'feedback' | 'announcements' | 'mediaCMS' | 'studentCard'>(
     isStudent ? 'studentCard' : 'departments'
   );
-  const [deptSubTab, setDeptSubTab] = useState<'content' | 'tasks' | 'students' | 'preview' | 'mediaCMS'>('content');
+  const [deptSubTab, setDeptSubTab] = useState<'content' | 'tasks' | 'students' | 'preview' | 'mediaCMS' | 'deptProgress'>(
+    startingDeptId === 'audit' ? 'deptProgress' : 'content'
+  );
+  const [auditedDeptId, setAuditedDeptId] = useState<string | null>(null);
+  const [auditDeptSearch, setAuditDeptSearch] = useState<string>('');
   const [deptSearchQuery, setDeptSearchQuery] = useState('');
   const [taskFilterStatus, setTaskFilterStatus] = useState<'all' | 'planned' | 'in_progress' | 'completed'>('all');
   const [taskViewMode, setTaskViewMode] = useState<'table' | 'cards'>('table');
@@ -202,6 +206,12 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
   const handleSelectDept = (deptId: string) => {
     setSelectedDeptId(deptId);
     setShowAddTaskForm(false);
+    setAuditedDeptId(null);
+    if (deptId === 'audit') {
+      setDeptSubTab('deptProgress');
+    } else if (deptSubTab === 'deptProgress') {
+      setDeptSubTab('tasks');
+    }
     const targetObj = departmentsData.find(d => d.id === deptId) || departmentsData[0];
     const settings = departmentSettings[deptId] || {
       id: deptId,
@@ -334,6 +344,57 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
   const inProgressTasksCount = currentTasks.filter(t => t.status === 'in_progress').length;
   const plannedTasksCount = currentTasks.filter(t => t.status === 'planned').length;
   const progressPct = totalTasksCount > 0 ? Math.round((completedTasksCount / totalTasksCount) * 100) : 0;
+
+  // All Departments Progress & Audit Calculation
+  const departmentsProgress = useMemo(() => {
+    return departmentsData.filter(d => d.id !== 'audit').map(dept => {
+      const tasks = departmentTasks[dept.id] || [];
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.status === 'completed').length;
+      const inProgress = tasks.filter(t => t.status === 'in_progress').length;
+      const planned = tasks.filter(t => t.status === 'planned').length;
+      const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+      return {
+        dept,
+        tasks,
+        total,
+        completed,
+        inProgress,
+        planned,
+        pct
+      };
+    });
+  }, [departmentTasks]);
+
+  const totalParishTasks = departmentsProgress.reduce((sum, d) => sum + d.total, 0);
+  const totalParishCompleted = departmentsProgress.reduce((sum, d) => sum + d.completed, 0);
+  const totalParishInProgress = departmentsProgress.reduce((sum, d) => sum + d.inProgress, 0);
+  const totalParishPlanned = departmentsProgress.reduce((sum, d) => sum + d.planned, 0);
+  const overallParishPct = totalParishTasks > 0 ? Math.round((totalParishCompleted / totalParishTasks) * 100) : 0;
+
+  const handleExportAllDepartmentsAuditCSV = () => {
+    const headers = ['ተ.ቁ', 'የክፍል ስም', 'ምድብ', 'ጠቅላላ እቅድ', 'የተጠናቀቁ', 'በሂደት ላይ', 'የታቀዱ', 'የአፈጻጸም መጠን (%)'];
+    const rows = departmentsProgress.map((dp, idx) => [
+      idx + 1,
+      `"${dp.dept.nameAm}"`,
+      `"${dp.dept.category}"`,
+      dp.total,
+      dp.completed,
+      dp.inProgress,
+      dp.planned,
+      `"${dp.pct}%"`
+    ]);
+    const summaryRow = ['ድምር', 'ሁሉም ክፍላት', '-', totalParishTasks, totalParishCompleted, totalParishInProgress, totalParishPlanned, `"${overallParishPct}%"`];
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(',')), summaryRow.join(',')].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `የፍኖተ_ትጉሃን_ክፍላት_አጠቃላይ_የኦዲት_ግስጋሴ_ሪፖርት.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const deptRegistrations = useMemo(() => {
     return registrations.filter(r => {
@@ -812,13 +873,16 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
 
             {/* Department Management Sub-Tabs */}
             <div className="flex border-b border-emerald-900 bg-[#041211] rounded-2xl p-1 gap-1 overflow-x-auto">
-              {[
+              {(selectedDeptId === 'audit' ? [
+                { id: 'deptProgress', labelAm: '📊 የክፍላት አጠቃላይ ግስጋሴ (Departments Progress)', labelEn: 'All Departments Progress', icon: BarChart3 },
+                { id: 'tasks', labelAm: `📋 የኦዲት ክፍሉ የውስጥ እቅድ (${completedTasksCount}/${totalTasksCount})`, labelEn: 'Audit Internal Plan', icon: ListTodo }
+              ] : [
                 { id: 'content', labelAm: '📝 የገጽ ይዘትና መገለጫ', labelEn: 'Page Profile & Content', icon: Edit3 },
                 { id: 'tasks', labelAm: `📋 የሥራ ዕቅድና ተግባራት (${completedTasksCount}/${totalTasksCount})`, labelEn: 'Tasks & Mandates', icon: ListTodo },
                 { id: 'students', labelAm: `👥 ተመዝጋቢዎች (${deptRegistrations.length})`, labelEn: 'Registrations', icon: UserCheck },
                 { id: 'preview', labelAm: '👁️ የቀጥታ ገጽ እይታ', labelEn: 'Live Preview', icon: Eye },
                 ...(selectedDeptId === 'media' ? [{ id: 'mediaCMS', labelAm: '🎨 የፊት ገጽ ማበጃ (CMS)', labelEn: 'Front-End CMS', icon: Sparkles }] : [])
-              ].map((sub) => {
+              ]).map((sub) => {
                 const isActive = deptSubTab === sub.id;
                 const Icon = sub.icon;
 
@@ -839,6 +903,279 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                 );
               })}
             </div>
+
+            {/* SUB-TAB: DEPARTMENTS PROGRESS & AUDIT MONITOR (FOR AUDIT DEPARTMENT) */}
+            {deptSubTab === 'deptProgress' && (
+              <div className="space-y-6 text-left animate-in fade-in duration-200">
+                {/* Header Banner */}
+                <div className="p-6 rounded-3xl bg-gradient-to-r from-[#0a2723] via-[#0d332e] to-[#0a2723] border border-emerald-800 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 shadow">
+                      <ShieldCheck size={26} />
+                    </div>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                        <span>{isAmharic ? 'የሰንበት ትምህርት ቤቱ 14ቱ ክፍላት የዕቅድ አፈጻጸም ክትትል' : 'Parish Departments Performance & Audit Monitor'}</span>
+                      </h3>
+                      <p className="text-xs text-emerald-300/80 mt-0.5">
+                        {isAmharic 
+                          ? 'በኦዲትና ኢንስፔክሽን ክፍል በገለልተኝነት የሚመረመርና የሚገመገም የክፍላት የስራ አፈጻጸም ዳሽቦርድ' 
+                          : 'Independent inspection and performance monitoring dashboard for all Sunday School departments.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleExportAllDepartmentsAuditCSV}
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center gap-2 shadow cursor-pointer self-start sm:self-auto shrink-0"
+                    title="ሙሉ የኦዲት ሪፖርት በ Excel አውርድ"
+                  >
+                    <Download size={14} />
+                    <span>{isAmharic ? 'ሙሉ የኦዲት ሪፖርት (CSV)' : 'Export Audit CSV'}</span>
+                  </button>
+                </div>
+
+                {/* Overall KPI Summary Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80">
+                    <div className="text-[11px] font-semibold text-emerald-300/80">{isAmharic ? 'ጠቅላላ የክፍላት እቅዶች' : 'Total Parish Tasks'}</div>
+                    <div className="text-2xl font-black text-white mt-1">{totalParishTasks}</div>
+                    <div className="text-[10px] text-emerald-400/60 mt-0.5">{isAmharic ? 'በ14ቱ ክፍላት የታቀዱ' : 'Across 14 departments'}</div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80">
+                    <div className="text-[11px] font-semibold text-emerald-300 flex items-center gap-1">
+                      <span>{isAmharic ? 'የተጠናቀቁ' : 'Completed'}</span>
+                      <CheckCircle2 size={13} className="text-emerald-400" />
+                    </div>
+                    <div className="text-2xl font-black text-emerald-400 mt-1">{totalParishCompleted}</div>
+                    <div className="text-[10px] text-emerald-400/60 mt-0.5">{totalParishTasks > 0 ? Math.round((totalParishCompleted/totalParishTasks)*100) : 0}% {isAmharic ? 'ተጠናቀዋል' : 'done'}</div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80">
+                    <div className="text-[11px] font-semibold text-blue-300 flex items-center gap-1">
+                      <span>{isAmharic ? 'በሂደት ላይ' : 'In Progress'}</span>
+                      <Clock size={13} className="text-blue-400" />
+                    </div>
+                    <div className="text-2xl font-black text-blue-400 mt-1">{totalParishInProgress}</div>
+                    <div className="text-[10px] text-blue-400/60 mt-0.5">{isAmharic ? 'በአፈጻጸም ላይ' : 'under execution'}</div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80">
+                    <div className="text-[11px] font-semibold text-amber-300 flex items-center gap-1">
+                      <span>{isAmharic ? 'የታቀዱ (ቀሪ)' : 'Planned'}</span>
+                      <ListTodo size={13} className="text-amber-400" />
+                    </div>
+                    <div className="text-2xl font-black text-amber-400 mt-1">{totalParishPlanned}</div>
+                    <div className="text-[10px] text-amber-400/60 mt-0.5">{isAmharic ? 'ገና ያልተጀመሩ' : 'pending start'}</div>
+                  </div>
+                </div>
+
+                {/* Overall Parish Progress Bar */}
+                <div className="p-5 rounded-2xl bg-[#09201e] border border-emerald-900/80 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-white flex items-center gap-1.5">
+                      <TrendingUp size={14} className="text-amber-400" />
+                      <span>{isAmharic ? 'የሰንበት ትምህርት ቤቱ አጠቃላይ የዕቅድ አፈጻጸም መጠን' : 'Overall Sunday School Execution Progress'}</span>
+                    </span>
+                    <span className="text-amber-400 font-extrabold text-sm">{overallParishPct}%</span>
+                  </div>
+                  <div className="w-full h-3 bg-[#041211] rounded-full overflow-hidden border border-emerald-900">
+                    <div 
+                      className="h-full bg-gradient-to-r from-amber-500 via-emerald-500 to-emerald-400 transition-all duration-500"
+                      style={{ width: `${overallParishPct}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Inspected Department Detail Modal/Drawer */}
+                {auditedDeptId && (
+                  <div className="p-6 rounded-3xl bg-[#072420] border-2 border-amber-500/60 shadow-2xl space-y-4 animate-in slide-in-from-top-2 duration-300">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-800 pb-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
+                            {isAmharic ? '🔍 የኦዲት ምርመራ' : 'Audit Inspection View'}
+                          </span>
+                          <span className="text-xs text-emerald-400/70 font-mono">
+                            {departmentsData.find(d => d.id === auditedDeptId)?.category}
+                          </span>
+                        </div>
+                        <h4 className="text-lg font-black text-white mt-1">
+                          {departmentsData.find(d => d.id === auditedDeptId)?.nameAm}
+                        </h4>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setAuditedDeptId(null)}
+                        className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all cursor-pointer self-start sm:self-auto"
+                      >
+                        {isAmharic ? '← ወደ ሁሉም ክፍላት ተመለስ' : '← Back to All Departments'}
+                      </button>
+                    </div>
+
+                    {/* Inspected Department Tasks Table */}
+                    <div className="overflow-x-auto rounded-2xl border border-emerald-800 bg-[#041413]">
+                      <table className="w-full text-left text-xs border-collapse">
+                        <thead>
+                          <tr className="bg-[#0b2824] border-b border-emerald-800 text-emerald-300 text-[11px] uppercase font-bold">
+                            <th className="py-2.5 px-3 w-10 text-center text-amber-400">#</th>
+                            <th className="py-2.5 px-4 min-w-[260px]">{isAmharic ? 'የትኩረት አቅጣጫ እና ዝርዝር እቅድ' : 'Task Details'}</th>
+                            <th className="py-2.5 px-3">{isAmharic ? 'መለኪያ / ዒላማ' : 'Target'}</th>
+                            <th className="py-2.5 px-3">{isAmharic ? 'ጊዜ (ወራት)' : 'Timeline'}</th>
+                            <th className="py-2.5 px-3">{isAmharic ? 'በጀት' : 'Budget'}</th>
+                            <th className="py-2.5 px-3">{isAmharic ? 'ኃላፊ ንዑስ ክፍል' : 'Sub-Unit'}</th>
+                            <th className="py-2.5 px-3 text-center">{isAmharic ? 'የክፍሉ ሁኔታ' : 'Status'}</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-emerald-900/60">
+                          {(departmentTasks[auditedDeptId] || []).map((t, idx) => (
+                            <tr key={t.id} className={idx % 2 === 0 ? 'bg-[#061816]' : 'bg-[#08201d]'}>
+                              <td className="py-2 px-3 text-center text-emerald-400/80 font-mono text-[11px]">{idx + 1}</td>
+                              <td className="py-2 px-4">
+                                <span className={`font-medium ${t.status === 'completed' ? 'line-through text-emerald-300/50' : 'text-slate-100'}`}>
+                                  {t.titleAm}
+                                </span>
+                              </td>
+                              <td className="py-2 px-3 text-emerald-300/80 text-[11px]">
+                                {[t.metric, t.target].filter(Boolean).join(' ') || '-'}
+                              </td>
+                              <td className="py-2 px-3 text-amber-200/90 text-[11px]">{t.monthTiming || '-'}</td>
+                              <td className="py-2 px-3 text-amber-300 font-mono text-[11px]">{t.budget || '-'}</td>
+                              <td className="py-2 px-3 text-emerald-300/80 text-[11px]">
+                                {t.subUnitAm ? (
+                                  <span className="px-2 py-0.5 rounded bg-[#041211] border border-emerald-900 text-amber-300/90">
+                                    {t.subUnitAm}
+                                  </span>
+                                ) : '-'}
+                              </td>
+                              <td className="py-2 px-3 text-center">
+                                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase border ${
+                                  t.status === 'completed'
+                                    ? 'bg-emerald-950 text-emerald-300 border-emerald-600'
+                                    : t.status === 'in_progress'
+                                    ? 'bg-blue-950 text-blue-300 border-blue-600'
+                                    : 'bg-amber-950 text-amber-300 border-amber-600'
+                                }`}>
+                                  {t.status === 'completed' ? '✓ ተጠናቋል' : t.status === 'in_progress' ? '⏳ በሂደት' : '○ የታቀደ'}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* All Departments Table */}
+                <div className="space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                      <BarChart3 size={15} className="text-amber-400" />
+                      <span>{isAmharic ? 'የ14ቱ ክፍላት የዕቅድ አፈጻጸም ዝርዝር ሰንጠረዥ' : 'All Departments Progress Table'}</span>
+                    </div>
+
+                    <div className="relative w-full sm:w-64">
+                      <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400/60" />
+                      <input
+                        type="text"
+                        value={auditDeptSearch}
+                        onChange={(e) => setAuditDeptSearch(e.target.value)}
+                        placeholder={isAmharic ? 'ክፍል በስም ፈልግ...' : 'Filter department...'}
+                        className="w-full pl-8 pr-3 py-1.5 bg-[#061816] border border-emerald-900/80 rounded-xl text-xs text-white placeholder-emerald-400/40 focus:outline-none focus:border-amber-400/80"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto rounded-2xl border border-emerald-800/80 bg-[#061816] shadow-xl">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="bg-[#0b2824] border-b border-emerald-800 text-emerald-300 uppercase font-semibold text-[11px] tracking-wider">
+                          <th className="py-3 px-3 w-10 text-center text-amber-400">#</th>
+                          <th className="py-3 px-4 min-w-[200px]">{isAmharic ? 'የክፍል ስም' : 'Department Name'}</th>
+                          <th className="py-3 px-3 text-center">{isAmharic ? 'ጠቅላላ እቅድ' : 'Tasks'}</th>
+                          <th className="py-3 px-3 text-center text-emerald-400">{isAmharic ? 'ተጠናቋል' : 'Done'}</th>
+                          <th className="py-3 px-3 text-center text-blue-400">{isAmharic ? 'በሂደት' : 'Active'}</th>
+                          <th className="py-3 px-3 text-center text-amber-400">{isAmharic ? 'የታቀደ' : 'Pending'}</th>
+                          <th className="py-3 px-4 min-w-[180px]">{isAmharic ? 'የአፈጻጸም መጠን' : 'Progress'}</th>
+                          <th className="py-3 px-3 text-center">{isAmharic ? 'የኦዲት ምርመራ' : 'Action'}</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-emerald-900/60">
+                        {departmentsProgress
+                          .filter(dp => !auditDeptSearch.trim() || dp.dept.nameAm.toLowerCase().includes(auditDeptSearch.toLowerCase()) || dp.dept.nameEn.toLowerCase().includes(auditDeptSearch.toLowerCase()))
+                          .map((dp, idx) => (
+                            <tr 
+                              key={dp.dept.id}
+                              className={`transition-colors hover:bg-emerald-900/30 ${
+                                idx % 2 === 0 ? 'bg-[#061816]' : 'bg-[#08201d]'
+                              } ${auditedDeptId === dp.dept.id ? 'ring-2 ring-amber-500/80 bg-amber-950/20' : ''}`}
+                            >
+                              <td className="py-3 px-3 text-center text-emerald-400/80 font-mono text-[11px]">{idx + 1}</td>
+                              
+                              <td className="py-3 px-4">
+                                <div className="font-bold text-slate-100 flex items-center gap-2">
+                                  <span>{dp.dept.nameAm}</span>
+                                </div>
+                                <div className="text-[10px] text-emerald-400/60 font-mono">{dp.dept.nameEn}</div>
+                              </td>
+
+                              <td className="py-3 px-3 text-center font-bold text-white text-xs">{dp.total}</td>
+
+                              <td className="py-3 px-3 text-center">
+                                <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold text-[11px]">
+                                  {dp.completed}
+                                </span>
+                              </td>
+
+                              <td className="py-3 px-3 text-center">
+                                <span className="px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800 font-bold text-[11px]">
+                                  {dp.inProgress}
+                                </span>
+                              </td>
+
+                              <td className="py-3 px-3 text-center">
+                                <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800 font-bold text-[11px]">
+                                  {dp.planned}
+                                </span>
+                              </td>
+
+                              <td className="py-3 px-4">
+                                <div className="flex items-center gap-2">
+                                  <div className="flex-1 h-2.5 bg-[#041211] rounded-full overflow-hidden border border-emerald-900">
+                                    <div 
+                                      className={`h-full rounded-full transition-all duration-300 ${
+                                        dp.pct >= 75 ? 'bg-emerald-400' : dp.pct >= 40 ? 'bg-amber-400' : 'bg-blue-400'
+                                      }`}
+                                      style={{ width: `${dp.pct}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-[11px] font-black text-amber-300 w-9 text-right font-mono">
+                                    {dp.pct}%
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td className="py-3 px-3 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => setAuditedDeptId(dp.dept.id)}
+                                  className="px-2.5 py-1 rounded-lg bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 border border-emerald-700 text-[11px] font-semibold transition-all cursor-pointer shadow hover:scale-105 inline-flex items-center gap-1"
+                                >
+                                  <span>{isAmharic ? 'መርምር' : 'Inspect'}</span>
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* SUB-TAB 1: PAGE CONTENT & PROFILE FORM */}
             {deptSubTab === 'content' && (
