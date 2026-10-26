@@ -501,7 +501,7 @@ export const MediaGallery: React.FC = () => {
   }, [galleryFilter, sortOrder]);
 
   return (
-    <section id="media" className="py-24 bg-[#061514] relative overflow-hidden">
+    <section id="media" className="py-14 sm:py-16 bg-[#061514] relative overflow-hidden">
       {/* Background Ornaments */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -509,16 +509,16 @@ export const MediaGallery: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">
-            <EthiopianCross size={14} variant="simple" />
+        <div className="text-center max-w-3xl mx-auto mb-7">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-2.5">
+            <EthiopianCross size={13} variant="simple" />
             <span>{isAmharic ? "መረጃዎችና ጋለሪ በአንድ ላይ" : "Chronological Media & Gallery"}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2.5">
             {t.navMedia}
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto rounded-full mb-4" />
-          <p className="text-emerald-200/80 text-base sm:text-lg leading-relaxed">
+          <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto rounded-full mb-2.5" />
+          <p className="text-emerald-200/80 text-xs sm:text-sm leading-relaxed max-w-2xl mx-auto">
             {isAmharic 
               ? "የሰንበት ትምህርት ቤታችን ዓመታዊ ሁነቶች፣ ዜናዎችና ምስሎች ከመስከረም እስከ ነሐሴ በወርኃዊ የቀን ቅደም ተከተል ተዘጋጅተው በአንድ ማዕከል ቀርበዋል" 
               : "Parish annual moments, events, and news unified chronologically in one comprehensive timeline"}
@@ -526,7 +526,7 @@ export const MediaGallery: React.FC = () => {
         </div>
 
         {/* CONTROLS BAR: Chronological Sorting, Documents Toggle & Summary */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-[#09201e]/90 border border-amber-500/30 mb-8 shadow-lg">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:p-3.5 rounded-2xl bg-[#09201e]/90 border border-amber-500/30 mb-5 shadow-lg">
           {/* Left: Chronological Order Switcher */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
@@ -633,7 +633,7 @@ export const MediaGallery: React.FC = () => {
         )}
 
         {/* Category Filter Chips */}
-        <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl mx-auto mb-10">
+        <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl mx-auto mb-6">
           {[
             { key: 'all', labelAm: 'ሁሉም በቅደም ተከተል (17)', labelEn: 'All in Order (17)' },
             { key: 'pilgrimage', labelAm: 'የነግሥ ጉዞ (2)', labelEn: 'Pilgrimages (2)' },
@@ -647,7 +647,7 @@ export const MediaGallery: React.FC = () => {
             <button
               key={f.key}
               onClick={() => setGalleryFilter(f.key as any)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                 galleryFilter === f.key
                   ? 'bg-amber-500 text-slate-950 shadow-md font-bold'
                   : 'bg-[#09201e] border border-emerald-800/80 text-emerald-200/80 hover:text-white hover:border-amber-400/50'
@@ -658,17 +658,17 @@ export const MediaGallery: React.FC = () => {
           ))}
         </div>
 
-        {/* UNIFIED CHRONOLOGICAL GALLERY & NEWS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+        {/* UNIFIED CHRONOLOGICAL GALLERY & NEWS GRID (Compact Cards) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 text-left">
           {processedGallery.map((item) => (
             <div
               key={item.id}
               onClick={() => setSelectedItem(item)}
-              className="group relative rounded-3xl overflow-hidden border-2 border-amber-500/30 hover:border-amber-400 shadow-xl bg-[#09201e] transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col justify-between"
+              className="group relative rounded-2xl overflow-hidden border border-amber-500/30 hover:border-amber-400 shadow-lg bg-[#09201e] transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
             >
               <div>
-                {/* Image Thumbnail with Overlay */}
-                <div className="h-64 sm:h-72 overflow-hidden relative bg-[#041211]">
+                {/* Image Thumbnail with Overlay (Shortened height) */}
+                <div className="h-44 sm:h-48 overflow-hidden relative bg-[#041211]">
                   <img
                     src={item.image}
                     alt={isAmharic ? item.titleAm : item.titleEn}
@@ -677,52 +677,52 @@ export const MediaGallery: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#061514] via-[#061514]/20 to-transparent pointer-events-none" />
 
                   {/* CHRONOLOGICAL SEQUENCE BADGE (Top Left) */}
-                  <span className="absolute top-3 left-3 text-[11px] font-black px-2.5 py-1 rounded-full bg-[#040e0d]/95 backdrop-blur-md text-amber-300 border-2 border-amber-400 shadow-lg flex items-center gap-1.5">
-                    <Calendar size={11} className="text-amber-400" />
+                  <span className="absolute top-2.5 left-2.5 text-[10px] font-black px-2 py-0.5 rounded-full bg-[#040e0d]/95 backdrop-blur-md text-amber-300 border border-amber-400 shadow flex items-center gap-1">
+                    <Calendar size={10} className="text-amber-400" />
                     <span>{isAmharic ? item.chronologicalBadgeAm : item.chronologicalBadgeEn}</span>
                   </span>
 
                   {/* Category Badge (Top Right) */}
-                  <span className="absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500 text-slate-950 shadow">
+                  <span className="absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 shadow">
                     {isAmharic ? item.categoryAm : item.categoryEn}
                   </span>
 
                   {/* Hover Zoom Prompt */}
-                  <div className="absolute bottom-3 right-3 p-2 rounded-xl bg-black/80 text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-xs font-medium backdrop-blur-sm">
-                    <ZoomIn size={14} />
-                    <span>{isAmharic ? "ዝርዝሩን እይ" : "View Details"}</span>
+                  <div className="absolute bottom-2.5 right-2.5 p-1.5 rounded-lg bg-black/80 text-amber-300 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-[11px] font-medium backdrop-blur-sm">
+                    <ZoomIn size={13} />
+                    <span>{isAmharic ? "ዝርዝሩን እይ" : "View"}</span>
                   </div>
                 </div>
 
-                {/* Card Content & Purpose Highlight */}
-                <div className="p-5 space-y-3">
+                {/* Card Content & Purpose Highlight (Compact) */}
+                <div className="p-3.5 sm:p-4 space-y-2">
                   {/* Title */}
-                  <h3 className="text-base font-bold text-white leading-snug group-hover:text-amber-300 transition-colors">
+                  <h3 className="text-xs sm:text-sm font-bold text-white leading-snug line-clamp-2 group-hover:text-amber-300 transition-colors">
                     {isAmharic ? item.titleAm : item.titleEn}
                   </h3>
 
-                  {/* Story / Mission Box */}
-                  <div className="p-3 rounded-2xl bg-[#051614] border border-amber-500/20 text-xs text-emerald-100/90 space-y-1">
-                    <div className="font-bold text-amber-400 text-[11px] flex items-center gap-1.5">
-                      <Target size={12} className="text-amber-400 shrink-0" />
-                      <span>{isAmharic ? "የመረጃውና የፎቶው ዋና ዓላማ፦" : "Core Mission:"}</span>
+                  {/* Story / Mission Box (Compact) */}
+                  <div className="p-2 sm:p-2.5 rounded-xl bg-[#051614] border border-amber-500/15 text-[11px] text-emerald-100/90 space-y-0.5">
+                    <div className="font-bold text-amber-400 text-[10px] flex items-center gap-1">
+                      <Target size={11} className="text-amber-400 shrink-0" />
+                      <span>{isAmharic ? "ዋና ዓላማ፦" : "Core Mission:"}</span>
                     </div>
-                    <p className="line-clamp-2 text-emerald-200/90 leading-relaxed text-xs">
+                    <p className="line-clamp-2 text-emerald-200/90 leading-snug text-[11px]">
                       {isAmharic ? item.purposeDescAm : item.purposeDescEn}
                     </p>
                   </div>
 
                   {/* Schedule & Location */}
-                  <div className="space-y-1.5 text-xs text-emerald-300/80 pt-1">
+                  <div className="space-y-1 text-[11px] text-emerald-300/80 pt-0.5">
                     {item.datesAm && (
                       <div className="flex items-center gap-1.5 truncate">
-                        <Calendar size={13} className="text-amber-400 shrink-0" />
+                        <Calendar size={12} className="text-amber-400 shrink-0" />
                         <span className="truncate">{isAmharic ? item.datesAm : item.datesEn}</span>
                       </div>
                     )}
                     {item.locationAm && (
                       <div className="flex items-center gap-1.5 truncate">
-                        <MapPin size={13} className="text-amber-400 shrink-0" />
+                        <MapPin size={12} className="text-amber-400 shrink-0" />
                         <span className="truncate">{isAmharic ? item.locationAm : item.locationEn}</span>
                       </div>
                     )}
@@ -731,13 +731,13 @@ export const MediaGallery: React.FC = () => {
               </div>
 
               {/* Card Bottom CTA */}
-              <div className="px-5 pb-5 pt-0">
+              <div className="px-3.5 sm:px-4 pb-3.5 sm:pb-4 pt-0">
                 <button
                   type="button"
-                  className="w-full py-2.5 rounded-xl bg-[#0e332f] hover:bg-[#12423d] text-amber-300 hover:text-white border border-amber-500/30 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow group-hover:border-amber-400"
+                  className="w-full py-2 rounded-xl bg-[#0e332f] hover:bg-[#12423d] text-amber-300 hover:text-white border border-amber-500/30 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow group-hover:border-amber-400"
                 >
                   <span>{isAmharic ? "ሙሉውን መረጃና ምስል እይ" : "View Story & Image"}</span>
-                  <ArrowUpRight size={14} />
+                  <ArrowUpRight size={13} />
                 </button>
               </div>
             </div>
