@@ -72,7 +72,7 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
   const [mainTab, setMainTab] = useState<'departments' | 'calendar' | 'mezmur' | 'registrations' | 'feedback' | 'announcements' | 'mediaCMS' | 'studentCard'>(
     isStudent ? 'studentCard' : 'departments'
   );
-  const [deptSubTab, setDeptSubTab] = useState<'content' | 'tasks' | 'students' | 'preview' | 'mediaCMS' | 'deptProgress'>(
+  const [deptSubTab, setDeptSubTab] = useState<'content' | 'tasks' | 'students' | 'preview' | 'mediaCMS' | 'deptProgress' | 'mezmur'>(
     startingDeptId === 'audit' ? 'deptProgress' : 'content'
   );
   const [auditedDeptId, setAuditedDeptId] = useState<string | null>(null);
@@ -209,7 +209,11 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
     setAuditedDeptId(null);
     if (deptId === 'audit') {
       setDeptSubTab('deptProgress');
-    } else if (deptSubTab === 'deptProgress' || (deptSubTab === 'students' && deptId !== 'education')) {
+    } else if (
+      deptSubTab === 'deptProgress' || 
+      (deptSubTab === 'students' && deptId !== 'education') ||
+      (deptSubTab === 'mezmur' && deptId !== 'choir')
+    ) {
       setDeptSubTab('tasks');
     }
     const targetObj = departmentsData.find(d => d.id === deptId) || departmentsData[0];
@@ -638,6 +642,28 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               <div className="shrink-0 flex flex-wrap items-center gap-2">
                 
 
+                {selectedDeptId === 'choir' && (
+                  <button
+                    type="button"
+                    onClick={() => setDeptSubTab('mezmur')}
+                    className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all cursor-pointer ring-1 ring-amber-400/50"
+                  >
+                    <Music size={13} className="text-amber-200" />
+                    <span>{isAmharic ? '🎵 መንፈሳዊ መዝሙራትና ዝማሬ' : 'Mezmur & Hymns'}</span>
+                  </button>
+                )}
+
+                {selectedDeptId === 'education' && (
+                  <button
+                    type="button"
+                    onClick={() => setDeptSubTab('students')}
+                    className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-700 hover:from-blue-500 hover:to-emerald-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all cursor-pointer ring-1 ring-blue-400/50"
+                  >
+                    <UserCheck size={13} className="text-amber-300" />
+                    <span>{isAmharic ? `📋 የተማሪዎች ምዝገባ (${deptRegistrations.length})` : `Registrations (${deptRegistrations.length})`}</span>
+                  </button>
+                )}
+
                 {selectedDeptId === 'media' && (
                   <button
                     type="button"
@@ -730,6 +756,7 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                 { id: 'content', labelAm: '📝 የገጽ ይዘትና መገለጫ', labelEn: 'Page Profile & Content', icon: Edit3 },
                 { id: 'tasks', labelAm: `📋 የሥራ ዕቅድና ተግባራት (${completedTasksCount}/${totalTasksCount})`, labelEn: 'Tasks & Mandates', icon: ListTodo },
                 ...(selectedDeptId === 'education' ? [{ id: 'students', labelAm: `👥 ተመዝጋቢዎች (${deptRegistrations.length})`, labelEn: 'Registrations', icon: UserCheck }] : []),
+                ...(selectedDeptId === 'choir' ? [{ id: 'mezmur', labelAm: '🎵 መንፈሳዊ መዝሙራትና ዝማሬ', labelEn: 'Sacred Mezmur & Hymns', icon: Music }] : []),
                 { id: 'preview', labelAm: '👁️ የቀጥታ ገጽ እይታ', labelEn: 'Live Preview', icon: Eye },
                 ...(selectedDeptId === 'media' ? [{ id: 'mediaCMS', labelAm: '🎨 የፊት ገጽ ማበጃ (CMS)', labelEn: 'Front-End CMS', icon: Sparkles }] : [])
               ]).map((sub) => {
@@ -1669,6 +1696,34 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                       </div>
                     ))}
                   </div>
+                </div>
+              </div>
+            )}
+
+                        {/* SUB-TAB: MEZMUR & SACRED HYMNS (FOR CHOIR DEPARTMENT ONLY) */}
+            {deptSubTab === 'mezmur' && selectedDeptId === 'choir' && (
+              <div className="space-y-4 animate-in fade-in duration-200 text-left">
+                <div className="p-5 rounded-3xl bg-gradient-to-r from-[#0a2723] via-[#0d332e] to-[#0a2723] border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xl">
+                  <div className="flex items-center gap-3.5">
+                    <div className="p-3.5 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/40 shrink-0 shadow">
+                      <Music size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <span>{isAmharic ? "የመዝሙር ክፍል መንፈሳዊ መዝሙራትና ዝማሬ ማዕከል" : "Choir Spiritual Mezmur & Hymns Hub"}</span>
+                        <Sparkles size={16} className="text-amber-400" />
+                      </h3>
+                      <p className="text-xs text-emerald-200/80 mt-0.5">
+                        {isAmharic 
+                          ? "የፍኖተ ትጉሃን ሰንበት ትምህርት ቤት የመዝሙር ክፍል የዝማሬዎች ማጫወቻ፣ ግጥሞችና የዜማ ስብስቦች ማስተዳደሪያ" 
+                          : "Sacred Orthodox chants, audio hymns, lyrics, and choir selections managed by the Choir Department"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl overflow-hidden border border-emerald-900/60 shadow-2xl bg-[#081716]">
+                  <MezmurPlayer />
                 </div>
               </div>
             )}
