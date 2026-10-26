@@ -309,6 +309,30 @@ const buildInitialTasks = (): Record<string, DepartmentTaskItem[]> => {
   return result;
 };
 
+function sanitizeDeptSettings(
+  raw: Record<string, DepartmentSettings>,
+  defaults: Record<string, DepartmentSettings>
+): Record<string, DepartmentSettings> {
+  const result: Record<string, DepartmentSettings> = { ...defaults };
+  const corruptedRegex = /[?]{2,}/;
+  for (const [deptId, settings] of Object.entries(raw)) {
+    if (!result[deptId]) {
+      result[deptId] = settings;
+      continue;
+    }
+    const def = defaults[deptId] || {};
+    const sanitized = { ...settings };
+    (Object.keys(sanitized) as (keyof DepartmentSettings)[]).forEach((key) => {
+      const val = sanitized[key];
+      if (typeof val === 'string' && (corruptedRegex.test(val) || val.includes('◈'))) {
+        (sanitized as any)[key] = (def as any)[key] || '';
+      }
+    });
+    result[deptId] = sanitized;
+  }
+  return result;
+}
+
 const CustomizationContext = createContext<CustomizationContextType | undefined>(undefined);
 
 export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -344,7 +368,9 @@ export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        return { ...initialDeptSettings, ...parsed };
+        const sanitized = sanitizeDeptSettings(parsed, initialDeptSettings);
+        localStorage.setItem('ft_dept_settings', JSON.stringify(sanitized));
+        return sanitized;
       } catch (e) {
         return initialDeptSettings;
       }
@@ -550,8 +576,11 @@ export const CustomizationProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const depts = await api.getDepartments();
       if (depts && Object.keys(depts).length > 0) {
-        setDepartmentSettingsState((prev) => ({ ...prev, ...depts }));
-        localStorage.setItem('ft_dept_settings', JSON.stringify({ ...departmentSettings, ...depts }));
+        setDepartmentSettingsState((prev) => {
+          const sanitized = sanitizeDeptSettings({ ...prev, ...depts }, initialDeptSettings);
+          localStorage.setItem('ft_dept_settings', JSON.stringify(sanitized));
+          return sanitized;
+        });
       }
       const ann = await api.getAnnouncement();
       if (ann && ann.textAm) {
