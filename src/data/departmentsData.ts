@@ -159,10 +159,86 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "dev-1", titleAm: "ለቀጣዩ የንግሥ በዓል የመንፈሳዊ አልባሳትና መጻሕፍት ምርት ማጠናቀቅ", status: "completed", subUnitAm: "የምርት ንዑስ ክፍል", articleRef: "ምዕራፍ 5" },
-      { id: "dev-2", titleAm: "የዝቋላና የደብረ ሊባኖስ ዓመታዊ መንፈሳዊ ጉዞ መርሐግብር ማስተባበር", status: "in_progress", subUnitAm: "የጉዞና አስጎብኚ ንዑስ ክፍል", articleRef: "ምዕራፍ 5" },
-      { id: "dev-3", titleAm: "የሽያጭ ሱቆች ዲጂታል የክፍያና የዕቃ መመዝገቢያ ሥርዓት መዘርጋት", status: "in_progress", subUnitAm: "የሽያጭና ገበያ ክፍል", articleRef: "ምዕራፍ 5" },
-      { id: "dev-4", titleAm: "አዲስ ዘላቂ የገቢ ማስገኛ ፕሮጀክት ጥናት ማጠናቀቅ", status: "planned", subUnitAm: "የግዢና ሒሳብ ክፍል", articleRef: "ምዕራፍ 5" }
+      {
+        id: "dev-1",
+        titleAm: "የልማት መደብሮችንና ሱቆችን ማደራጀትና ማስተካከል",
+        metric: "በቁጥር",
+        target: "2 ሱቆች",
+        monthTiming: "መስከረም - ጥቅምት",
+        budget: "20,000 ብር",
+        subUnitAm: "ሱቅ አስተዳደር",
+        status: "completed"
+      },
+      {
+        id: "dev-2",
+        titleAm: "የልማት እቃዎችን በጅምላ መግዛትና ማቅረብ",
+        metric: "ዙር",
+        target: "12 ዙር",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "500,000 ብር",
+        subUnitAm: "የግዥ ክፍል",
+        status: "in_progress"
+      },
+      {
+        id: "dev-3",
+        titleAm: "የልማት እቃዎች የዕለት ሽያጭ ማከናወንና የሽያጭ ሶፍትዌር መዘርጋት",
+        metric: "ሽያጭ",
+        target: "ዕለታዊ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "ገቢ 1,200,000",
+        subUnitAm: "የሽያጭ ሰራተኞች",
+        status: "in_progress"
+      },
+      {
+        id: "dev-4",
+        titleAm: "የጋርመንት ማሽነሪዎችን መጠገንና ማሟላት",
+        metric: "በቁጥር",
+        target: "5 ማሽኖች",
+        monthTiming: "መስከረም",
+        budget: "15,000 ብር",
+        subUnitAm: "ቴክኒክ ቡድን",
+        status: "completed"
+      },
+      {
+        id: "dev-5",
+        titleAm: "የሰንበት ት/ቤት ዩኒፎርም፣ ካባና አልባሳት በጋርመንቱ መስፋት",
+        metric: "በቁጥር",
+        target: "600 አልባሳት",
+        monthTiming: "መስከረም - ሰኔ",
+        budget: "ወጪ 180,000",
+        subUnitAm: "ጋርመንት",
+        status: "in_progress"
+      },
+      {
+        id: "dev-6",
+        titleAm: "የጋርመንት ምርቶችን ለውጭ ደንበኞች መሸጥ",
+        metric: "ሽያጭ",
+        target: "ተከታታይ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "ገቢ 450,000",
+        subUnitAm: "ግብይት",
+        status: "in_progress"
+      },
+      {
+        id: "dev-7",
+        titleAm: "የመንፈሳዊ ጉዞዎች የትኬት ሽያጭ ማከናወን",
+        metric: "ጉዞ",
+        target: "3 ጉዞዎች",
+        monthTiming: "ህዳር፣ ጥር፣ መጋቢት",
+        budget: "ገቢ 600,000",
+        subUnitAm: "የጉዞ ንዑስ ክፍል",
+        status: "in_progress"
+      },
+      {
+        id: "dev-8",
+        titleAm: "የወርሃዊና የሩብ ዓመት የፋይናንስ ሪፖርት ማቅረብ",
+        metric: "ሪፖርት",
+        target: "12 ሪፖርት",
+        monthTiming: "ወርሃዊ",
+        budget: "-",
+        subUnitAm: "ሒሳብ ሹም",
+        status: "in_progress"
+      }
     ]
   },
   {
@@ -216,10 +292,206 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "edu-1", titleAm: "የ2026/2027 ዓ.ም አዲስ ተማሪዎች ሥርዓተ ትምህርትና ሞጁል ማከፋፈል", status: "completed", subUnitAm: "የሥርዓተ ትምህርት ንዑስ ክፍል", articleRef: "አንቀጽ 2.1" },
-      { id: "edu-2", titleAm: "ለሰንበት ት/ቤት መምህራን የስነ-ዘዴና የዶግማ ስልጠና ማካሄድ", status: "in_progress", subUnitAm: "የመምህራን ንዑስ ክፍል", articleRef: "አንቀጽ 2.3" },
-      { id: "edu-3", titleAm: "የሩብ ዓመት የተማሪዎች የፈተና ጥያቄዎች ዝግጅትና ምዘና ማካሄድ", status: "planned", subUnitAm: "የመርሐግብራት ክትትል ንዑስ ክፍል", articleRef: "አንቀጽ 2.4" },
-      { id: "edu-4", titleAm: "የአስተማሪዎችና ተማሪዎች መንፈሳዊ ሲምፖዚየም ማዘጋጀት", status: "planned", subUnitAm: "የስልጠና ንዑስ ክፍል", articleRef: "አንቀጽ 2.5" }
+      {
+        id: "edu-1",
+        titleAm: "የተዘጋጀውን ስርዓተ ትምህርት ማስገምገም እና ማጸደቅ",
+        metric: "በቁጥር",
+        target: "1",
+        monthTiming: "መስከረም - ጥቅምት",
+        budget: "-",
+        subUnitAm: "ስርዓተ ትምህርት",
+        status: "completed"
+      },
+      {
+        id: "edu-2",
+        titleAm: "ለስርዓተ ትምህርት አስፈላጊ የሆኑ የማስተማሪያ ጥራዞች ማዘጋጀት እና ማሳተም",
+        metric: "በቁጥር",
+        target: "ጥራዞች",
+        monthTiming: "ህዳር",
+        budget: "በጥናት",
+        subUnitAm: "የህትመት ቡድን",
+        status: "planned"
+      },
+      {
+        id: "edu-3",
+        titleAm: "የስርዓተ ትምህርት ትግበራ እቅድ መሠረት ክፍል ድልድል ማድረግ",
+        metric: "በቁጥር",
+        target: "ክፍላት",
+        monthTiming: "ህዳር",
+        budget: "-",
+        subUnitAm: "አስተዳደር",
+        status: "completed"
+      },
+      {
+        id: "edu-4",
+        titleAm: "ከመምህራን ጋር በመማር ማስተማር ዙሪያ ውይይት ማድረግ",
+        metric: "በቁጥር",
+        target: "ተከታታይ",
+        monthTiming: "ህዳር",
+        budget: "-",
+        subUnitAm: "መምህራን አስተባባሪ",
+        status: "completed"
+      },
+      {
+        id: "edu-5",
+        titleAm: "የትምህርት መርሐ ግብር መከታተያ እና መገምገሚያ ቅጾችን ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "ቅጾች",
+        monthTiming: "ህዳር",
+        budget: "-",
+        subUnitAm: "ክትትልና ግምገማ",
+        status: "completed"
+      },
+      {
+        id: "edu-6",
+        titleAm: "በየምድቦቹ ላይ ተጠሪ የሚሆኑ የክፍል አባላትን መመደብ",
+        metric: "በቁጥር",
+        target: "ተጠሪዎች",
+        monthTiming: "ህዳር",
+        budget: "-",
+        subUnitAm: "የምድባት አመራር",
+        status: "completed"
+      },
+      {
+        id: "edu-7",
+        titleAm: "በየምድቦቹ ላይ መምህራንን መድቦ ትምህርት መስጠት",
+        metric: "በቁጥር",
+        target: "ሳምንታዊ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "መምህራን",
+        status: "in_progress"
+      },
+      {
+        id: "edu-8",
+        titleAm: "የየምድቦቹን የጋራ የጸሎት መርሐ ግብር ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "ወርሃዊ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "መንፈሳዊ ዘርፍ",
+        status: "in_progress"
+      },
+      {
+        id: "edu-9",
+        titleAm: "ከክፍል ወደ ክፍል ለሚሸጋገሩ ተማሪዎች የምረቃ መርሐ ግብር ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "1 ዝግጅት",
+        monthTiming: "ሰኔ",
+        budget: "በጥናት",
+        subUnitAm: "የምርቃት ኮሚቴ",
+        status: "planned"
+      },
+      {
+        id: "edu-10",
+        titleAm: "ከክፍላት ጋር በመነጋገር የስልጠና ፍላጎት ዳሰሳ መስራት",
+        metric: "በቁጥር",
+        target: "6 ክፍላት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "15,000 ብር",
+        subUnitAm: "ስልጠና ክፍል",
+        status: "in_progress"
+      },
+      {
+        id: "edu-11",
+        titleAm: "ለሰንበት ትምህርት ቤት አባላት ልዩ ልዩ ስልጠናዎችን መስጠት",
+        metric: "በቁጥር",
+        target: "4 ዙር",
+        monthTiming: "ህዳር፣ የካቲት፣ ግንቦት",
+        budget: "10,000 ብር",
+        subUnitAm: "ስልጠና ቡድን",
+        status: "planned"
+      },
+      {
+        id: "edu-12",
+        titleAm: "የመርሐ ግብር መሪ ስልጠና መስጠት",
+        metric: "በቁጥር",
+        target: "2 ዙር",
+        monthTiming: "ታህሳስ፣ ግንቦት",
+        budget: "-",
+        subUnitAm: "ስልጠና ቡድን",
+        status: "planned"
+      },
+      {
+        id: "edu-13",
+        titleAm: "ለሀዘን መርሐ ግብር መምህር መድቦ ማስተማር",
+        metric: "በቁጥር",
+        target: "20 መርሐ ግብር",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "30,000 ብር",
+        subUnitAm: "ማህበራዊ ትምህርት",
+        status: "in_progress"
+      },
+      {
+        id: "edu-14",
+        titleAm: "የሚቀጠሩ መምህራንን መለየትና በቋሚነት መቅጠር",
+        metric: "በቁጥር",
+        target: "2 መምህራን",
+        monthTiming: "ታህሳስ",
+        budget: "በጥናት",
+        subUnitAm: "አመራር",
+        status: "planned"
+      },
+      {
+        id: "edu-15",
+        titleAm: "የአርብ የጸሎት መርሐ ግብር ላይ መምህር መድቦ ማስተማር",
+        metric: "በቁጥር",
+        target: "208 ክፍለ ጊዜ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "78,000 ብር",
+        subUnitAm: "የጸሎት ዘርፍ",
+        status: "in_progress"
+      },
+      {
+        id: "edu-16",
+        titleAm: "የሕማማት ሳምንታዊ የጸሎት መርሐ ግብር ላይ መምህር መድቦ ማስተማር",
+        metric: "በቁጥር",
+        target: "4 መርሐ ግብር",
+        monthTiming: "መጋቢት",
+        budget: "3,000 ብር",
+        subUnitAm: "የጸሎት ዘርፍ",
+        status: "planned"
+      },
+      {
+        id: "edu-17",
+        titleAm: "ምክረ አበው መርሐ ግብር ማዘጋጀት እና መምህር መድቦ ማስተማር",
+        metric: "በቁጥር",
+        target: "2 ዝግጅቶች",
+        monthTiming: "በዓመቱ ውስጥ",
+        budget: "15,000 ብር",
+        subUnitAm: "የትምህርት ክፍል",
+        status: "planned"
+      },
+      {
+        id: "edu-18",
+        titleAm: "ለተተኪ መምህራን ስልጠናዎችን መስጠት",
+        metric: "በቁጥር",
+        target: "16 ክፍለ ጊዜ",
+        monthTiming: "ህዳር - የካቲት",
+        budget: "24,000 ብር",
+        subUnitAm: "ተተኪ አሰልጣኝ",
+        status: "planned"
+      },
+      {
+        id: "edu-19",
+        titleAm: "ለነባር መምህራን አቅም ማጎልበቻ ስልጠናዎች መስጠት",
+        metric: "በቁጥር",
+        target: "2 ዙር",
+        monthTiming: "ታህሳስ፣ ሚያዝያ",
+        budget: "5,000 ብር",
+        subUnitAm: "የአቅም ግንባታ",
+        status: "planned"
+      },
+      {
+        id: "edu-20",
+        titleAm: "የመምህራን ጉባኤ በማዘጋጀት እና ልምድ ልውውጥ እንዲያረጉ ማድረግ",
+        metric: "በቁጥር",
+        target: "2 ጉባኤ",
+        monthTiming: "ህዳር፣ የካቲት",
+        budget: "2,000 ብር",
+        subUnitAm: "አመራር",
+        status: "planned"
+      }
     ]
   },
   {
@@ -273,10 +545,176 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "apo-1", titleAm: "ሳምንታዊ የወጣቶችና ምዕመናን የወንጌል ጉባኤ ማስተባበር", status: "completed", subUnitAm: "የአጥቢያ ጉባኤያት ንዑስ ክፍል", articleRef: "አንቀጽ 3.1" },
-      { id: "apo-2", titleAm: "የእቅበተ እምነት (የኦርቶዶክስ ተዋሕዶ እምነት ጥበቃ) ጥናታዊ አውደ ጥናት ማካሄድ", status: "in_progress", subUnitAm: "የእቅበተ እምነት ንዑስ ክፍል", articleRef: "አንቀጽ 3.2" },
-      { id: "apo-3", titleAm: "ወደ ገጠር አድባራት የሚደረግ የስብከተ ወንጌል ሚሲዮን ጉዞ ማዘጋጀት", status: "planned", subUnitAm: "የስብከተ ወንጌል ማስፋፊያ", articleRef: "አንቀጽ 3.3" },
-      { id: "apo-4", titleAm: "የስብከተ ወንጌል በራሪ ጽሑፎችን አዘጋጅቶ ማሰራጨት", status: "planned", subUnitAm: "የስብከተ ወንጌል ማስፋፊያ", articleRef: "አንቀጽ 3.5" }
+      {
+        id: "apo-1",
+        titleAm: "የሠራተኞች ጉባኤ አባላትን መዝገብ ማደስ እና ክትትል ማድረግ",
+        metric: "በቁጥር",
+        target: "12 ወራት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "የሰራተኞች ጉባኤ",
+        status: "in_progress"
+      },
+      {
+        id: "apo-2",
+        titleAm: "በጉባኤው ላይ ህይወታዊ ትምህርቶችን የሚሰጡ መምህራንን መመደብ",
+        metric: "በቁጥር",
+        target: "36 መምህራን",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "36,000 ብር",
+        subUnitAm: "የትምህርት ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "apo-3",
+        titleAm: "ልዩ ጉባኤያትን ማድረግና ምክረ አበው ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "2 ጉባኤያት",
+        monthTiming: "ህዳር፣ ሚያዝያ",
+        budget: "6,000 ብር",
+        subUnitAm: "የጉባኤ አስተባባሪ",
+        status: "planned"
+      },
+      {
+        id: "apo-4",
+        titleAm: "የዓውደ ምህረት ጉባኤ መርሐግብር ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "1 ታላቅ ጉባኤ",
+        monthTiming: "መጋቢት",
+        budget: "50,000 ብር",
+        subUnitAm: "አውደ ምህረት",
+        status: "planned"
+      },
+      {
+        id: "apo-5",
+        titleAm: "የቅድመ ጋብቻ እና ድህረ ጋብቻ ስልጠና ማስታወቅ፣ መመዝገብና ማሰጠት",
+        metric: "በቁጥር",
+        target: "ተከታታይ",
+        monthTiming: "ህዳር፣ ግንቦት",
+        budget: "16,000 ብር",
+        subUnitAm: "የጋብቻ ትምህርት",
+        status: "planned"
+      },
+      {
+        id: "apo-6",
+        titleAm: "በደቡብ ኦሞ እና አሪ ዞን የወንጌል ማስፋፊያ ፕሮጀክት ውጤታማነት ጥናት ማካሔድ",
+        metric: "በቁጥር",
+        target: "1 አጠቃላይ ጥናት",
+        monthTiming: "መስከረም - ሚያዝያ",
+        budget: "149,300 ብር",
+        subUnitAm: "የስብከተ ወንጌል ፕሮጀክት",
+        status: "in_progress"
+      },
+      {
+        id: "apo-7",
+        titleAm: "የደቡብ ኦሞ እና አሪ ዞን ፕሮጀክት ቀጣይ አካሔድ እና ገቢ ማሰባሰቢያ ንድፈ ሐሳብ ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "1 ንድፈ ሐሳብ",
+        monthTiming: "መስከረም - ሚያዝያ",
+        budget: "-",
+        subUnitAm: "የፕሮጀክት ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "apo-8",
+        titleAm: "በዚህ ፕሮጀክት የሰለጠኑ ሰልጣኞችን መረጃ ማሰባሰብ እና በስልክ መደወል",
+        metric: "በዙር",
+        target: "9 ዙር",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "1,000 ብር",
+        subUnitAm: "ክትትል ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "apo-9",
+        titleAm: "የፕሮጀክት ነባር ሰልጣኞች የጋራ መሰባሰቢያና አፈጻጸም ግምገማ በማዕከል ማካሔድ",
+        metric: "በቁጥር",
+        target: "1 ጉባኤ",
+        monthTiming: "መጋቢት",
+        budget: "ከማህበረ ቅዱሳን ጋር",
+        subUnitAm: "አጋርነት",
+        status: "planned"
+      },
+      {
+        id: "apo-10",
+        titleAm: "በራሳቸው ተነሳሽነት ለሚመጡ አዳዲስ ተጠማቅያን ከትምህርት እስከ ቤተ ክርስቲያን ልጅነት ማግኘት ያለውን ሲስተም መዘርጋት",
+        metric: "በቁጥር",
+        target: "1 ሲስተም",
+        monthTiming: "መስከረም - ጥቅምት",
+        budget: "-",
+        subUnitAm: "አዳዲስ አማንያን",
+        status: "completed"
+      },
+      {
+        id: "apo-11",
+        titleAm: "በዓመት ሁለት ጊዜ የግንዛቤ ማስጨበጫ እንቅስቃሴ (Campaign) በማህበራዊ ሚዲያ ማድረግ",
+        metric: "በዙር",
+        target: "2 ዙር",
+        monthTiming: "ህዳር፣ ግንቦት",
+        budget: "ከሚዲያ ጋር",
+        subUnitAm: "ሚዲያና ቅስቀሳ",
+        status: "planned"
+      },
+      {
+        id: "apo-12",
+        titleAm: "አዳዲስ አማንያንን ወደ ክርስቶስ ማህበር መቀላቀል",
+        metric: "ቁጥር",
+        target: "5 ተጠማቅያን",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "አዳዲስ አማንያን",
+        status: "in_progress"
+      },
+      {
+        id: "apo-13",
+        titleAm: "ከምዕመናን ከትምህርተ ሃይማኖት ጋር ለሚነሱ ጥያቄዎች መልስ መስጠትና መምህራንን ማገናኘት",
+        metric: "በቁጥር",
+        target: "12 ወራት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "እቅበተ እምነት",
+        status: "in_progress"
+      },
+      {
+        id: "apo-14",
+        titleAm: "የእቅበተ እምነት የምክረ አበው እና የፓናል ውይይት መርሐግብር ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "2 ዝግጅቶች",
+        monthTiming: "ታህሳስ፣ ግንቦት",
+        budget: "6,000 ብር",
+        subUnitAm: "እቅበተ እምነት",
+        status: "planned"
+      },
+      {
+        id: "apo-15",
+        titleAm: "የመጽሐፍት ዳሰሳ ማዘጋጀትና መጽሐፍትን ለተሳታፊዎች በስጦታ መስጠት",
+        metric: "በቁጥር",
+        target: "2 መርሐግብር",
+        monthTiming: "ጥር፣ ሰኔ",
+        budget: "10,000 ብር",
+        subUnitAm: "እቅበተ እምነት",
+        status: "planned"
+      },
+      {
+        id: "apo-16",
+        titleAm: "የእቅበተ እምነት አጫጭር ጽሑፎችንና በራሪ ወረቀቶችን ማዘጋጀትና ማሰራጨት",
+        metric: "በቁጥር",
+        target: "እንደአስፈላጊነቱ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "ህትመት ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "apo-17",
+        titleAm: "የአቅም ግንባታ ወርሃዊ ጸሎትና ውይይት ማካሄድ",
+        metric: "በቁጥር",
+        target: "12 ወራት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "አቅም ግንባታ",
+        status: "in_progress"
+      }
     ]
   },
   {
@@ -330,10 +768,216 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "choir-1", titleAm: "የሰንበት ቅዳሴና ንግሥ በዓላት የመዘምራን ሳምንታዊ ምደባ ማዘጋጀት", status: "completed", subUnitAm: "የአገልግሎት ማስተባበርያ", articleRef: "አንቀጽ 4.1" },
-      { id: "choir-2", titleAm: "የበገናና ያሬዳዊ የዜማ መሣሪያዎች አዲስ ዙር ስልጠና መስጠት", status: "in_progress", subUnitAm: "የክህሎት ማጎልበቻ", articleRef: "አንቀጽ 4.2" },
-      { id: "choir-3", titleAm: "የ2026/2027 ዓ.ም አዳዲስ መንፈሳዊ መዝሙራትን መድረስና በኮሚቴ ማስገምገም", status: "in_progress", subUnitAm: "የድርሰትና ዝግጅት ንዑስ ክፍል", articleRef: "አንቀጽ 4.3" },
-      { id: "choir-4", titleAm: "ለመዘምራን መንፈሳዊ ሥነ-ምግባርና የአገልግሎት ዝግጁነት ጉባኤ ማዘጋጀት", status: "planned", subUnitAm: "የሥርዓተ ትምህርት ክትትል", articleRef: "አንቀጽ 4.4" }
+      {
+        id: "choir-1",
+        titleAm: "ለየምድባቱ የትግበራ እቅድ ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "ምድባት",
+        monthTiming: "ጥቅምት",
+        budget: "-",
+        subUnitAm: "አመራር",
+        status: "completed"
+      },
+      {
+        id: "choir-2",
+        titleAm: "በወጣንያን ምድብ የሚገኙ አባላትን ወደ ማእከላውያን 1 ማሸጋገር",
+        metric: "ቁጥር",
+        target: "40",
+        monthTiming: "ሰኔ",
+        budget: "-",
+        subUnitAm: "የትምህርት ቡድን",
+        status: "planned"
+      },
+      {
+        id: "choir-3",
+        titleAm: "የክፍሉን አገልግሎት የሚያግዝ ሲስተም መዘርጋት",
+        metric: "ቁጥር",
+        target: "2",
+        monthTiming: "ህዳር - ታህሳስ",
+        budget: "-",
+        subUnitAm: "አይቲና መረጃ",
+        status: "in_progress"
+      },
+      {
+        id: "choir-4",
+        titleAm: "በየምድቡ ለሚገኙ አባላት ትምህርት መስጠት እና መከታተል",
+        metric: "ተከታታይ",
+        target: "ምድባት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "አስጠኚዎች",
+        status: "in_progress"
+      },
+      {
+        id: "choir-5",
+        titleAm: "በመዝሙር ስርአተ ትምህርቱ መሰረት ግምገማ ማድረግ",
+        metric: "ቁጥር",
+        target: "3",
+        monthTiming: "ታህሳስ፣ የካቲት፣ ግንቦት",
+        budget: "-",
+        subUnitAm: "ግምገማ ኮሚቴ",
+        status: "planned"
+      },
+      {
+        id: "choir-6",
+        titleAm: "ለአባላት ስለስርአተ ትምህርቱ ግንዛቤ መስጠት",
+        metric: "ቁጥር",
+        target: "2",
+        monthTiming: "ጥቅምት፣ የካቲት",
+        budget: "-",
+        subUnitAm: "አመራር",
+        status: "planned"
+      },
+      {
+        id: "choir-7",
+        titleAm: "በየምድባቱ ከአባላት ጋር የውይይት መርሐ ግብር ማዘጋጀት",
+        metric: "ቁጥር",
+        target: "3",
+        monthTiming: "ጥቅምት፣ ጥር፣ ግንቦት",
+        budget: "-",
+        subUnitAm: "አመራር",
+        status: "planned"
+      },
+      {
+        id: "choir-8",
+        titleAm: "በየምድባቱ የሚጠፉ አባላትን ክትትል ማድረግ መደወል",
+        metric: "ስልክ ጥሪ",
+        target: "ተከታታይ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "1,000 ብር",
+        subUnitAm: "ክትትል ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "choir-9",
+        titleAm: "የዜማ መሳሪያ ስርዓተ ትምህርት ማዘጋጀት (በገና ፤ መሰንቆ)",
+        metric: "ቁጥር",
+        target: "2",
+        monthTiming: "ጥቅምት",
+        budget: "-",
+        subUnitAm: "የዜማ መሳሪያ ተቋም",
+        status: "planned"
+      },
+      {
+        id: "choir-10",
+        titleAm: "የተቋም መመሪያ ማዘጋጀት",
+        metric: "ቁጥር",
+        target: "1",
+        monthTiming: "ግንቦት",
+        budget: "-",
+        subUnitAm: "አመራር",
+        status: "planned"
+      },
+      {
+        id: "choir-11",
+        titleAm: "የዜማ መሳሪያ እድሳት ማከናወን (መሰንቆ ፤ በገና)",
+        metric: "ጥገና",
+        target: "መሰንቆ/በገና",
+        monthTiming: "ጥቅምት",
+        budget: "19,500 ብር",
+        subUnitAm: "ንብረት ክፍል",
+        status: "planned"
+      },
+      {
+        id: "choir-12",
+        titleAm: "በስርዓተ ትምህርቱ መሰረት የጀማርያን የበገና ትምህርት መስጠት",
+        metric: "ቁጥር",
+        target: "1 ዙር",
+        monthTiming: "የካቲት",
+        budget: "-",
+        subUnitAm: "የበገና መምህር",
+        status: "planned"
+      },
+      {
+        id: "choir-13",
+        titleAm: "በስርዓተ ትምህርቱ መሰረት የጀማርያን የመሰንቆ ትምህርት መስጠት",
+        metric: "ቁጥር",
+        target: "1 ዙር",
+        monthTiming: "የካቲት",
+        budget: "-",
+        subUnitAm: "የመሰንቆ መምህር",
+        status: "planned"
+      },
+      {
+        id: "choir-14",
+        titleAm: "አድቫንስድ የበገና መሳሪያ ትምህርት መስጠት",
+        metric: "ቁጥር",
+        target: "1 ዙር",
+        monthTiming: "ህዳር",
+        budget: "-",
+        subUnitAm: "የበገና መምህር",
+        status: "planned"
+      },
+      {
+        id: "choir-15",
+        titleAm: "አድቫንስድ የመሰንቆ መሳሪያ ትምህርት መስጠት",
+        metric: "ቁጥር",
+        target: "1 ዙር",
+        monthTiming: "ታህሳስ",
+        budget: "-",
+        subUnitAm: "የመሰንቆ መምህር",
+        status: "planned"
+      },
+      {
+        id: "choir-16",
+        titleAm: "የመጀመሪያ ደረጃ የአስጠኚዎች ሥልጠና መስጠት",
+        metric: "ቁጥር",
+        target: "2 ዙር",
+        monthTiming: "መስከረም፣ የካቲት",
+        budget: "33,000 ብር",
+        subUnitAm: "ስልጠና ቡድን",
+        status: "planned"
+      },
+      {
+        id: "choir-17",
+        titleAm: "ሁለተኛ ደረጃ የአስጠኚዎች ሥልጠና መስጠት",
+        metric: "ቁጥር",
+        target: "1 ዙር",
+        monthTiming: "የካቲት",
+        budget: "-",
+        subUnitAm: "ስልጠና ቡድን",
+        status: "planned"
+      },
+      {
+        id: "choir-18",
+        titleAm: "ብቁ አስጠኚዎችን ማፍራት",
+        metric: "ቁጥር",
+        target: "15",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "አስጠኚዎች",
+        status: "in_progress"
+      },
+      {
+        id: "choir-19",
+        titleAm: "የዝማሬ አገልግሎት መስጫ ንዋየ ቅድሳትን ማሟላት (መቋሚያ ግዢ)",
+        metric: "ቁጥር",
+        target: "60",
+        monthTiming: "ጥቅምት",
+        budget: "12,000 ብር",
+        subUnitAm: "ንብረት ክፍል",
+        status: "planned"
+      },
+      {
+        id: "choir-20",
+        titleAm: "አዳዲስ መዝሙራትን ማውጣትና ማስተዋወቅ",
+        metric: "ቁጥር",
+        target: "3 ዝማሬ",
+        monthTiming: "ህዳር፣ የካቲት፣ ግንቦት",
+        budget: "33,000 ብር",
+        subUnitAm: "የዜማ ቡድን",
+        status: "planned"
+      },
+      {
+        id: "choir-21",
+        titleAm: "ዓመታዊ የመዝሙር ጥናት ቀንና የታረመ የዝማሬ ጥራዝ ማዘጋጀት",
+        metric: "ቁጥር",
+        target: "2 ቀናት",
+        monthTiming: "ህዳር፣ ሰኔ",
+        budget: "2,000 ብር",
+        subUnitAm: "አዘጋጅ ኮሚቴ",
+        status: "planned"
+      }
     ]
   },
   {
@@ -387,10 +1031,196 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "charity-1", titleAm: "ለተማሪዎችና ወላጅ አልባ ሕፃናት የትምህርት ቁሳቁስ ማከፋፈል", status: "completed", subUnitAm: "የእርዳታና ድጋፍ ማስተባበሪያ", articleRef: "አንቀጽ 5.1" },
-      { id: "charity-2", titleAm: "ወርሃዊ የሕሙማንና የአረጋውያን የቤት ለቤት ጉብኝት ማካሄድ", status: "in_progress", subUnitAm: "የእርዳታና ድጋፍ ማስተባበሪያ", articleRef: "አንቀጽ 5.2" },
-      { id: "charity-3", titleAm: "ነፃ የአጥቢያ ሕክምና ምርመራ ቀን ከሐኪሞች ጋር ማዘጋጀት", status: "planned", subUnitAm: "የሙያ አገልግሎት ማስተባበሪያ", articleRef: "አንቀጽ 5.3" },
-      { id: "charity-4", titleAm: "የክረምት የበጎ አድራጎት ፈንድ አሰባሳቢ ሁነት ማዘጋጀት", status: "planned", subUnitAm: "የገቢ አሰባሳቢ", articleRef: "አንቀጽ 5.4" }
+      {
+        id: "charity-1",
+        titleAm: "አዲስ ገቢ ማስገኛ ፕሮጀክት መንደፍና ፕሮፖዛል ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "3",
+        monthTiming: "መስከረም-ጥቅምት",
+        budget: "በጥናት",
+        subUnitAm: "የፕሮጀክት ቡድን",
+        status: "planned"
+      },
+      {
+        id: "charity-2",
+        titleAm: "የተዘጋጀውን የገቢ ማስገኛ ንድፈ ሐሳብ ማጽደቅና ማስጀመር",
+        metric: "በቁጥር",
+        target: "1",
+        monthTiming: "ታህሳስ",
+        budget: "-",
+        subUnitAm: "ልማት ንዑስ ክፍል",
+        status: "planned"
+      },
+      {
+        id: "charity-3",
+        titleAm: "አባላትን በየሙያቸው መለየትና ማኅደራቸውን በዲጂታል ማደራጀት",
+        metric: "በቁጥር",
+        target: "50 ባለሙያ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "የሰው ኃይል",
+        status: "in_progress"
+      },
+      {
+        id: "charity-4",
+        titleAm: "የተቸገሩ ገዳማት፣ አድባራትና ሰ/ት/ቤቶች ጥያቄዎችን መርዳት",
+        metric: "በቁጥር",
+        target: "ተከታታይ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "50,000 ብር",
+        subUnitAm: "የበጎ አድራጎት ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "charity-5",
+        titleAm: "እርዳታ ለሚያስፈልጋቸው አብያተ ክርስቲያናትና አብነት ት/ቤቶች ድጋፍ ማድረግ",
+        metric: "በቁጥር",
+        target: "2",
+        monthTiming: "ህዳር፣ ግንቦት",
+        budget: "ገቢ 20k / ወጪ 50k",
+        subUnitAm: "የበጎ አድራጎት ቡድን",
+        status: "planned"
+      },
+      {
+        id: "charity-6",
+        titleAm: "ተጨማሪ ረጂ አካላትን በጥናት መለየትና ከተረጂዎች ጋር ማገናኘት",
+        metric: "በቁጥር",
+        target: "5 ረጂዎች",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "አጋርነትና ትስስር",
+        status: "in_progress"
+      },
+      {
+        id: "charity-7",
+        titleAm: "ለቅዱስ ዮሐንስ በዓል ማስፈሰኪያ ገንዘብ ማሰባሰብና የቤት ለቤት ድጋፍ",
+        metric: "በቁጥር",
+        target: "30 አባወራ",
+        monthTiming: "መስከረም",
+        budget: "ገቢ 97.5k / ወጪ 75k",
+        subUnitAm: "የበዓላት ኮሚቴ",
+        status: "completed"
+      },
+      {
+        id: "charity-8",
+        titleAm: "ለልደት በዓል ማስፈሰኪያ የአይነትና ገንዘብ ማሰባሰብና ምገባ ማከናወን",
+        metric: "በገንዘብ",
+        target: "56 አባወራ",
+        monthTiming: "ታህሳስ",
+        budget: "ገቢ 300k / ወጪ 290k",
+        subUnitAm: "የምገባ ቡድን",
+        status: "planned"
+      },
+      {
+        id: "charity-9",
+        titleAm: "ለፋሲካ በዓል ማስፈሰኪያ ድጋፍ ማሰባሰብ፣ ምገባና የቤት ለቤት ድጋፍ",
+        metric: "በገንዘብ",
+        target: "62 አባወራ",
+        monthTiming: "መጋቢት - ሚያዝያ",
+        budget: "ገቢ 550k / ወጪ 355k",
+        subUnitAm: "የምገባ ቡድን",
+        status: "planned"
+      },
+      {
+        id: "charity-10",
+        titleAm: "ለተረጂ አካላት ቀጣይነት ያለው የሥራ ዕድል ፈጠራ ስልጠና መስጠትና ስራ ማስጀመር",
+        metric: "በቁጥር",
+        target: "10 ተጠቃሚ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "ገቢ 30k / ወጪ 100k",
+        subUnitAm: "ስራ ፈጠራ",
+        status: "planned"
+      },
+      {
+        id: "charity-11",
+        titleAm: "የመነኮሳትና አቅመ ደካሞች ልብስ ማጠብ አገልግሎት ማካሄድ",
+        metric: "በቁጥር",
+        target: "5 ዙር",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "3,000 ብር",
+        subUnitAm: "የበጎ ፈቃድ ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "charity-12",
+        titleAm: "በጸበል ቦታዎች ለሚገኙ ጸበልተኞች ድጋፍ መስጠት",
+        metric: "በቁጥር",
+        target: "3 ዙር",
+        monthTiming: "ጥቅምት፣ ጥር፣ መጋቢት",
+        budget: "ገቢ 10k / ወጪ 30k",
+        subUnitAm: "የበጎ አድራጎት ቡድን",
+        status: "planned"
+      },
+      {
+        id: "charity-13",
+        titleAm: "ድንገተኛና አስቸኳይ የህክምና/ችግር እርዳታ በጥናት ማድረግ",
+        metric: "በቁጥር",
+        target: "ተከታታይ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "100,000 ብር",
+        subUnitAm: "የድንገተኛ ኮሚቴ",
+        status: "in_progress"
+      },
+      {
+        id: "charity-14",
+        titleAm: "ለጥምቀት አገልግሎት የመጀመሪያ የህክምና እርዳታ (First Aid) መስጠት",
+        metric: "በቁጥር",
+        target: "1 በዓል",
+        monthTiming: "ጥር",
+        budget: "10,000 ብር",
+        subUnitAm: "የጤና ባለሙያዎች",
+        status: "planned"
+      },
+      {
+        id: "charity-15",
+        titleAm: "ከቀይ መስቀል ጋር በመተባበር 3 ዙር የደም ልገሳ ማካሄድ",
+        metric: "በቁጥር",
+        target: "3 ዙር",
+        monthTiming: "ህዳር፣ የካቲት፣ ሰኔ",
+        budget: "15,000 ብር",
+        subUnitAm: "የበጎ ፈቃድ አስተባባሪ",
+        status: "planned"
+      },
+      {
+        id: "charity-16",
+        titleAm: "የአባላትን ኢኮኖሚ ማሳደግ (የሙያ ስልጠናና ቋሚ ስራ ማስጀመር)",
+        metric: "በቁጥር",
+        target: "5 አባላት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "50,000 ብር",
+        subUnitAm: "አቅም ማጎልበቻ",
+        status: "planned"
+      },
+      {
+        id: "charity-17",
+        titleAm: "ሕጋዊ የበጎ አድራጎት ድርጅት (Charity NGO) ማቋቋም",
+        metric: "ንድፈ ሐሳብ",
+        target: "1 ድርጅት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "በጥናት",
+        subUnitAm: "ቦርድ",
+        status: "in_progress"
+      },
+      {
+        id: "charity-18",
+        titleAm: "የክፍሉን አገልግሎት በበራሪ ወረቀት፣ ባነርና ሚዲያ ማስተዋወቅ",
+        metric: "በቁጥር",
+        target: "ተከታታይ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "25,000 ብር",
+        subUnitAm: "ኮሙኒኬሽን",
+        status: "in_progress"
+      },
+      {
+        id: "charity-19",
+        titleAm: "ታላቅ የበጎ አድራጎት ዓውደ ርዕይ ማዘጋጀትና ማካሄድ",
+        metric: "በቁጥር",
+        target: "1 ዓውደ ርዕይ",
+        monthTiming: "ግንቦት",
+        budget: "ገቢ 70k / ወጪ 20k",
+        subUnitAm: "አዘጋጅ ኮሚቴ",
+        status: "planned"
+      }
     ]
   },
   {
@@ -444,10 +1274,76 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "fin-1", titleAm: "የወርሃዊ ገቢና ወጪ ሒሳብ ማወራረድና የባንክ ማስታረቂያ ማዘጋጀት", status: "completed", subUnitAm: "የሒሳብ መዝገብ ንዑስ ክፍል", articleRef: "አንቀጽ 6.1" },
-      { id: "fin-2", titleAm: "የቋሚና አላቂ ዕቃዎች ኮዲንግና የመዝገብ ማዘመን ሥራ ማጠናቀቅ", status: "in_progress", subUnitAm: "የንብረት ቁጥጥርና ጥገና", articleRef: "አንቀጽ 6.2" },
-      { id: "fin-3", titleAm: "ለክፍላት የሚያስፈልጉ የቢሮና የትምህርት መገልገያዎች ግዢ መፈጸም", status: "in_progress", subUnitAm: "የንብረት ቁጥጥርና ጥገና", articleRef: "አንቀጽ 6.3" },
-      { id: "fin-4", titleAm: "የበጀት ዓመቱ የፋይናንስ ሪፖርት ለሥራ አመራር ክፍል ማቅረብ", status: "planned", subUnitAm: "የሒሳብ መዝገብ ንዑስ ክፍል", articleRef: "አንቀጽ 6.5" }
+      {
+        id: "fin-1",
+        titleAm: "የሰንበት ት/ቤቱን ቋሚና አላቂ ንብረቶች ቆጠራ ማካሄድ",
+        metric: "በቁጥር",
+        target: "1 ቆጠራ",
+        monthTiming: "መስከረም",
+        budget: "-",
+        subUnitAm: "ንብረት ክፍል",
+        status: "completed"
+      },
+      {
+        id: "fin-2",
+        titleAm: "የንብረት መለያ ቁጥር (QR Tagging) መስጠትና መመዝገብ",
+        metric: "በቁጥር",
+        target: "100%",
+        monthTiming: "ጥቅምት",
+        budget: "5,000 ብር",
+        subUnitAm: "ንብረት ክፍል",
+        status: "in_progress"
+      },
+      {
+        id: "fin-3",
+        titleAm: "የተበላሹ እቃዎችን መለየትና መጠገን",
+        metric: "በቁጥር",
+        target: "ተከታታይ",
+        monthTiming: "ህዳር",
+        budget: "15,000 ብር",
+        subUnitAm: "ቴክኒክ ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "fin-4",
+        titleAm: "የቢሮ ዴስክቶፕ ኮምፒውተሮችን መጠገንና ማሻሻል",
+        metric: "በቁጥር",
+        target: "3 ፒሲ",
+        monthTiming: "ጥቅምት",
+        budget: "6,000 ብር",
+        subUnitAm: "አይቲ ቡድን",
+        status: "completed"
+      },
+      {
+        id: "fin-5",
+        titleAm: "የአባላት ወርሃዊ መዋጮ መሰብሰብና በዲጂታል መመዝገብ",
+        metric: "በቁጥር",
+        target: "12 ወራት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "ገቢ 300,000",
+        subUnitAm: "ፋይናንስ",
+        status: "in_progress"
+      },
+      {
+        id: "fin-6",
+        titleAm: "የገቢና ወጪ ሰነዶችን ኦዲት ማድረግ",
+        metric: "በቁጥር",
+        target: "4 ኦዲቶች",
+        monthTiming: "ሩብ ዓመታዊ",
+        budget: "-",
+        subUnitAm: "ኦዲት ኮሚቴ",
+        status: "planned"
+      },
+      {
+        id: "fin-7",
+        titleAm: "ለበዓላት የሚያስፈልጉ ንዋያተ ቅድሳትን ማዘጋጀትና መቆጣጠር",
+        metric: "በቁጥር",
+        target: "በዓላት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "ንዋያት አስተዳዳሪ",
+        status: "in_progress"
+      }
     ]
   },
   {
@@ -501,10 +1397,186 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "med-1", titleAm: "የሰንበት ጉባኤ የቀጥታ ስርጭትና የቪዲዮ ዝግጅት ማጠናቀቅ", status: "completed", subUnitAm: "የቀረጻና ቅንብር ንዑስ ክፍል", articleRef: "አንቀጽ 7.1" },
-      { id: "med-2", titleAm: "ይፋዊ የሰንበት ት/ቤት ድረ-ገጽና የፖርታል መረጃዎችን ማዘመን", status: "in_progress", subUnitAm: "የመካነ ድርና ማኅበራዊ ሚዲያ", articleRef: "አንቀጽ 7.2" },
-      { id: "med-3", titleAm: "የዓመታዊ መንፈሳዊ መጽሔት ጽሑፎች ጥንቅርና ኤዲቶሪያል ግምገማ", status: "in_progress", subUnitAm: "ኤዲቶሪያል ቦርድ", articleRef: "አንቀጽ 7.4" },
-      { id: "med-4", titleAm: "የታሪካዊ ፎቶዎችና የቀረጻዎች ዲጂታል አርካይቭ ማደራጀት", status: "planned", subUnitAm: "የመዛግብት (ክምችት) ክፍል", articleRef: "አንቀጽ 7.5" }
+      {
+        id: "media-1",
+        titleAm: "ለሚዲያ ክፍል አባላት የክህሎት ስልጠና መስጠት (ግራፊክስ፣ ቪዲዮ፣ ቀረጻ፣ ሶሻል ሚዲያ)",
+        metric: "በቁጥር",
+        target: "4 ዘርፎች",
+        monthTiming: "መስከረም - ህዳር",
+        budget: "25,000 ብር",
+        subUnitAm: "ስልጠና ቡድን",
+        status: "planned"
+      },
+      {
+        id: "media-2",
+        titleAm: "በሰ/ት/ቤትና ውጪ ያሉ 20 የሚዲያ ቤተሰቦች (ፈቃደኞች) ማዋቀር",
+        metric: "በቁጥር",
+        target: "20 አባላት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "የሰው ኃይል",
+        status: "in_progress"
+      },
+      {
+        id: "media-3",
+        titleAm: "ለቀረጻና ፕሮዳክሽን የሚያስፈልጉ ዘመናዊ ግብአቶችን ማሟላት (ካሜራ፣ ማይክ)",
+        metric: "በጥናት",
+        target: "የስቱዲዮ እቃዎች",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "800,000 ብር",
+        subUnitAm: "የግዥ ኮሚቴ",
+        status: "in_progress"
+      },
+      {
+        id: "media-4",
+        titleAm: "ለሚዲያ ክፍሉ ታላቅ የገቢ ማሰባሰቢያ መርሃ ግብር ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "1 ዝግጅት",
+        monthTiming: "ታህሳስ",
+        budget: "ገቢ 400,000 ብር",
+        subUnitAm: "ገቢ አሰባሳቢ ቡድን",
+        status: "planned"
+      },
+      {
+        id: "media-5",
+        titleAm: "ጊዜያዊ የድምጽና ቪዲዮ ስቱዲዮ ማዘጋጀትና ቁሶችን ማሟላት",
+        metric: "በቁጥር",
+        target: "3 ምዕራፍ",
+        monthTiming: "ጥቅምት - ጥር",
+        budget: "100,000 ብር",
+        subUnitAm: "ቴክኒክ ቡድን",
+        status: "planned"
+      },
+      {
+        id: "media-6",
+        titleAm: "መደበኛና ቋሚ የሚዲያ ባለሙያ መቅጠርና ማሰማራት",
+        metric: "በቁጥር",
+        target: "1 ባለሙያ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "70,000 ብር",
+        subUnitAm: "አስተዳደር",
+        status: "planned"
+      },
+      {
+        id: "media-7",
+        titleAm: "የሰንበት ትምህርት ቤት አገልግሎት የሚዲያ መመሪያ ማሻሻል",
+        metric: "በቁጥር",
+        target: "1 ሰነድ",
+        monthTiming: "መስከረም",
+        budget: "-",
+        subUnitAm: "አመራር",
+        status: "completed"
+      },
+      {
+        id: "media-8",
+        titleAm: "ለ14ቱ ክፍላት የግራፊክስ፣ የማስታወቂያና የቀረጻ ድጋፍ መስጠት",
+        metric: "ተከታታይ",
+        target: "14 ክፍላት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "የፈጠራ ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "media-9",
+        titleAm: "ዓመታዊ የደብሩን 6 ንግስ ክብረ በዓላት በሚዲያ መሸፈን",
+        metric: "በቁጥር",
+        target: "6 በዓላት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "10,000 ብር",
+        subUnitAm: "የቀረጻ ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "media-10",
+        titleAm: "የጥምቀት በዓል የቀጥታና የተቀዳ የሚዲያ ሽፋን መስጠት",
+        metric: "በቁጥር",
+        target: "1 በዓል",
+        monthTiming: "ጥር",
+        budget: "10,000 ብር",
+        subUnitAm: "የቀረጻ ቡድን",
+        status: "planned"
+      },
+      {
+        id: "media-11",
+        titleAm: "ለአባላትና ምዕመናን 48 መንፈሳዊ የሚዲያ ይዘቶችን ማሰራጨት",
+        metric: "በቁጥር",
+        target: "48 ይዘት (ሳምንታዊ)",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "ኤዲቶሪያል",
+        status: "in_progress"
+      },
+      {
+        id: "media-12",
+        titleAm: "በሰ/ት/ቤቱ የሚከፈቱ ማንኛውንም የሚዲያ አካውንቶች መቆጣጠር",
+        metric: "በቁጥር",
+        target: "100%",
+        monthTiming: "ቋሚ",
+        budget: "-",
+        subUnitAm: "ቁጥጥር",
+        status: "in_progress"
+      },
+      {
+        id: "media-13",
+        titleAm: "የቲክቶክ (12k)፣ ኢንስታግራም (5k)፣ ፌስቡክ (5k)፣ ዩቲዩብ (5k) ተከታዮችን ማሳደግ",
+        metric: "ተከታዮች",
+        target: "27,000 ተከታይ",
+        monthTiming: "ሰኔ መጨረሻ",
+        budget: "-",
+        subUnitAm: "ሶሻል ሚዲያ",
+        status: "in_progress"
+      },
+      {
+        id: "media-14",
+        titleAm: "ይፋዊ የ YouTube እና Facebook የቀጥታ ስርጭት አገልግሎት ማስጀመር",
+        metric: "በቁጥር",
+        target: "2 ቻናሎች",
+        monthTiming: "ጥቅምት",
+        budget: "-",
+        subUnitAm: "ስርጭት",
+        status: "completed"
+      },
+      {
+        id: "media-15",
+        titleAm: "የይዘት ማዘጋጀት (Content Pipeline)፦ 100 ጽሁፎችና 50 ቪዲዮዎች",
+        metric: "በቁጥር",
+        target: "150 ይዘቶች",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "የይዘት ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "media-16",
+        titleAm: "አጫጭር ቪዲዮዎች (24 Reels)፣ ረጅም ቪዲዮዎች (6 ዶክመንተሪ) እና 48 ግራፊክስ",
+        metric: "በቁጥር",
+        target: "78 ይዘቶች",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "ፕሮዳክሽን",
+        status: "in_progress"
+      },
+      {
+        id: "media-17",
+        titleAm: "የሰንበት ትምህርት ቤቱን የወረቀትና ታሪካዊ መረጃ ማደራጀት",
+        metric: "በቁጥር",
+        target: "ሙሉ ማህደር",
+        monthTiming: "ጥቅምት - መጋቢት",
+        budget: "-",
+        subUnitAm: "አርካይቭ",
+        status: "planned"
+      },
+      {
+        id: "media-18",
+        titleAm: "መረጃዎችን፣ ምስሎችንና ቪዲዮዎችን በዲጂታል መንገድ (Cloud DAM) ማደራጀት",
+        metric: "ዲጂታል",
+        target: "ደመና ማህደር",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "አይቲና አርካይቭ",
+        status: "in_progress"
+      }
     ]
   },
   {
@@ -558,10 +1630,116 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "counsel-1", titleAm: "ምስጢራዊ የግል መንፈሳዊ የምክር ክፍለ ጊዜዎችን ማስተናገድ", status: "completed", subUnitAm: "የባለሙያዎች ንዑስ ክፍል", articleRef: "አንቀጽ 8.1" },
-      { id: "counsel-2", titleAm: "የወጣቶች የሕይወት ውሳኔና የሥነ-ልቦና ማማከር አውደ ጥናት ማዘጋጀት", status: "in_progress", subUnitAm: "የባለሙያዎች ንዑስ ክፍል", articleRef: "አንቀጽ 8.2" },
-      { id: "counsel-3", titleAm: "የኦርቶዶክሳዊ ጋብቻና የቤተሰብ ሕይወት ሴሚናር ማዘጋጀት", status: "planned", subUnitAm: "የባለሙያዎች ንዑስ ክፍል", articleRef: "አንቀጽ 8.3" },
-      { id: "counsel-4", titleAm: "የምክር ፈላጊዎች የክትትልና የንስሐ አባቶች ትስስር ማጠናከር", status: "planned", subUnitAm: "የክትትል ንዑስ ክፍል", articleRef: "አንቀጽ 8.5" }
+      {
+        id: "counsel-1",
+        titleAm: "አገልግሎቱን እንዲሰጡ ለተመረጡ ባለሙያዎች ስልጠና መስጠት",
+        metric: "በቁጥር",
+        target: "20",
+        monthTiming: "መስከረም - ታህሳስ",
+        budget: "8,000 ብር",
+        subUnitAm: "የስልጠና ቡድን",
+        status: "planned"
+      },
+      {
+        id: "counsel-2",
+        titleAm: "በሙያቸው አገልግሎት የሚሰጡ የቤተክርስቲያን ልጆችን/ባለሙያዎችን ማፈላለግ እና ማናገር",
+        metric: "በቁጥር",
+        target: "-",
+        monthTiming: "ህዳር - የካቲት",
+        budget: "4,000 ብር",
+        subUnitAm: "የሰው ኃይል ቡድን",
+        status: "planned"
+      },
+      {
+        id: "counsel-3",
+        titleAm: "አገልግሎት ተጠቃሚዎችን ከባለሙያዎች ጋር ማገናኘት",
+        metric: "በቁጥር",
+        target: "30",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "የምክር አገልግሎት",
+        status: "in_progress"
+      },
+      {
+        id: "counsel-4",
+        titleAm: "ከህፃናት ክፍል ጋር በመተባበር በአዳራሽ ለስምንተኛ እና አስራ ሁለተኛ ክፍል ተማሪዎች የስነልቦና ዝግጅት ማከናወን",
+        metric: "በቁጥር",
+        target: "4",
+        monthTiming: "ታህሳስ፣ የካቲት፣ ሚያዝያ፣ ሰኔ",
+        budget: "4,000 ብር",
+        subUnitAm: "የተማሪዎች ስነ-ልቦና",
+        status: "planned"
+      },
+      {
+        id: "counsel-5",
+        titleAm: "ለመደበኛ አባላት በተለያዩ ነጥቦች ዙርያ ስነልቦናዊ ስልጠና መስጠት",
+        metric: "በቁጥር",
+        target: "3",
+        monthTiming: "ህዳር፣ የካቲት፣ ግንቦት",
+        budget: "-",
+        subUnitAm: "የአባላት ስልጠና",
+        status: "planned"
+      },
+      {
+        id: "counsel-6",
+        titleAm: "የመማክርት አገልግሎት በተለያየ መንገድ ማስተዋወቅ",
+        metric: "በቁጥር",
+        target: "ተከታታይ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "ኮሙኒኬሽን",
+        status: "in_progress"
+      },
+      {
+        id: "counsel-7",
+        titleAm: "ከክፍሉ አቅም በላይ የሆኑ ተጠቃሚዎችን በዘርፍ አገልግሎት ከሚሰጡ ተቋማት ጋር ማገናኘት",
+        metric: "በቁጥር",
+        target: "እንደአስፈላጊነቱ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "10,000 ብር",
+        subUnitAm: "ሪፈራል ቡድን",
+        status: "planned"
+      },
+      {
+        id: "counsel-8",
+        titleAm: "አገልግሎት የሚሰጥበትን ቦታ ማስተካከል እና ሚስጥራዊነትን ማረጋገጥ",
+        metric: "በቁጥር",
+        target: "1",
+        monthTiming: "መስከረም - ጥር",
+        budget: "-",
+        subUnitAm: "አስተዳደር",
+        status: "completed"
+      },
+      {
+        id: "counsel-9",
+        titleAm: "ለማማከር አገልግሎት አስፈላጊ ቁሳቁስ ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "-",
+        monthTiming: "መስከረም - ህዳር",
+        budget: "9,000 ብር",
+        subUnitAm: "ንብረት ክፍል",
+        status: "planned"
+      },
+      {
+        id: "counsel-10",
+        titleAm: "በባለሙያ ክትትል ለሚደረግላቸው ተገልጋዮች ክትትል ማድረግ",
+        metric: "በቁጥር",
+        target: "-",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "1,000 ብር",
+        subUnitAm: "ክትትልና ድጋፍ",
+        status: "in_progress"
+      },
+      {
+        id: "counsel-11",
+        titleAm: "ባለሙያዎችን የተሰጣቸውን አገልግሎት በአግባቡ እየሰጡ መሆኑን ክትትል ማድረግ",
+        metric: "በቁጥር",
+        target: "ተከታታይ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "ጥራት ቁጥጥር",
+        status: "in_progress"
+      }
     ]
   },
   {
@@ -681,10 +1859,266 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "child-1", titleAm: "የ2026/2027 ዓ.ም አዲስ ሕፃናት ተማሪዎች ምዝገባና ምደባ ማጠናቀቅ", status: "completed", subUnitAm: "የመረጃና መዛግብት", articleRef: "አንቀጽ 10.1" },
-      { id: "child-2", titleAm: "ለማቴዎስ፣ ማርቆስና ሉቃስ ክፍሎች የመማሪያ መጻሕፍትና የቀለም ደብተሮች ማዘጋጀት", status: "in_progress", subUnitAm: "የማቴዎስ ምድብ (4-9 ዓመት)", articleRef: "አንቀጽ 10.2" },
-      { id: "child-3", titleAm: "የሕፃናትና የወላጆች የጋራ የምስጋናና የመዝሙር ቀን ማካሄድ", status: "planned", subUnitAm: "የወላጅ ኮሚቴ", articleRef: "አንቀጽ 10.3" },
-      { id: "child-4", titleAm: "የሕፃናት መንፈሳዊ ሥዕላትና ተውኔት ውድድር ማዘጋጀት", status: "planned", subUnitAm: "የሥነ ጥበባት ንዑስ ክፍል", articleRef: "አንቀጽ 10.4" }
+      {
+        id: "child-1",
+        titleAm: "የሕጻናት ስርዓተ ትምህርትን ማስቀጠልና አፈጻጸም መከታተል (1-12ኛ ክፍል)",
+        metric: "ክፍላት",
+        target: "12 ክፍሎች",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "ስርዓተ ትምህርት",
+        status: "in_progress"
+      },
+      {
+        id: "child-2",
+        titleAm: "የ2018 ሀገር አቀፍ ፈተና ያለፉ ተማሪዎችን ምርቃት ማካሄድ",
+        metric: "በቁጥር",
+        target: "1 ምርቃት",
+        monthTiming: "መስከረም",
+        budget: "20,000 ብር",
+        subUnitAm: "ምርቃት ኮሚቴ",
+        status: "completed"
+      },
+      {
+        id: "child-3",
+        titleAm: "ለ4ኛ ክፍል የነገረ መጽሐፍ ቅዱስና ታሪክ Handout ማዘጋጀት",
+        metric: "ወረቀት",
+        target: "2 ደስታ",
+        monthTiming: "ጥቅምት",
+        budget: "በጥናት",
+        subUnitAm: "የትምህርት ቡድን",
+        status: "completed"
+      },
+      {
+        id: "child-4",
+        titleAm: "ለ3ኛ እና 4ኛ ክፍል ጥያቄና መልስ ማዘጋጀትና መሸለም",
+        metric: "በቁጥር",
+        target: "1 ውድድር",
+        monthTiming: "ጥር",
+        budget: "2,000 ብር",
+        subUnitAm: "ፈተና ኮሚቴ",
+        status: "planned"
+      },
+      {
+        id: "child-5",
+        titleAm: "የወላጆችና መምህራን መገናኛ ደብተር ተግባራዊ ማድረግ",
+        metric: "ደብተር",
+        target: "9 እሽግ",
+        monthTiming: "ጥቅምት",
+        budget: "5,000 ብር",
+        subUnitAm: "ክፍል ተጠሪዎች",
+        status: "completed"
+      },
+      {
+        id: "child-6",
+        titleAm: "ለማርቆስ ምድብ ተማሪዎች የከበሮ አመታት ግንዛቤና ስልጠና መስጠት",
+        metric: "ስልጠና",
+        target: "ሳምንታዊ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "የዜማ አስተማሪ",
+        status: "in_progress"
+      },
+      {
+        id: "child-7",
+        titleAm: "የአንድነት ስርዓተ ትምህርት መማሪያ መጽሐፍት መግዛትና ማተም (1-11ኛ ክፍል)",
+        metric: "መጽሐፍት",
+        target: "1-11ኛ ክፍል",
+        monthTiming: "ህዳር",
+        budget: "በጥናት",
+        subUnitAm: "የግዥ ኮሚቴ",
+        status: "planned"
+      },
+      {
+        id: "child-8",
+        titleAm: "የተማሪዎች አጋማሽና ማጠቃለያ ፈተናዎችን ማዘጋጀትና መፈተን",
+        metric: "ወረቀት",
+        target: "40 ደስታ",
+        monthTiming: "ጥር፣ ሰኔ",
+        budget: "በጥናት",
+        subUnitAm: "ፈተና አስተባባሪ",
+        status: "planned"
+      },
+      {
+        id: "child-9",
+        titleAm: "ለማቴዎስ ምድብ (ቅድመ-መደበኛ) አመታዊ የትምህርት ሰሌዳ ማዘጋጀት",
+        metric: "ሰነድ",
+        target: "1 ሰነድ",
+        monthTiming: "መስከረም",
+        budget: "-",
+        subUnitAm: "ማቴዎስ አመራር",
+        status: "completed"
+      },
+      {
+        id: "child-10",
+        titleAm: "ለሀገር አቀፍ ተፈታኞች Worksheet፣ ሞዴል ፈተናና ሽልማት ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "4 ስራ / 2 ሞዴል",
+        monthTiming: "የካቲት - ግንቦት",
+        budget: "6,000 ብር",
+        subUnitAm: "ትምህርት ጥራት",
+        status: "planned"
+      },
+      {
+        id: "child-11",
+        titleAm: "በየሳምንቱ ለሚቀሩ ተማሪዎች ወላጆች ስልክ ደውሎ ማጣራት",
+        metric: "ጥሪ",
+        target: "ሳምንታዊ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "9,000 ብር",
+        subUnitAm: "ክትትል ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "child-12",
+        titleAm: "የተማሪዎች መንፈሳዊ ጉዞ (ዮሐንስ 15k፣ ሉቃስ 20k፣ 4ኛ ክፍል 12.5k)",
+        metric: "በቁጥር",
+        target: "3 ጉዞዎች",
+        monthTiming: "ታህሳስ - መጋቢት",
+        budget: "47,500 ብር",
+        subUnitAm: "ጉዞ ኮሚቴ",
+        status: "planned"
+      },
+      {
+        id: "child-13",
+        titleAm: "የአብነት መምህራን ክፍያ (140k + 90k ጭማሪ) እና ማበረታቻ",
+        metric: "ደመወዝ",
+        target: "ዓመቱን ሙሉ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "235,500 ብር",
+        subUnitAm: "አብነት አስተባባሪ",
+        status: "in_progress"
+      },
+      {
+        id: "child-14",
+        titleAm: "ልሳነ ግዕዝ ትምህርት፣ 10 ተተኪ መምህራንና ለ500 ቆራቢዎች ባጅ",
+        metric: "ባጅ",
+        target: "500 ባጅ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "28,500 ብር",
+        subUnitAm: "ልሳነ ግዕዝ",
+        status: "planned"
+      },
+      {
+        id: "child-15",
+        titleAm: "የ12ኛ ክፍል 75 ተማሪዎች ምርቃትና የትራንስክሪፕት ዝግጅት",
+        metric: "ተመራቂ",
+        target: "75 ተማሪ",
+        monthTiming: "ሰኔ",
+        budget: "-",
+        subUnitAm: "12ኛ ክፍል ቡድን",
+        status: "planned"
+      },
+      {
+        id: "child-16",
+        titleAm: "የማቴዎስና ማርቆስ ምድብ የተማሪዎች መረጃ ቋት (Database) ማደራጀት",
+        metric: "ዳታቤዝ",
+        target: "100%",
+        monthTiming: "መስከረም - ጥቅምት",
+        budget: "-",
+        subUnitAm: "አይቲና መረጃ",
+        status: "completed"
+      },
+      {
+        id: "child-17",
+        titleAm: "የተማሪዎች መረጃና አቴንዳንስ በ SMS ማሳወቂያ ስርዓት መዘርጋት (SMS Gateway)",
+        metric: "ሲስተም",
+        target: "1 ሲስተም",
+        monthTiming: "ጥቅምት - ህዳር",
+        budget: "45,000 ብር",
+        subUnitAm: "የቴክኖሎጂ መሪ",
+        status: "in_progress"
+      },
+      {
+        id: "child-18",
+        titleAm: "ለሉቃስና ዮሐንስ ምድባት የተማሪዎች መታወቂያ በ QR Code ማዘጋጀት",
+        metric: "መታወቂያ",
+        target: "1,000 መታወቂያ",
+        monthTiming: "ህዳር",
+        budget: "20,000 ብር",
+        subUnitAm: "የቴክኖሎጂ መሪ",
+        status: "in_progress"
+      },
+      {
+        id: "child-19",
+        titleAm: "የአብነት መምህራን አቴንዳንስ በ QR Code መከታተያ ማዋቀር",
+        metric: "ሰዓት ቁጥጥር",
+        target: "መምህራን",
+        monthTiming: "ህዳር",
+        budget: "-",
+        subUnitAm: "የቴክኖሎጂ መሪ",
+        status: "in_progress"
+      },
+      {
+        id: "child-20",
+        titleAm: "የተማሪዎች የውጤት መግለጫ (Result Sheet & Report Card) ዲጂታል ማመንጫ",
+        metric: "ሶፍትዌር",
+        target: "1 ሞጁል",
+        monthTiming: "ጥር፣ ሰኔ",
+        budget: "-",
+        subUnitAm: "የቴክኖሎጂ መሪ",
+        status: "planned"
+      },
+      {
+        id: "child-21",
+        titleAm: "የግቢ ጉባኤ ተማሪዎች እቅበተ እምነት ስልጠና፣ ጸሎትና ጉዞ ማካሄድ",
+        metric: "በቁጥር",
+        target: "4 ስልጠና / ጉዞ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "17,600 ብር",
+        subUnitAm: "ግቢ ጉባኤ ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "child-22",
+        titleAm: "ከወላጆች ጋር 4 ዙር ጉባኤና ስልጠና ማዘጋጀት እንዲሁም የወላጆች ጉዞ",
+        metric: "ጉባኤ",
+        target: "4 ጉባኤ",
+        monthTiming: "ሩብ ዓመታዊ",
+        budget: "9,000 ብር",
+        subUnitAm: "ወላጆች ኮሚቴ",
+        status: "planned"
+      },
+      {
+        id: "child-23",
+        titleAm: "ወርሃዊ የሕጻናት ሬዲዮ (12 ዙር) እና 24 ግድግዳ መጽሔት ማሳተም",
+        metric: "በቁጥር",
+        target: "12 ሬዲዮ / 24 መጽሔት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "ወረቀት",
+        subUnitAm: "ስነ-ጽሁፍ ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "child-24",
+        titleAm: "4 አዳዲስ በገናዎችን መግዛት (32k) እና የተጎዱትን ማደስ (8k)",
+        metric: "በገና",
+        target: "4 በገና",
+        monthTiming: "ጥቅምት - ታህሳስ",
+        budget: "40,000 ብር",
+        subUnitAm: "በገና ክፍል",
+        status: "planned"
+      },
+      {
+        id: "child-25",
+        titleAm: "የስነ ስዕል ትምህርት፣ ግብአቶች ግዢ (15k)፣ ጉብኝትና የስዕል ሽያጭ (5k)",
+        metric: "ኤግዚቢሽን",
+        target: "1 ዝግጅት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "22,000 ብር",
+        subUnitAm: "ስነ ስዕል ቡድን",
+        status: "planned"
+      },
+      {
+        id: "child-26",
+        titleAm: "ለመምህራንና ክፍል ኃላፊዎች የሕጻናት ሳይኮሎጂና አያያዝ ስልጠና መስጠት",
+        metric: "ስልጠና",
+        target: "2 ዙር",
+        monthTiming: "ህዳር፣ የካቲት",
+        budget: "10,000 ብር",
+        subUnitAm: "ትምህርት አመራር",
+        status: "planned"
+      }
     ]
   },
   {
@@ -738,10 +2172,86 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "abnet-1", titleAm: "የቀንና የማታ የዳዊት ንባብና የዜማ ክፍለ ጊዜዎችን ማስተባበር", status: "completed", subUnitAm: "የሥርዓተ ትምህርት አተገባበር", articleRef: "አንቀጽ 11.1" },
-      { id: "abnet-2", titleAm: "የጾመ ድጓና የማኅሌት አቋቋም ሳምንታዊ ስልጠና መስጠት", status: "in_progress", subUnitAm: "የመምህራንና አስቀጻዮች ምደባ", articleRef: "አንቀጽ 11.2" },
-      { id: "abnet-3", titleAm: "የግዕዝ ቋንቋና የሰዋስው ትምህርት ለተማሪዎች መስጠት", status: "in_progress", subUnitAm: "የሥርዓተ ትምህርት አተገባበር", articleRef: "አንቀጽ 11.4" },
-      { id: "abnet-4", titleAm: "የአብነት ተማሪዎች ዓመታዊ የምረቃና የዲቁና ዝግጅት ማካሄድ", status: "planned", subUnitAm: "የተማሪዎችና አባላት ክትትል", articleRef: "አንቀጽ 11.5" }
+      {
+        id: "abnet-1",
+        titleAm: "የአብነት ስርዓተ ትምህርት ማጽደቅና የወንበር ትምህርቱን መስጠት",
+        metric: "በቁጥር",
+        target: "3 ወንበር",
+        monthTiming: "መስከረም - ሰኔ",
+        budget: "5,000 ብር",
+        subUnitAm: "ስርዓተ ትምህርት",
+        status: "in_progress"
+      },
+      {
+        id: "abnet-2",
+        titleAm: "የአብነት ትምህርቱን የሚማሩ ተማሪዎችን መለየትና ምዝገባ ማካሄድ",
+        metric: "በቁጥር",
+        target: "ተማሪዎች",
+        monthTiming: "መስከረም - ሰኔ",
+        budget: "-",
+        subUnitAm: "ምዝገባ ቡድን",
+        status: "completed"
+      },
+      {
+        id: "abnet-3",
+        titleAm: "ከመደበኛ የአብነት መምህራንና ተማሪዎች ጋር ወርሃዊ ውይይት",
+        metric: "በቁጥር",
+        target: "12 ስብሰባ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "አመራር",
+        status: "in_progress"
+      },
+      {
+        id: "abnet-4",
+        titleAm: "4ኛ ዙር እጩ ዲያቆናትን መለየት፣ ስልጠና ማካሄድና ማዕረግ ማስቀበል",
+        metric: "በቁጥር",
+        target: "15 ዲያቆናት",
+        monthTiming: "መስከረም - የካቲት",
+        budget: "9,000 ብር",
+        subUnitAm: "እጩ ዲያቆናት",
+        status: "in_progress"
+      },
+      {
+        id: "abnet-5",
+        titleAm: "የአብነት ቀን ማዘጋጀትና ማክበር",
+        metric: "በቁጥር",
+        target: "1 ዝግጅት",
+        monthTiming: "ግንቦት",
+        budget: "20,000 ብር",
+        subUnitAm: "አዘጋጅ ኮሚቴ",
+        status: "planned"
+      },
+      {
+        id: "abnet-6",
+        titleAm: "የአብነት ተማሪዎች መንፈሳዊ ጉዞ ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "1 ጉዞ",
+        monthTiming: "መጋቢት",
+        budget: "15,000 ብር",
+        subUnitAm: "ጉዞ ኮሚቴ",
+        status: "planned"
+      },
+      {
+        id: "abnet-7",
+        titleAm: "የአብነት ማስተማሪያ መተግበሪያ (Abnet PWA / Mobile App) ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "1 መተግበሪያ",
+        monthTiming: "ጥቅምት - ታህሳስ",
+        budget: "10,000 ብር",
+        subUnitAm: "አይቲ ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "abnet-8",
+        titleAm: "የአብነት ክፍል ዴስክቶፕ ኮምፒውተር መጠገንና ማደራጀት",
+        metric: "በቁጥር",
+        target: "1 PC",
+        monthTiming: "መስከረም",
+        budget: "1,500 ብር",
+        subUnitAm: "አይቲ ቡድን",
+        status: "completed"
+      }
     ]
   },
   {
@@ -795,10 +2305,206 @@ export const departmentsData: Department[] = [
       }
     ],
     defaultActionTasks: [
-      { id: "art-1", titleAm: "ለሚቀጥለው የደብር ንግሥ በዓል መንፈሳዊ ተውኔትና ድራማ ማዘጋጀት", status: "completed", subUnitAm: "የኪነ ጥበብና ሥነ ጽሑፍ", articleRef: "አንቀጽ 12.1" },
-      { id: "art-2", titleAm: "የቤተ መጻሕፍት መጻሕፍትን ዲጂታል ካታሎግ ማዘጋጀትና ማደራጀት", status: "in_progress", subUnitAm: "የቤተ መጻሕፍት ንዑስ ክፍል", articleRef: "አንቀጽ 12.3" },
-      { id: "art-3", titleAm: "የኦርቶዶክሳዊ ቅዱሳት ሥዕላት (Iconography) ስልጠና መጀመር", status: "planned", subUnitAm: "የሥዕል ትምህርት ንዑስ ክፍል", articleRef: "አንቀጽ 12.2" },
-      { id: "art-4", titleAm: "የሰንበት ት/ቤት ተማሪዎች የንባብና የጥናት ሳምንት ማካሄድ", status: "planned", subUnitAm: "የቤተ መጻሕፍት ንዑስ ክፍል", articleRef: "አንቀጽ 12.4" }
+      {
+        id: "art-1",
+        titleAm: "የቤተመጽሐፍቱን መመሪያ ማሻሻልና ውስጣዊ ገጽታውን ማስተካከል",
+        metric: "በጊዜ",
+        target: "1 ማሻሻያ",
+        monthTiming: "ህዳር",
+        budget: "በጥናት",
+        subUnitAm: "ቤተ-መጽሐፍት",
+        status: "planned"
+      },
+      {
+        id: "art-2",
+        titleAm: "ዲጂታል የቤተ-መጽሐፍት ማውጫ (Digital OPAC Catalog) ማዘጋጀት",
+        metric: "በጊዜ",
+        target: "2 ዙር",
+        monthTiming: "ህዳር፣ መጋቢት",
+        budget: "-",
+        subUnitAm: "አይቲና ቤተ-መጽሐፍት",
+        status: "in_progress"
+      },
+      {
+        id: "art-3",
+        titleAm: "ቤተ መጻሕፍቱን በቋሚነት ለአንባቢዎች ክፍት ማድረግና ማስጠቀም",
+        metric: "ዓመቱን ሙሉ",
+        target: "ሳምንታዊ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "አስተናጋጅ",
+        status: "in_progress"
+      },
+      {
+        id: "art-4",
+        titleAm: "የተለያዩ ማስታወቂያዎችን (ባነር፣ ብሮሸርና ፍላየር) ማዘጋጀትና በበዓላት መበተን",
+        metric: "ዓመቱን ሙሉ",
+        target: "በዓላት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "5,000 ብር",
+        subUnitAm: "ኮሙኒኬሽን",
+        status: "in_progress"
+      },
+      {
+        id: "art-5",
+        titleAm: "የመጽሐፍ ዕቁብ ማዘጋጀትና ለቤተ መጻህፍቱ መጻህፍትን ማሟላት",
+        metric: "በቁጥር",
+        target: "2 ዕቁብ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "ገቢ 50k / ወጪ 50k",
+        subUnitAm: "የመጽሐፍ ዕቁብ",
+        status: "in_progress"
+      },
+      {
+        id: "art-6",
+        titleAm: "ከምእመናን እና ከፍቃደኛ አባላት መጻሕፍትን ማሰባሰብ",
+        metric: "በቁጥር",
+        target: "100 መጻሕፍት",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "ማሰባሰብ ቡድን",
+        status: "in_progress"
+      },
+      {
+        id: "art-7",
+        titleAm: "በልደት በዓል ክፍላት የመጽሐፍ ስጦታ እንዲሰጡ ማድረግ",
+        metric: "በቁጥር",
+        target: "50 መጻሕፍት",
+        monthTiming: "ታህሳስ",
+        budget: "-",
+        subUnitAm: "ስጦታ አስተባባሪ",
+        status: "planned"
+      },
+      {
+        id: "art-8",
+        titleAm: "ለኦዲዮ ቪዥዋል አገልግሎት የሚውሉ PC ማሟላት",
+        metric: "በቁጥር",
+        target: "1 PC",
+        monthTiming: "ህዳር",
+        budget: "30,000 ብር",
+        subUnitAm: "አይቲና ንብረት",
+        status: "planned"
+      },
+      {
+        id: "art-9",
+        titleAm: "ለስነ ስዕል የሚያስፈልጉ ግብአቶች ማሟላት",
+        metric: "በቁጥር",
+        target: "ግብአቶች",
+        monthTiming: "ህዳር",
+        budget: "15,000 ብር",
+        subUnitAm: "ስነ ስዕል",
+        status: "planned"
+      },
+      {
+        id: "art-10",
+        titleAm: "የቅርፃ ቅርፅ ስራና የሚያስፈልጉ ግብአቶች ማሟላት",
+        metric: "በቁጥር",
+        target: "ቁሳቁስ",
+        monthTiming: "ህዳር",
+        budget: "25,000 ብር",
+        subUnitAm: "ቅርፃ ቅርፅ",
+        status: "planned"
+      },
+      {
+        id: "art-11",
+        titleAm: "በትወና ዘርፍ አባላት ብቁ እንዲሆኑ የ3 ወር ስልጠና ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "15 ሰልጣኝ",
+        monthTiming: "ጥር - መጋቢት",
+        budget: "15,000 ብር",
+        subUnitAm: "ትወና ቡድን",
+        status: "planned"
+      },
+      {
+        id: "art-12",
+        titleAm: "ጸሐፊያንን ለማፍራት የሚስችል የ3 ወር የአፃፃፍ ስልጠና ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "10 ጸሐፊያን",
+        monthTiming: "ጥቅምት - ታህሳስ",
+        budget: "15,000 ብር",
+        subUnitAm: "ስነ ጽሁፍ ቡድን",
+        status: "planned"
+      },
+      {
+        id: "art-13",
+        titleAm: "የቅዱሳን ስዕላት ስልጠና ከህፃናት ክፍል ለተመረቁ የስነ ስዕል ሰልጣኞች መስጠት",
+        metric: "በቁጥር",
+        target: "ተመራቂዎች",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "ስነ ስዕል",
+        status: "in_progress"
+      },
+      {
+        id: "art-14",
+        titleAm: "የቅርፃ ቅርፅ ማውጣትና የንዋየ ቅዱሳን አሰራር ስልጠና መስጠት",
+        metric: "በቁጥር",
+        target: "ሰልጣኞች",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "8,000 ብር",
+        subUnitAm: "ቅርፃ ቅርፅ",
+        status: "planned"
+      },
+      {
+        id: "art-15",
+        titleAm: "የሥነ ጽሑፍ ምሽት ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "2 ዝግጅት",
+        monthTiming: "ጥቅምት፣ ሚያዝያ",
+        budget: "ገቢ 15k / ወጪ 25k",
+        subUnitAm: "ስነ ጽሁፍ ቡድን",
+        status: "planned"
+      },
+      {
+        id: "art-16",
+        titleAm: "በአውደምህረት የስነ-ፅሁፍ ምሽት ማከናወን",
+        metric: "በቁጥር",
+        target: "1 ዝግጅት",
+        monthTiming: "የካቲት",
+        budget: "5,000 ብር",
+        subUnitAm: "አውደ ምህረት",
+        status: "planned"
+      },
+      {
+        id: "art-17",
+        titleAm: "የሥነ ጽሑፍና የኪነጥበብ ስራዎችን ከሚዲያ ክፍል ጋር በመተባበር መልቀቅ",
+        metric: "በቁጥር",
+        target: "ተከታታይ",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "-",
+        subUnitAm: "ሚዲያ ትስስር",
+        status: "in_progress"
+      },
+      {
+        id: "art-18",
+        titleAm: "የመጽሐፍ ዳሰሳ መርሐግብር ማከናወን",
+        metric: "በጊዜ",
+        target: "2 መርሐግብር",
+        monthTiming: "ታህሳስ፣ ግንቦት",
+        budget: "10,000 ብር",
+        subUnitAm: "ቤተ-መጽሐፍት",
+        status: "planned"
+      },
+      {
+        id: "art-19",
+        titleAm: "የተዋንያን የትወና ውድድር ማዘጋጀት እና ማከናወን",
+        metric: "በቁጥር",
+        target: "1 ውድድር",
+        monthTiming: "ሰኔ",
+        budget: "10,000 ብር",
+        subUnitAm: "ትወና ቡድን",
+        status: "planned"
+      },
+      {
+        id: "art-20",
+        titleAm: "በልማት ተቋሙ መሸጥ የሚችሉ የስነ-ጥበብ ስራዎችን ማዘጋጀት",
+        metric: "በቁጥር",
+        target: "ምርቶች",
+        monthTiming: "ዓመቱን ሙሉ",
+        budget: "ገቢ 40,000 ብር",
+        subUnitAm: "ልማት ትስስር",
+        status: "in_progress"
+      }
     ]
   },
   {

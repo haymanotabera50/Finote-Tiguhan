@@ -18,7 +18,7 @@ import {
   CheckCircle, ChevronRight, Bookmark, MapPin, Phone, Send,
   Globe, Building2, Sparkles, ExternalLink, ArrowLeft, Home,
   Sliders, LogOut, LogIn, Calendar, RefreshCw, MessageSquare, Reply,
-  UserPlus
+  UserPlus, FileSpreadsheet, LayoutGrid, Table
 } from 'lucide-react';
 
 interface DepartmentAdminPageProps {
@@ -75,6 +75,12 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
   const [deptSubTab, setDeptSubTab] = useState<'content' | 'tasks' | 'students' | 'preview' | 'mediaCMS'>('content');
   const [deptSearchQuery, setDeptSearchQuery] = useState('');
   const [taskFilterStatus, setTaskFilterStatus] = useState<'all' | 'planned' | 'in_progress' | 'completed'>('all');
+  const [taskViewMode, setTaskViewMode] = useState<'table' | 'cards'>('table');
+  const [taskSearchQuery, setTaskSearchQuery] = useState<string>('');
+  const [newTaskMetric, setNewTaskMetric] = useState<string>('');
+  const [newTaskTarget, setNewTaskTarget] = useState<string>('');
+  const [newTaskTiming, setNewTaskTiming] = useState<string>('');
+  const [newTaskBudget, setNewTaskBudget] = useState<string>('');
   const [regFilterStatus, setRegFilterStatus] = useState<string>('all');
   const [selectedRegDeptFilter, setSelectedRegDeptFilter] = useState<string>('all');
   const [regSearchQuery, setRegSearchQuery] = useState<string>('');
@@ -252,19 +258,51 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
     setTimeout(() => setSaveSuccess(false), 3000);
   };
 
+  const handleExportTasksToCSV = () => {
+    if (!currentTasks.length) return;
+    const deptName = currentDeptObj?.nameAm || selectedDeptId;
+    const headers = ['ተ.ቁ', 'የትኩረት አቅጣጫ እና ዝርዝር እቅድ', 'መለኪያ / ዒላማ', 'የሚፈጸምበት ጊዜ', 'በጀት', 'ኃላፊ ንዑስ ክፍል', 'ሁኔታ'];
+    const rows = currentTasks.map((t, idx) => [
+      idx + 1,
+      `"${(t.titleAm || '').replace(/"/g, '""')}"`,
+      `"${((t.metric || '') + ' ' + (t.target || '')).trim() || '-'}"`,
+      `"${(t.monthTiming || '').replace(/"/g, '""') || '-'}"`,
+      `"${(t.budget || '-').replace(/"/g, '""')}"`,
+      `"${(t.subUnitAm || '').replace(/"/g, '""') || '-'}"`,
+      t.status === 'completed' ? 'ተጠናቋል' : t.status === 'in_progress' ? 'በሂደት ላይ' : 'የታቀደ'
+    ]);
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${deptName}_የ2019_የድርጊት_መርሃግብር_እቅድ.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleAddNewTask = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTaskTitle.trim() || !canEditDepartment(selectedDeptId)) return;
 
     addTask(selectedDeptId, {
       titleAm: newTaskTitle.trim(),
-      subUnitAm: newTaskSubUnit.trim() || "አጠቃላይ አገልግሎት",
+      subUnitAm: newTaskSubUnit.trim() || "አጠቃላይ የክፍሉ ስራ",
       status: newTaskStatus,
-      articleRef: currentDeptObj?.articleRef || "ደንብ"
+      articleRef: currentDeptObj?.articleRef || "ደንብ",
+      metric: newTaskMetric.trim(),
+      target: newTaskTarget.trim(),
+      monthTiming: newTaskTiming.trim(),
+      budget: newTaskBudget.trim()
     });
 
     setNewTaskTitle('');
     setNewTaskSubUnit('');
+    setNewTaskMetric('');
+    setNewTaskTarget('');
+    setNewTaskTiming('');
+    setNewTaskBudget('');
     setNewTaskStatus('planned');
     setShowAddTaskForm(false);
   };
@@ -281,8 +319,14 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
 
   const currentTasks = departmentTasks[selectedDeptId] || [];
   const filteredTasks = currentTasks.filter(t => {
-    if (taskFilterStatus === 'all') return true;
-    return t.status === taskFilterStatus;
+    const matchesStatus = taskFilterStatus === 'all' || t.status === taskFilterStatus;
+    const q = taskSearchQuery.trim().toLowerCase();
+    const matchesSearch = !q || 
+      t.titleAm.toLowerCase().includes(q) ||
+      (t.subUnitAm && t.subUnitAm.toLowerCase().includes(q)) ||
+      (t.monthTiming && t.monthTiming.toLowerCase().includes(q)) ||
+      (t.budget && t.budget.toLowerCase().includes(q));
+    return matchesStatus && matchesSearch;
   });
 
   const totalTasksCount = currentTasks.length;
@@ -1006,73 +1050,167 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                 </div>
 
                 {/* Tasks Control Bar */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  {/* Status Filter */}
-                  <div className="flex items-center gap-1.5 text-xs">
-                    {[
-                      { id: 'all', label: isAmharic ? 'ሁሉም' : 'All' },
-                      { id: 'planned', label: isAmharic ? 'የታቀደ' : 'Planned' },
-                      { id: 'in_progress', label: isAmharic ? 'በሂደት ላይ' : 'In Progress' },
-                      { id: 'completed', label: isAmharic ? 'የተጠናቀቀ' : 'Completed' }
-                    ].map((st) => (
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    {/* Status Filter */}
+                    <div className="flex items-center gap-1.5 text-xs">
+                      {[
+                        { id: 'all', label: isAmharic ? 'ሁሉም' : 'All' },
+                        { id: 'planned', label: isAmharic ? 'የታቀደ' : 'Planned' },
+                        { id: 'in_progress', label: isAmharic ? 'በሂደት ላይ' : 'In Progress' },
+                        { id: 'completed', label: isAmharic ? 'የተጠናቀቀ' : 'Completed' }
+                      ].map((st) => (
+                        <button
+                          key={st.id}
+                          type="button"
+                          onClick={() => setTaskFilterStatus(st.id as any)}
+                          className={`px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
+                            taskFilterStatus === st.id
+                              ? 'bg-amber-500 text-slate-950 font-bold shadow'
+                              : 'bg-[#09201e] text-emerald-200/80 border border-emerald-900/80 hover:text-white'
+                          }`}
+                        >
+                          {st.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Right Controls: View Switcher & Actions */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* View Mode Toggle */}
+                      <div className="flex items-center p-0.5 rounded-xl bg-[#061816] border border-emerald-900/80">
+                        <button
+                          type="button"
+                          onClick={() => setTaskViewMode('table')}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                            taskViewMode === 'table'
+                              ? 'bg-emerald-600 text-white shadow'
+                              : 'text-emerald-400/80 hover:text-white'
+                          }`}
+                          title="Excel ሰንጠረዥ እይታ"
+                        >
+                          <Table size={13} />
+                          <span>{isAmharic ? 'ሰንጠረዥ (Excel)' : 'Spreadsheet'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setTaskViewMode('cards')}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                            taskViewMode === 'cards'
+                              ? 'bg-emerald-600 text-white shadow'
+                              : 'text-emerald-400/80 hover:text-white'
+                          }`}
+                          title="ካርድ እይታ"
+                        >
+                          <LayoutGrid size={13} />
+                          <span>{isAmharic ? 'ካርዶች' : 'Cards'}</span>
+                        </button>
+                      </div>
+
+                      {/* Export to CSV/Excel */}
                       <button
-                        key={st.id}
                         type="button"
-                        onClick={() => setTaskFilterStatus(st.id as any)}
-                        className={`px-3 py-1 rounded-xl font-semibold transition-all cursor-pointer ${
-                          taskFilterStatus === st.id
-                            ? 'bg-amber-500 text-slate-950 font-bold shadow'
-                            : 'bg-[#09201e] text-emerald-200/80 border border-emerald-900/80 hover:text-white'
-                        }`}
+                        onClick={handleExportTasksToCSV}
+                        className="px-3 py-1.5 rounded-xl bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/80 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                        title="ይህን እቅድ በ Excel / CSV አውርድ"
                       >
-                        {st.label}
+                        <Download size={13} />
+                        <span>{isAmharic ? 'Excel አውርድ' : 'Export CSV'}</span>
                       </button>
-                    ))}
+
+                      {/* Add Custom Task Button */}
+                      {canEditDepartment(selectedDeptId) && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAddTaskForm(!showAddTaskForm)}
+                          className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow"
+                        >
+                          <Plus size={14} />
+                          <span>{isAmharic ? 'አዲስ እቅድ ጨምር' : 'Add Task'}</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Add Custom Task Button */}
-                  {canEditDepartment(selectedDeptId) && (
-                    <button
-                      type="button"
-                      onClick={() => setShowAddTaskForm(!showAddTaskForm)}
-                      className="px-4 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
-                    >
-                      <Plus size={14} />
-                      <span>{isAmharic ? 'አዲስ ተግባር / ዕቅድ መዝግብ' : 'Add New Task'}</span>
-                    </button>
-                  )}
+                  {/* Task Search Bar */}
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-400/60" />
+                    <input
+                      type="text"
+                      value={taskSearchQuery}
+                      onChange={(e) => setTaskSearchQuery(e.target.value)}
+                      placeholder={isAmharic ? 'በእቅድ ርዕስ፣ በንዑስ ክፍል ወይም በወራት ፈልግ...' : 'Search action plans by task, sub-unit, month...'}
+                      className="w-full pl-9 pr-4 py-2 bg-[#061816] border border-emerald-900/80 rounded-xl text-xs text-white placeholder-emerald-400/40 focus:outline-none focus:border-amber-400/80"
+                    />
+                  </div>
                 </div>
 
                 {/* Add New Task Modal/Inline Form */}
                 {showAddTaskForm && canEditDepartment(selectedDeptId) && (
-                  <form onSubmit={handleAddNewTask} className="p-5 rounded-2xl bg-[#092b27] border-2 border-amber-500/40 space-y-3">
+                  <form onSubmit={handleAddNewTask} className="p-5 rounded-2xl bg-[#092b27] border-2 border-amber-500/40 space-y-3 shadow-xl">
                     <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
                       <Plus size={15} />
-                      <span>{isAmharic ? 'አዲስ የተግባር ዕቅድ ማከል' : 'Create New Action Task'}</span>
+                      <span>{isAmharic ? 'አዲስ የድርጊት መርሃ ግብር እቅድ መመዝገቢያ' : 'Create New Action Task / Activity'}</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div className="sm:col-span-2">
                         <label className="block text-[11px] font-semibold text-emerald-300 mb-1">
-                          {isAmharic ? 'የተግባሩ አርዕስት / ዝርዝር' : 'Task Title / Duty'}
+                          {isAmharic ? 'የትኩረት አቅጣጫ እና ዝርዝር እቅድ *' : 'Task Title / Action Item *'}
                         </label>
                         <input
                           type="text"
                           required
                           value={newTaskTitle}
                           onChange={(e) => setNewTaskTitle(e.target.value)}
-                          placeholder="ምሳሌ፦ የሩብ ዓመት ሪፖርት ማዘጋጀት..."
+                          placeholder={isAmharic ? 'ምሳሌ፦ ለተማሪዎች የነገረ መጽሐፍ ቅዱስ ማጠቃለያ ፈተና ማዘጋጀት...' : 'Enter action item...'}
                           className="w-full px-3 py-2 bg-[#041211] border border-emerald-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
                         />
                       </div>
                       <div>
                         <label className="block text-[11px] font-semibold text-emerald-300 mb-1">
-                          {isAmharic ? 'ንዑስ ክፍል / ኃላፊ' : 'Sub-Unit / Assignee'}
+                          {isAmharic ? 'ኃላፊ ንዑስ ክፍል' : 'Sub-Unit / Assignee'}
                         </label>
                         <input
                           type="text"
                           value={newTaskSubUnit}
                           onChange={(e) => setNewTaskSubUnit(e.target.value)}
-                          placeholder="ምሳሌ፦ አጠቃላይ ሥራ አመራር"
+                          placeholder={isAmharic ? 'ምሳሌ፦ የትምህርት ቡድን' : 'e.g., Training Committee'}
+                          className="w-full px-3 py-2 bg-[#041211] border border-emerald-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-emerald-300 mb-1">
+                          {isAmharic ? 'መለኪያና ዒላማ' : 'Metric & Target'}
+                        </label>
+                        <input
+                          type="text"
+                          value={newTaskMetric}
+                          onChange={(e) => setNewTaskMetric(e.target.value)}
+                          placeholder={isAmharic ? 'ምሳሌ፦ በቁጥር / 50' : 'e.g. 50 members'}
+                          className="w-full px-3 py-2 bg-[#041211] border border-emerald-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-emerald-300 mb-1">
+                          {isAmharic ? 'የሚፈጸምበት ወራት' : 'Timeline / Months'}
+                        </label>
+                        <input
+                          type="text"
+                          value={newTaskTiming}
+                          onChange={(e) => setNewTaskTiming(e.target.value)}
+                          placeholder={isAmharic ? 'ምሳሌ፦ ጥቅምት - ታህሳስ' : 'e.g. Oct - Dec'}
+                          className="w-full px-3 py-2 bg-[#041211] border border-emerald-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-emerald-300 mb-1">
+                          {isAmharic ? 'የታቀደ በጀት' : 'Budget'}
+                        </label>
+                        <input
+                          type="text"
+                          value={newTaskBudget}
+                          onChange={(e) => setNewTaskBudget(e.target.value)}
+                          placeholder={isAmharic ? 'ምሳሌ፦ 15,000 ብር' : 'e.g. 15,000 ETB'}
                           className="w-full px-3 py-2 bg-[#041211] border border-emerald-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
                         />
                       </div>
@@ -1087,101 +1225,244 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
                       </button>
                       <button
                         type="submit"
-                        className="px-4 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 cursor-pointer"
+                        className="px-4 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 cursor-pointer shadow"
                       >
-                        {isAmharic ? 'አስቀምጥ' : 'Save Task'}
+                        {isAmharic ? 'እቅዱን መዝግብ' : 'Save Task'}
                       </button>
                     </div>
                   </form>
                 )}
 
-                {/* Task Items List */}
-                <div className="space-y-2.5">
-                  {filteredTasks.map((task) => {
-                    const canEdit = canEditDepartment(selectedDeptId);
+                {/* SPREADSHEET (EXCEL) TABLE VIEW */}
+                {taskViewMode === 'table' ? (
+                  <div className="overflow-x-auto rounded-2xl border border-emerald-800/80 bg-[#061816] shadow-xl">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="bg-[#0b2824] border-b border-emerald-800 text-emerald-300 uppercase font-semibold text-[11px] tracking-wider">
+                          <th className="py-3 px-3 w-12 text-center text-amber-400">#</th>
+                          <th className="py-3 px-4 min-w-[280px]">{isAmharic ? 'የትኩረት አቅጣጫ እና ዝርዝር እቅድ' : 'Action Item / Task Details'}</th>
+                          <th className="py-3 px-3 min-w-[110px]">{isAmharic ? 'መለኪያ / ዒላማ' : 'Metric / Target'}</th>
+                          <th className="py-3 px-3 min-w-[120px]">{isAmharic ? 'ጊዜ (ወራት)' : 'Timeline'}</th>
+                          <th className="py-3 px-3 min-w-[100px]">{isAmharic ? 'በጀት' : 'Budget'}</th>
+                          <th className="py-3 px-3 min-w-[130px]">{isAmharic ? 'ኃላፊ ንዑስ ክፍል' : 'Sub-Unit'}</th>
+                          <th className="py-3 px-3 min-w-[120px] text-center">{isAmharic ? 'ሁኔታ' : 'Status'}</th>
+                          <th className="py-3 px-3 w-16 text-center">{isAmharic ? 'ተግባር' : 'Action'}</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-emerald-900/60">
+                        {filteredTasks.map((task, idx) => {
+                          const canEdit = canEditDepartment(selectedDeptId);
+                          return (
+                            <tr 
+                              key={task.id}
+                              className={`transition-colors hover:bg-emerald-900/30 ${
+                                idx % 2 === 0 ? 'bg-[#061816]' : 'bg-[#08201d]'
+                              }`}
+                            >
+                              {/* Row No & Checkbox */}
+                              <td className="py-2.5 px-3 text-center text-emerald-400/80 font-mono text-[11px]">
+                                <button
+                                  type="button"
+                                  disabled={!canEdit}
+                                  onClick={() => handleCycleTaskStatus(task)}
+                                  className={`w-5 h-5 mx-auto rounded border flex items-center justify-center transition-all ${
+                                    task.status === 'completed'
+                                      ? 'bg-emerald-500 border-emerald-400 text-slate-950'
+                                      : task.status === 'in_progress'
+                                      ? 'bg-blue-500/20 border-blue-400 text-blue-300'
+                                      : 'bg-transparent border-emerald-800 text-transparent'
+                                  } ${canEdit ? 'cursor-pointer hover:scale-110' : 'cursor-default'}`}
+                                  title={isAmharic ? 'ሁኔታ ቀይር' : 'Toggle status'}
+                                >
+                                  {task.status === 'completed' ? <Check size={13} strokeWidth={3} /> : task.status === 'in_progress' ? '⏳' : null}
+                                </button>
+                              </td>
 
-                    return (
-                      <div 
-                        key={task.id}
-                        className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-amber-500/40 transition-colors"
-                      >
-                        <div className="flex items-start gap-3">
-                          <button
-                            type="button"
-                            disabled={!canEdit}
-                            onClick={() => handleCycleTaskStatus(task)}
-                            className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
-                              task.status === 'completed'
-                                ? 'bg-emerald-500 border-emerald-400 text-slate-950'
-                                : task.status === 'in_progress'
-                                ? 'bg-blue-500/20 border-blue-400 text-blue-300'
-                                : 'bg-transparent border-emerald-800 text-transparent'
-                            } ${canEdit ? 'cursor-pointer hover:scale-110' : 'cursor-default'}`}
-                            title={isAmharic ? 'ሁኔታ ቀይር' : 'Toggle status'}
-                          >
-                            {task.status === 'completed' ? <Check size={14} strokeWidth={3} /> : task.status === 'in_progress' ? '⏳' : null}
-                          </button>
-
-                          <div>
-                            <div className={`text-xs font-bold ${task.status === 'completed' ? 'line-through text-emerald-300/60' : 'text-white'}`}>
-                              {task.titleAm}
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2 mt-1 text-[10px] text-emerald-300/70">
-                              {task.subUnitAm && (
-                                <span className="px-2 py-0.5 rounded-md bg-[#041211] border border-emerald-900 text-amber-300/90 font-medium">
-                                  {task.subUnitAm}
+                              {/* Task Title */}
+                              <td className="py-2.5 px-4">
+                                <span className={`font-medium ${task.status === 'completed' ? 'line-through text-emerald-300/50' : 'text-slate-100'}`}>
+                                  {task.titleAm}
                                 </span>
-                              )}
-                              {task.articleRef && (
-                                <span className="font-mono text-emerald-400/70">
-                                  {task.articleRef}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                              </td>
 
-                        <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-                          <button
-                            type="button"
-                            disabled={!canEdit}
-                            onClick={() => handleCycleTaskStatus(task)}
-                            className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase border transition-all ${
-                              task.status === 'completed'
-                                ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
-                                : task.status === 'in_progress'
-                                ? 'bg-blue-950 text-blue-300 border-blue-700'
-                                : 'bg-amber-950 text-amber-300 border-amber-700'
-                            } ${canEdit ? 'hover:scale-105 cursor-pointer' : 'cursor-default'}`}
-                          >
-                            {task.status === 'completed' 
-                              ? (isAmharic ? '✓ የተጠናቀቀ' : 'Completed') 
-                              : task.status === 'in_progress'
-                              ? (isAmharic ? '⏳ በሂደት ላይ' : 'In Progress')
-                              : (isAmharic ? '○ የታቀደ' : 'Planned')}
-                          </button>
+                              {/* Metric / Target */}
+                              <td className="py-2.5 px-3 text-emerald-300/80 text-[11px]">
+                                {task.metric || task.target ? (
+                                  <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-900 text-emerald-300">
+                                    {[task.metric, task.target].filter(Boolean).join(' ')}
+                                  </span>
+                                ) : (
+                                  <span className="text-emerald-600">-</span>
+                                )}
+                              </td>
 
-                          {canEdit && task.id.includes('custom') && (
+                              {/* Timeline */}
+                              <td className="py-2.5 px-3 text-emerald-200/90 text-[11px]">
+                                {task.monthTiming ? (
+                                  <span className="font-sans text-amber-200/90">{task.monthTiming}</span>
+                                ) : (
+                                  <span className="text-emerald-600">-</span>
+                                )}
+                              </td>
+
+                              {/* Budget */}
+                              <td className="py-2.5 px-3 text-amber-300 font-mono text-[11px]">
+                                {task.budget && task.budget !== '-' ? task.budget : <span className="text-emerald-600 font-sans">-</span>}
+                              </td>
+
+                              {/* SubUnit */}
+                              <td className="py-2.5 px-3 text-emerald-300/80 text-[11px]">
+                                {task.subUnitAm ? (
+                                  <span className="px-2 py-0.5 rounded bg-[#041211] border border-emerald-900 text-amber-300/90">
+                                    {task.subUnitAm}
+                                  </span>
+                                ) : (
+                                  <span className="text-emerald-600">-</span>
+                                )}
+                              </td>
+
+                              {/* Status Toggle Badge */}
+                              <td className="py-2.5 px-3 text-center">
+                                <button
+                                  type="button"
+                                  disabled={!canEdit}
+                                  onClick={() => handleCycleTaskStatus(task)}
+                                  className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase border transition-all inline-flex items-center gap-1 ${
+                                    task.status === 'completed'
+                                      ? 'bg-emerald-950 text-emerald-300 border-emerald-600'
+                                      : task.status === 'in_progress'
+                                      ? 'bg-blue-950 text-blue-300 border-blue-600'
+                                      : 'bg-amber-950 text-amber-300 border-amber-600'
+                                  } ${canEdit ? 'hover:scale-105 cursor-pointer shadow' : 'cursor-default'}`}
+                                  title={canEdit ? (isAmharic ? 'ሁኔታውን ለመቀየር እዚህ ይጫኑ' : 'Click to cycle status') : ''}
+                                >
+                                  {task.status === 'completed' 
+                                    ? (isAmharic ? '✓ ተጠናቋል' : 'Completed') 
+                                    : task.status === 'in_progress'
+                                    ? (isAmharic ? '⏳ በሂደት' : 'In Progress')
+                                    : (isAmharic ? '○ የታቀደ' : 'Planned')}
+                                </button>
+                              </td>
+
+                              {/* Action */}
+                              <td className="py-2.5 px-3 text-center">
+                                {canEdit && (
+                                  <button
+                                    type="button"
+                                    onClick={() => deleteTask(selectedDeptId, task.id)}
+                                    className="p-1 rounded-lg text-rose-400 hover:bg-rose-500/20 transition-all cursor-pointer"
+                                    title="እቅዱን ሰርዝ"
+                                  >
+                                    <Trash2 size={13} />
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+
+                    {filteredTasks.length === 0 && (
+                      <div className="py-8 text-center text-xs text-emerald-300/60 bg-[#061816]">
+                        {isAmharic ? 'በዚህ ማጣሪያ የተገኘ እቅድ የለም።' : 'No tasks match this filter.'}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* CARD CHECKLIST VIEW */
+                  <div className="space-y-2.5">
+                    {filteredTasks.map((task) => {
+                      const canEdit = canEditDepartment(selectedDeptId);
+
+                      return (
+                        <div 
+                          key={task.id}
+                          className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-amber-500/40 transition-colors"
+                        >
+                          <div className="flex items-start gap-3">
                             <button
                               type="button"
-                              onClick={() => deleteTask(selectedDeptId, task.id)}
-                              className="p-1 rounded-lg text-rose-400 hover:bg-rose-500/20 transition-all cursor-pointer"
-                              title="ሰርዝ"
+                              disabled={!canEdit}
+                              onClick={() => handleCycleTaskStatus(task)}
+                              className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                                task.status === 'completed'
+                                  ? 'bg-emerald-500 border-emerald-400 text-slate-950'
+                                  : task.status === 'in_progress'
+                                  ? 'bg-blue-500/20 border-blue-400 text-blue-300'
+                                  : 'bg-transparent border-emerald-800 text-transparent'
+                              } ${canEdit ? 'cursor-pointer hover:scale-110' : 'cursor-default'}`}
+                              title={isAmharic ? 'ሁኔታ ቀይር' : 'Toggle status'}
                             >
-                              <Trash2 size={13} />
+                              {task.status === 'completed' ? <Check size={14} strokeWidth={3} /> : task.status === 'in_progress' ? '⏳' : null}
                             </button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
 
-                  {filteredTasks.length === 0 && (
-                    <div className="py-8 text-center text-xs text-emerald-300/60 bg-[#09201e] rounded-2xl border border-dashed border-emerald-900">
-                      {isAmharic ? 'በዚህ ምድብ ውስጥ የተመዘገበ ተግባር የለም።' : 'No tasks found for this filter.'}
-                    </div>
-                  )}
-                </div>
+                            <div>
+                              <div className={`text-xs font-bold ${task.status === 'completed' ? 'line-through text-emerald-300/60' : 'text-white'}`}>
+                                {task.titleAm}
+                              </div>
+                              <div className="flex flex-wrap items-center gap-2 mt-1 text-[10px] text-emerald-300/70">
+                                {task.subUnitAm && (
+                                  <span className="px-2 py-0.5 rounded-md bg-[#041211] border border-emerald-900 text-amber-300/90 font-medium">
+                                    {task.subUnitAm}
+                                  </span>
+                                )}
+                                {task.monthTiming && (
+                                  <span className="px-2 py-0.5 rounded-md bg-[#041211] border border-emerald-900 text-emerald-300">
+                                    📅 {task.monthTiming}
+                                  </span>
+                                )}
+                                {task.budget && task.budget !== '-' && (
+                                  <span className="px-2 py-0.5 rounded-md bg-amber-950/40 border border-amber-900/60 text-amber-300 font-mono">
+                                    💰 {task.budget}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 self-end sm:self-auto">
+                            <button
+                              type="button"
+                              disabled={!canEdit}
+                              onClick={() => handleCycleTaskStatus(task)}
+                              className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase border transition-all ${
+                                task.status === 'completed'
+                                  ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
+                                  : task.status === 'in_progress'
+                                  ? 'bg-blue-950 text-blue-300 border-blue-700'
+                                  : 'bg-amber-950 text-amber-300 border-amber-700'
+                              } ${canEdit ? 'hover:scale-105 cursor-pointer' : 'cursor-default'}`}
+                            >
+                              {task.status === 'completed' 
+                                ? (isAmharic ? '✓ የተጠናቀቀ' : 'Completed') 
+                                : task.status === 'in_progress'
+                                ? (isAmharic ? '⏳ በሂደት ላይ' : 'In Progress')
+                                : (isAmharic ? '○ የታቀደ' : 'Planned')}
+                            </button>
+
+                            {canEdit && (
+                              <button
+                                type="button"
+                                onClick={() => deleteTask(selectedDeptId, task.id)}
+                                className="p-1 rounded-lg text-rose-400 hover:bg-rose-500/20 transition-all cursor-pointer"
+                                title="ሰርዝ"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {filteredTasks.length === 0 && (
+                      <div className="py-8 text-center text-xs text-emerald-300/60 bg-[#09201e] rounded-2xl border border-dashed border-emerald-900">
+                        {isAmharic ? 'በዚህ ምድብ ውስጥ የተመዘገበ ተግባር የለም።' : 'No tasks found for this filter.'}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Statutory Duties List from Bylaws */}
                 <div className="p-6 rounded-3xl bg-[#09201e] border border-emerald-900/80 space-y-3">

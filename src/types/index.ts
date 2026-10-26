@@ -9,6 +9,11 @@ export interface DepartmentTaskItem {
   status: 'planned' | 'in_progress' | 'completed';
   articleRef?: string;
   descriptionAm?: string;
+  metric?: string;
+  target?: string;
+  monthTiming?: string;
+  budget?: string;
+  remarks?: string;
 }
 
 export interface SubUnitDetailed {
