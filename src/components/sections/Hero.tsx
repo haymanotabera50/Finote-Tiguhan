@@ -100,11 +100,11 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
           </a>
 
           <a
-            href="#mezmur"
+            href="#courses"
             className="px-6 py-3.5 rounded-full bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-700/50 text-emerald-200 font-semibold text-sm sm:text-base transition-all duration-300 flex items-center gap-2 hover:scale-105"
           >
-            <Music size={18} className="text-amber-400" />
-            <span>{t.navMezmur}</span>
+            <BookOpen size={18} className="text-amber-400" />
+            <span>{t.navCourses}</span>
           </a>
         </div>
 
