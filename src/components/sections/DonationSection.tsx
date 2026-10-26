@@ -53,71 +53,83 @@ export const DonationSection: React.FC = () => {
   ];
 
   return (
-    <section id="donate" className="py-24 bg-[#081716] relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+    <section id="donate" className="py-12 sm:py-14 bg-[#081716] relative overflow-hidden">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Section Header (Compact) */}
+        <div className="text-center max-w-2xl mx-auto mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-2.5">
+            <EthiopianCross size={13} variant="simple" />
+            <span>{isAmharic ? "አገልግሎቱን ይደግፉ" : "Support Our Mission"}</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
             {t.givingTitle}
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto rounded-full mb-4" />
-          <p className="text-emerald-200/80 text-base sm:text-lg">
+          <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto rounded-full mb-2.5" />
+          <p className="text-emerald-200/80 text-xs sm:text-sm">
             {t.givingSubtitle}
           </p>
         </div>
 
-        {/* Giving Pillars Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
-          <div className="p-6 rounded-2xl bg-[#09201e]/70 border border-emerald-800/60 space-y-2">
-            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 w-fit">
-              <BookOpen size={20} />
+        {/* Giving Pillars Overview (Compact) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-7 text-left">
+          <div className="p-4 rounded-2xl bg-[#09201e]/80 border border-emerald-800/60 space-y-1.5 shadow-md">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-amber-500/15 text-amber-400 w-fit shrink-0">
+                <BookOpen size={17} />
+              </div>
+              <h4 className="text-xs sm:text-sm font-bold text-white">
+                {isAmharic ? "የሕፃናት ትምህርት ቁሳቁስ" : "Children Curriculum"}
+              </h4>
             </div>
-            <h4 className="text-base font-bold text-white">
-              {isAmharic ? "የሕፃናት ትምህርት ቁሳቁስ" : "Children Curriculum & Books"}
-            </h4>
-            <p className="text-xs text-emerald-200/70 leading-relaxed">
+            <p className="text-[11px] text-emerald-200/70 leading-relaxed">
               {isAmharic 
-                ? "ለማቴዎስ፣ ማርቆስና ሉቃስ ክፍላት የመማሪያ መጻሕፍት፣ ቀለማትና የዝማሬ መሣሪያዎች ድጋፍ።" 
-                : "Supporting classroom books, coloring materials, and liturgical instruments for young learners."}
+                ? "ለመማሪያ መጻሕፍት፣ ቀለማትና የዝማሬ መሣሪያዎች ድጋፍ።" 
+                : "Books, coloring materials, and liturgical instruments for learners."}
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-[#09201e]/70 border border-emerald-800/60 space-y-2">
-            <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-400 w-fit">
-              <Heart size={20} />
+          <div className="p-4 rounded-2xl bg-[#09201e]/80 border border-emerald-800/60 space-y-1.5 shadow-md">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-rose-500/15 text-rose-400 w-fit shrink-0">
+                <Heart size={17} />
+              </div>
+              <h4 className="text-xs sm:text-sm font-bold text-white">
+                {isAmharic ? "የአቅመ-ደካሞች ተራድዖ" : "Elderly & Needy Care"}
+              </h4>
             </div>
-            <h4 className="text-base font-bold text-white">
-              {isAmharic ? "የአቅመ-ደካሞች ተራድዖ" : "Vulnerable & Elderly Care"}
-            </h4>
-            <p className="text-xs text-emerald-200/70 leading-relaxed">
+            <p className="text-[11px] text-emerald-200/70 leading-relaxed">
               {isAmharic 
-                ? "በአጥቢያችን ለሚገኙ ችግረኛ ወገኖች፣ አረጋውያንና አቅመ-ደካሞች ወርሃዊ የምግብና የመድኃኒት ድጋፍ።" 
-                : "Monthly food parcels, medical assistance, and emergency relief for needy community members."}
+                ? "ለችግረኛ ወገኖችና አረጋውያን ወርሃዊ የምግብና የመድኃኒት ድጋፍ።" 
+                : "Monthly food parcels and medical assistance for vulnerable members."}
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-[#09201e]/70 border border-emerald-800/60 space-y-2">
-            <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 w-fit">
-              <Sparkles size={20} />
+          <div className="p-4 rounded-2xl bg-[#09201e]/80 border border-emerald-800/60 space-y-1.5 shadow-md">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-cyan-500/15 text-cyan-400 w-fit shrink-0">
+                <Sparkles size={17} />
+              </div>
+              <h4 className="text-xs sm:text-sm font-bold text-white">
+                {isAmharic ? "የሰንበት ት/ቤቱ አዳራሽና ሚዲያ" : "Hall & Media"}
+              </h4>
             </div>
-            <h4 className="text-base font-bold text-white">
-              {isAmharic ? "የሰንበት ት/ቤቱ አዳራሽና ሚዲያ" : "Sunday School Hall & Media"}
-            </h4>
-            <p className="text-xs text-emerald-200/70 leading-relaxed">
+            <p className="text-[11px] text-emerald-200/70 leading-relaxed">
               {isAmharic 
-                ? "የድምጽ፣ ምስልና የመገናኛ ብዙኃን መሣሪያዎችን በማሟላት የወንጌልን ብርሃን በሰፊው ማዳረስ።" 
-                : "Upgrading audio-visual equipment, library, and broadcasting infrastructure for wider evangelism."}
+                ? "የድምጽ፣ ምስልና የመገናኛ መሣሪያዎችን በማሟላት የወንጌል አገልግሎት።" 
+                : "Audio-visual and broadcasting equipment for wider evangelism."}
             </p>
           </div>
         </div>
 
-        {/* Bank & Payment Cards */}
-        <div className="max-w-4xl mx-auto space-y-4">
-          <div className="text-xs text-amber-400 font-semibold mb-2 text-center uppercase tracking-wider">
-            {t.givingAccountHolder}
+        {/* Bank & Payment Cards (Compact) */}
+        <div className="space-y-3">
+          <div className="text-[11px] sm:text-xs text-amber-400 font-semibold mb-2 text-center uppercase tracking-wider flex items-center justify-center gap-2">
+            <span className="w-8 h-px bg-amber-400/30" />
+            <span>{t.givingAccountHolder}</span>
+            <span className="w-8 h-px bg-amber-400/30" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-left">
             {accounts.map((acc) => {
               const isCopied = copiedKey === acc.id;
               const IconComp = acc.icon;
@@ -125,27 +137,27 @@ export const DonationSection: React.FC = () => {
               return (
                 <div
                   key={acc.id}
-                  className={`p-6 rounded-3xl bg-[#09201e] border-2 ${acc.color} transition-all duration-300 shadow-xl flex flex-col justify-between`}
+                  className={`p-4 sm:p-5 rounded-2xl bg-[#09201e] border ${acc.color} transition-all duration-300 shadow-xl flex flex-col justify-between`}
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="p-2.5 rounded-xl bg-white/5 text-amber-400">
-                        <IconComp size={22} />
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="p-2 rounded-xl bg-white/5 text-amber-400">
+                        <IconComp size={18} />
                       </div>
-                      <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${acc.badgeColor}`}>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${acc.badgeColor}`}>
                         {acc.badge}
                       </span>
                     </div>
 
-                    <h4 className="text-sm font-bold text-white mb-2 leading-snug">
+                    <h4 className="text-xs sm:text-sm font-bold text-white mb-2 leading-snug">
                       {isAmharic ? acc.bankNameAm : acc.bankNameEn}
                     </h4>
 
-                    <div className="p-3 rounded-xl bg-[#051413] border border-emerald-900/60 font-mono text-sm sm:text-base font-extrabold text-amber-300 tracking-wider text-center select-all mb-2">
+                    <div className="py-2 px-3 rounded-xl bg-[#051413] border border-emerald-900/60 font-mono text-sm sm:text-base font-extrabold text-amber-300 tracking-wider text-center select-all mb-1.5">
                       {acc.accountNumber}
                     </div>
                     {acc.holderAm && (
-                      <div className="text-[11px] text-emerald-300/80 text-center mb-3">
+                      <div className="text-[10px] sm:text-[11px] text-emerald-300/80 text-center mb-3 truncate">
                         <span>{acc.holderAm}</span>
                       </div>
                     )}
@@ -153,7 +165,7 @@ export const DonationSection: React.FC = () => {
 
                   <button
                     onClick={() => copyToClipboard(acc.accountNumber, acc.id)}
-                    className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    className={`w-full py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       isCopied
                         ? 'bg-emerald-500 text-slate-950 font-bold'
                         : 'bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/30'
@@ -161,12 +173,12 @@ export const DonationSection: React.FC = () => {
                   >
                     {isCopied ? (
                       <>
-                        <Check size={14} />
+                        <Check size={13} />
                         <span>{t.givingCopied}</span>
                       </>
                     ) : (
                       <>
-                        <Copy size={14} />
+                        <Copy size={13} />
                         <span>{t.givingCopy}</span>
                       </>
                     )}
