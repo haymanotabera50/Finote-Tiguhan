@@ -8,7 +8,6 @@ import { Hero } from './components/sections/Hero';
 import { About } from './components/sections/About';
 import { Departments } from './components/sections/Departments';
 import { Courses } from './components/sections/Courses';
-import { FeastCalendar } from './components/sections/FeastCalendar';
 import { MezmurPlayer } from './components/sections/MezmurPlayer';
 import { MediaGallery } from './components/sections/MediaGallery';
 import { DonationSection } from './components/sections/DonationSection';
@@ -203,7 +202,6 @@ export function AppContent() {
           onOpenAuth={() => handleOpenAuth('login')}
         />
         <Courses onEnroll={(courseId) => handleOpenRegister()} />
-        <FeastCalendar />
         <MezmurPlayer />
         <MediaGallery />
         <DonationSection />

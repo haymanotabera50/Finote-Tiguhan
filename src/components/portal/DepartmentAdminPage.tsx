@@ -6,7 +6,6 @@ import { departmentsData } from '../../data/departmentsData';
 import { EthiopianCross } from '../common/EthiopianCross';
 import { DepartmentTaskItem } from '../../types';
 import logoImg from '../../assets/logo.jpg';
-import { FeastCalendar } from '../sections/FeastCalendar';
 import { MezmurPlayer } from '../sections/MezmurPlayer';
 import { MediaFrontEndCMS } from './MediaFrontEndCMS';
 import { api } from '../../services/api';
@@ -2064,46 +2063,6 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
           </div>
         )}
 
-        {/* ========================================================================= */}
-        {/* TAB: FEAST & FAST CALENDAR (የበዓላትና የአጽዋማት ቀን መቁጠሪያ)                     */}
-        {/* ========================================================================= */}
-        {mainTab === 'calendar' && (
-          <div className="space-y-4 animate-in fade-in duration-200 text-left">
-            <div className="bg-[#041211] p-4 sm:p-5 rounded-3xl border border-emerald-900/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                  <Calendar size={22} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                    <span>{isAmharic ? "የበዓላትና የአጽዋማት ቀን መቁጠሪያ" : "Liturgical Feast & Fast Calendar"}</span>
-                    <Sparkles size={16} className="text-amber-400" />
-                  </h3>
-                  <p className="text-xs text-emerald-200/70">
-                    {isAmharic 
-                      ? "ለ14ቱ ክፍላት የጋራ አገልግሎቶች፣ ዓበይት በዓላትና አጽዋማት ማጣቀሻ የቀረበ" 
-                      : "Official liturgical dates, fasts, and Sunday School feast services for all 14 departments"}
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setMainTab('departments')}
-                className="px-4 py-2 rounded-xl bg-[#081f1c] hover:bg-[#0c2f2b] text-amber-300 border border-amber-500/40 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer self-start sm:self-auto shadow"
-              >
-                <ArrowLeft size={14} />
-                <span>{isAmharic ? "ወደ ክፍላት አስተዳደር ተመለስ" : "Back to Departments CMS"}</span>
-              </button>
-            </div>
-
-            <div className="rounded-3xl overflow-hidden border border-emerald-900/60 shadow-2xl bg-[#081716]">
-              <FeastCalendar />
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
         {/* TAB: SACRED MEZMUR & HYMNS (መንፈሳዊ መዝሙራትና ዝማሬ)                       */}
         {/* ========================================================================= */}
         {mainTab === 'mezmur' && (

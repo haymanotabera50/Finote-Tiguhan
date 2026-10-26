@@ -38,7 +38,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: t.navAbout, href: "#about" },
     { label: isAuthenticated ? t.navDepartments : (isAmharic ? "አዲስ ምዝገባ" : "Registration"), href: "#departments" },
     { label: t.navCourses, href: "#courses" },
-    { label: t.navCalendar, href: "#calendar" },
     { label: t.navMezmur, href: "#mezmur" },
     { label: t.navMedia, href: "#media" },
     { label: t.navDonate, href: "#donate" },
