@@ -209,7 +209,7 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
     setAuditedDeptId(null);
     if (deptId === 'audit') {
       setDeptSubTab('deptProgress');
-    } else if (deptSubTab === 'deptProgress') {
+    } else if (deptSubTab === 'deptProgress' || (deptSubTab === 'students' && deptId !== 'education')) {
       setDeptSubTab('tasks');
     }
     const targetObj = departmentsData.find(d => d.id === deptId) || departmentsData[0];
@@ -626,50 +626,6 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               </span>
             </button>
 
-            {/* TAB: FEAST & FAST CALENDAR */}
-            <button
-              type="button"
-              onClick={() => setMainTab('calendar')}
-              className={`py-2.5 px-4 rounded-xl font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer ${
-                mainTab === 'calendar'
-                  ? 'bg-amber-500 text-slate-950 font-black shadow'
-                  : 'text-emerald-200/80 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Calendar size={16} />
-              <span>{isAmharic ? '📅 የበዓላትና የአጽዋማት ቀን መቁጠሪያ' : 'Feast & Fast Calendar'}</span>
-            </button>
-
-            {/* TAB: SACRED MEZMUR & HYMNS */}
-            <button
-              type="button"
-              onClick={() => setMainTab('mezmur')}
-              className={`py-2.5 px-4 rounded-xl font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer ${
-                mainTab === 'mezmur'
-                  ? 'bg-amber-500 text-slate-950 font-black shadow'
-                  : 'text-emerald-200/80 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Music size={16} />
-              <span>{isAmharic ? '🎵 መንፈሳዊ መዝሙራትና ዝማሬ' : 'Spiritual Mezmur & Hymns'}</span>
-            </button>
-
-            {/* TAB: REGISTRATIONS */}
-            <button
-              type="button"
-              onClick={() => setMainTab('registrations')}
-              className={`py-2.5 px-4 rounded-xl font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer ${
-                mainTab === 'registrations'
-                  ? 'bg-amber-500 text-slate-950 font-black shadow'
-                  : 'text-emerald-200/80 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <UserCheck size={16} />
-              <span>
-                {isAmharic ? '📋 የተማሪዎች ምዝገባ' : 'Registrations'} ({registrations.length})
-              </span>
-            </button>
-
             {/* TAB: FEEDBACK & INQUIRIES INBOX */}
             <button
               type="button"
@@ -768,25 +724,7 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               </div>
 
               <div className="shrink-0 flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setMainTab('calendar')}
-                  className="px-3 py-1.5 rounded-xl bg-[#061514] hover:bg-[#0a2320] text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm hover:border-amber-400"
-                  title={isAmharic ? "የበዓላትና የአጽዋማት ቀን መቁጠሪያ" : "Feast & Fast Calendar"}
-                >
-                  <Calendar size={13} className="text-amber-400" />
-                  <span>{isAmharic ? 'ቀን መቁጠሪያ' : 'Calendar'}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setMainTab('mezmur')}
-                  className="px-3 py-1.5 rounded-xl bg-[#061514] hover:bg-[#0a2320] text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm hover:border-amber-400"
-                  title={isAmharic ? "መንፈሳዊ መዝሙራትና ዝማሬ" : "Sacred Mezmur & Hymns"}
-                >
-                  <Music size={13} className="text-amber-400" />
-                  <span>{isAmharic ? 'መዝሙራት' : 'Mezmur'}</span>
-                </button>
+                
 
                 {selectedDeptId === 'media' && (
                   <button
@@ -879,7 +817,7 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               ] : [
                 { id: 'content', labelAm: '📝 የገጽ ይዘትና መገለጫ', labelEn: 'Page Profile & Content', icon: Edit3 },
                 { id: 'tasks', labelAm: `📋 የሥራ ዕቅድና ተግባራት (${completedTasksCount}/${totalTasksCount})`, labelEn: 'Tasks & Mandates', icon: ListTodo },
-                { id: 'students', labelAm: `👥 ተመዝጋቢዎች (${deptRegistrations.length})`, labelEn: 'Registrations', icon: UserCheck },
+                ...(selectedDeptId === 'education' ? [{ id: 'students', labelAm: `👥 ተመዝጋቢዎች (${deptRegistrations.length})`, labelEn: 'Registrations', icon: UserCheck }] : []),
                 { id: 'preview', labelAm: '👁️ የቀጥታ ገጽ እይታ', labelEn: 'Live Preview', icon: Eye },
                 ...(selectedDeptId === 'media' ? [{ id: 'mediaCMS', labelAm: '🎨 የፊት ገጽ ማበጃ (CMS)', labelEn: 'Front-End CMS', icon: Sparkles }] : [])
               ]).map((sub) => {
