@@ -56,133 +56,122 @@ export const Departments: React.FC<DepartmentsProps> = ({
   }, [activeCategory, searchQuery]);
 
   return (
-    <section id="departments" className="py-24 bg-[#081716] relative overflow-hidden">
+    <section id="departments" className="py-14 bg-[#081716] relative overflow-hidden">
       {/* Background Glow */}
       <div className="absolute top-1/4 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-10 left-10 w-80 h-80 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* ========================================================================= */}
-      {/* 1. PUBLIC GUEST VIEW (When NOT logged in: Show Public Enrollment & Login Gateway) */}
-      {/* ========================================================================= */}
+      {/* 1. PUBLIC GUEST VIEW (Shortened & Compact) */}
       {!currentUser ? (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Public Section Header */}
-          <div className="text-center max-w-3xl mx-auto mb-14">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">
-              <EthiopianCross size={14} variant="simple" />
-              <span>{isAmharic ? "የአዲስ ተማሪዎች ምዝገባ" : "New Student Registration"}</span>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Public Section Header (Shortened & Punchy) */}
+          <div className="text-center max-w-2xl mx-auto mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-2.5">
+              <EthiopianCross size={13} variant="simple" />
+              <span>{isAmharic ? "የተማሪዎች ምዝገባ" : "Student Enrollment"}</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-              {isAmharic ? "ይህ ክፍል ለአዲስ ተማሪዎች ምዝገባ የተዘጋጀ ነው" : "This Part is for New Student Registration"}
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+              {isAmharic ? "የተማሪዎች ምዝገባና መግቢያ" : "Student Registration & Sign In"}
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto rounded-full mb-4" />
-            <p className="text-emerald-200/80 text-base sm:text-lg">
+            <p className="text-emerald-200/80 text-xs sm:text-sm">
               {isAmharic 
-                ? "ይህ ክፍል ለአዲስ ተማሪዎች ምዝገባ ብቻ የተዘጋጀ ነው። አዲስ ተማሪዎች እባክዎ ከታች ይመዝገቡ፤ ነባር ተማሪዎች ደግሞ ወደ መለያዎ ይግቡ።"
-                : "This section is dedicated exclusively for new student registration. New students please register below, or sign in if already enrolled."}
+                ? "አዲስ ተማሪዎች ይመዝገቡ፤ ነባር ተማሪዎች ደግሞ ወደ መለያዎ ይግቡ።"
+                : "Register as a new student or sign in to your student portal."}
             </p>
           </div>
 
-          {/* Public Action Cards: New Student Registration vs Enrolled Student Sign In */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-6">
+          {/* Compact Public Action Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
             {/* Card 1: New Student Registration */}
-            <div className="rounded-3xl p-8 bg-gradient-to-b from-[#0e332f] to-[#071d1b] border-2 border-amber-400 shadow-xl shadow-amber-500/10 flex flex-col justify-between text-left relative overflow-hidden group hover:scale-[1.02] transition-all">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3.5 rounded-2xl bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/20">
-                    <UserPlus size={26} />
+            <div className="rounded-2xl p-5 sm:p-6 bg-gradient-to-b from-[#0e332f] to-[#071d1b] border-2 border-amber-400 shadow-lg flex flex-col justify-between text-left relative overflow-hidden group hover:scale-[1.01] transition-all">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="p-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold shadow-md">
+                    <UserPlus size={20} />
                   </div>
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
                     {isAmharic ? "ምዝገባ ክፍት ነው" : "Open Enrollment"}
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-bold text-white mb-2">
+                <h3 className="text-lg sm:text-xl font-bold text-white">
                   {isAmharic ? "አዲስ ተማሪዎች ምዝገባ" : "New Student Registration"}
                 </h3>
-                <p className="text-sm text-emerald-100/80 leading-relaxed mb-6">
+                <p className="text-xs text-emerald-100/80 leading-relaxed">
                   {isAmharic 
-                    ? "በፍኖተ ትጉሃን ሰንበት ትምህርት ቤት የሕፃናት፣ የወጣቶች፣ የአብነት ወይም የመዝሙር ክፍል ተማሪ ለመሆን አሁኑኑ በኦንላይን ይመዝገቡ።" 
-                    : "Apply online today to join Sunday School classes, youth divisions, traditional Abnet studies, or sacred choir."}
+                    ? "የሕፃናት፣ የወጣቶች፣ የአብነት ወይም የመዝሙር ክፍል ተማሪ ለመሆን አሁኑኑ ይመዝገቡ።" 
+                    : "Apply online to join Sunday School classes, youth divisions, Abnet studies, or choir."}
                 </p>
 
-                <div className="space-y-2 mb-6 text-xs text-emerald-200">
+                <div className="space-y-1.5 pt-1 text-xs text-emerald-200/90">
                   <div className="flex items-center gap-2">
-                    <Check size={14} className="text-amber-400 shrink-0" />
-                    <span>{isAmharic ? "ቀጥታ የዲጂታል ምዝገባ ኮድ ማግኘት" : "Instant registration confirmation code"}</span>
+                    <Check size={13} className="text-amber-400 shrink-0" />
+                    <span>{isAmharic ? "ዲጂታል የምዝገባ ኮድ ማግኘት" : "Digital registration code"}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check size={14} className="text-amber-400 shrink-0" />
-                    <span>{isAmharic ? "በዕድሜ ደረጃ የተከፋፈሉ የመማሪያ ክፍሎች" : "Age-appropriate Orthodox curriculum"}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check size={14} className="text-amber-400 shrink-0" />
-                    <span>{isAmharic ? "የመማሪያ መጻሕፍትና መንፈሳዊ ቁሳቁሶች ድጋፍ" : "Access to spiritual books and learning resources"}</span>
+                    <Check size={13} className="text-amber-400 shrink-0" />
+                    <span>{isAmharic ? "በዕድሜ የተከፋፈሉ የመማሪያ ክፍሎች" : "Age-appropriate Orthodox curriculum"}</span>
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={() => onJoinDepartment()}
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="mt-5 w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <UserPlus size={16} />
-                <span>{isAmharic ? "አሁኑኑ ይመዝገቡ" : "Register Now as New Student"}</span>
-                <ArrowRight size={16} />
+                <UserPlus size={15} />
+                <span>{isAmharic ? "አሁኑኑ ይመዝገቡ" : "Register Now"}</span>
+                <ArrowRight size={14} />
               </button>
             </div>
 
             {/* Card 2: Enrolled Student Sign In */}
-            <div className="rounded-3xl p-8 bg-gradient-to-b from-[#0a2724] to-[#051614] border border-emerald-700/60 shadow-xl flex flex-col justify-between text-left relative overflow-hidden group hover:scale-[1.02] transition-all">
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3.5 rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    <LogIn size={26} />
+            <div className="rounded-2xl p-5 sm:p-6 bg-gradient-to-b from-[#0a2724] to-[#051614] border border-emerald-700/60 shadow-lg flex flex-col justify-between text-left relative overflow-hidden group hover:scale-[1.01] transition-all">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <LogIn size={20} />
                   </div>
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#0a2724] text-emerald-300 border border-emerald-600/40">
-                    {isAmharic ? "የተማሪዎችና አባላት መዳረሻ" : "Members Only Access"}
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#0a2724] text-emerald-300 border border-emerald-600/40">
+                    {isAmharic ? "የተማሪዎች መዳረሻ" : "Members Only"}
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  {isAmharic ? "የሰንበት ት/ቤት ተማሪዎች መግቢያ" : "Enrolled Student Sign In"}
+                <h3 className="text-lg sm:text-xl font-bold text-white">
+                  {isAmharic ? "የነባር ተማሪዎች መግቢያ" : "Student Sign In"}
                 </h3>
-                <p className="text-sm text-emerald-100/80 leading-relaxed mb-6">
+                <p className="text-xs text-emerald-100/80 leading-relaxed">
                   {isAmharic
-                    ? "ቀድመው የተመዘገቡ የሰንበት ት/ቤት ተማሪዎች፣ መዘምራንና አገልጋዮች የትምህርት መርሃ ግብሮችና ዲጂታል መታወቂያ ካርዳቸውን ለመመልከት እባክዎ ይግቡ።"
-                    : "Already enrolled Sunday School students, choir members, and coordinators: please sign in to view class schedules and your digital ID card."}
+                    ? "ቀደም ብለው የተመዘገቡ ተማሪዎች መርሃ ግብርና መታወቂያ ካርድ ለመመልከት ይግቡ።"
+                    : "Enrolled students: sign in to view class schedules and your digital ID card."}
                 </p>
 
-                <div className="space-y-2 mb-6 text-xs text-emerald-200">
+                <div className="space-y-1.5 pt-1 text-xs text-emerald-200/90">
                   <div className="flex items-center gap-2">
-                    <Check size={14} className="text-amber-400 shrink-0" />
-                    <span>{isAmharic ? "የትምህርት መርሃ ግብርና መሪ ቃሎች" : "Curricula & class schedules"}</span>
+                    <Check size={13} className="text-amber-400 shrink-0" />
+                    <span>{isAmharic ? "የትምህርት መርሃ ግብርና ማስታወቂያ" : "Schedules & announcements"}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check size={14} className="text-amber-400 shrink-0" />
-                    <span>{isAmharic ? "የተመደቡበት ክፍልና የአስተማሪዎች ማስታወቂያ" : "Assigned division & coordinator notices"}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check size={14} className="text-amber-400 shrink-0" />
-                    <span>{isAmharic ? "የግል ዲጂታል የተማሪ መታወቂያ ካርድ" : "Personal digital Student ID Badge"}</span>
+                    <Check size={13} className="text-amber-400 shrink-0" />
+                    <span>{isAmharic ? "የግል ዲጂታል የተማሪ መታወቂያ ካርድ" : "Personal digital Student ID"}</span>
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={() => onOpenAuth ? onOpenAuth() : null}
-                className="w-full py-3.5 rounded-2xl bg-[#0a2b27] hover:bg-[#0e3b35] text-amber-300 hover:text-white border border-amber-500/40 hover:border-amber-400 font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow"
+                className="mt-5 w-full py-2.5 rounded-xl bg-[#0a2b27] hover:bg-[#0e3b35] text-amber-300 hover:text-white border border-amber-500/40 hover:border-amber-400 font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow"
               >
-                <LogIn size={16} className="text-amber-400" />
-                <span>{isAmharic ? "ይግቡና መለያዎን ይመልከቱ" : "Sign In to Your Account"}</span>
-                <ArrowRight size={16} />
+                <LogIn size={15} className="text-amber-400" />
+                <span>{isAmharic ? "ወደ መለያዎ ይግቡ" : "Sign In to Account"}</span>
+                <ArrowRight size={14} />
               </button>
             </div>
           </div>
         </div>
       ) : (
-        /* ========================================================================= */
+
         /* 2. AUTHENTICATED STUDENT / MEMBER VIEW (Show full 14 Departments Grid)   */
         /* ========================================================================= */
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
