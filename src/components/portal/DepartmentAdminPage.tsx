@@ -14,7 +14,7 @@ import {
   Clock, AlertTriangle, Edit3, Eye, Lock, Filter, Search, 
   Save, Megaphone, IdCard, Download, ArrowRight, UserCheck,
   ListTodo, Check, Plus, Trash2, FileText, Layers, Award,
-  CheckCircle, ChevronRight, Bookmark, MapPin, Phone, Send,
+  CheckCircle, ChevronRight, Bookmark, MapPin, Phone, Send, Mail,
   Globe, Building2, Sparkles, ExternalLink, ArrowLeft, Home,
   Sliders, LogOut, LogIn, Calendar, RefreshCw, MessageSquare, Reply,
   UserPlus, FileSpreadsheet, LayoutGrid, Table, BarChart3, ShieldCheck, Activity, TrendingUp, CheckCheck
@@ -71,7 +71,7 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
   const [mainTab, setMainTab] = useState<'departments' | 'calendar' | 'mezmur' | 'registrations' | 'feedback' | 'announcements' | 'mediaCMS' | 'studentCard'>(
     isStudent ? 'studentCard' : 'departments'
   );
-  const [deptSubTab, setDeptSubTab] = useState<'content' | 'tasks' | 'students' | 'preview' | 'mediaCMS' | 'deptProgress' | 'mezmur'>(
+  const [deptSubTab, setDeptSubTab] = useState<'content' | 'tasks' | 'students' | 'preview' | 'mediaCMS' | 'deptProgress' | 'mezmur' | 'feedback'>(
     startingDeptId === 'audit' ? 'deptProgress' : 'content'
   );
   const [auditedDeptId, setAuditedDeptId] = useState<string | null>(null);
@@ -211,7 +211,8 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
     } else if (
       deptSubTab === 'deptProgress' || 
       (deptSubTab === 'students' && deptId !== 'education') ||
-      (deptSubTab === 'mezmur' && deptId !== 'choir')
+      (deptSubTab === 'mezmur' && deptId !== 'choir') ||
+      (deptSubTab === 'feedback' && deptId !== 'leadership' && deptId !== 'audit')
     ) {
       setDeptSubTab('tasks');
     }
@@ -641,6 +642,25 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               <div className="shrink-0 flex flex-wrap items-center gap-2">
                 
 
+                {(selectedDeptId === 'leadership' || selectedDeptId === 'audit') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeptSubTab('feedback');
+                      fetchFeedback();
+                    }}
+                    className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-800 to-teal-900 hover:from-emerald-700 hover:to-teal-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all cursor-pointer ring-1 ring-emerald-500/40"
+                  >
+                    <MessageSquare size={13} className="text-amber-300" />
+                    <span>{isAmharic ? `💬 አስተያየቶች (${feedbackList.length})` : `Feedback (${feedbackList.length})`}</span>
+                    {unreadFeedbackCount > 0 && (
+                      <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[9px] font-black animate-pulse">
+                        {unreadFeedbackCount}
+                      </span>
+                    )}
+                  </button>
+                )}
+
                 {selectedDeptId === 'choir' && (
                   <button
                     type="button"
@@ -750,10 +770,12 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
             <div className="flex border-b border-emerald-900 bg-[#041211] rounded-2xl p-1 gap-1 overflow-x-auto">
               {(selectedDeptId === 'audit' ? [
                 { id: 'deptProgress', labelAm: '📊 የክፍላት አጠቃላይ ግስጋሴ (Departments Progress)', labelEn: 'All Departments Progress', icon: BarChart3 },
-                { id: 'tasks', labelAm: `📋 የኦዲት ክፍሉ የውስጥ እቅድ (${completedTasksCount}/${totalTasksCount})`, labelEn: 'Audit Internal Plan', icon: ListTodo }
+                { id: 'tasks', labelAm: `📋 የኦዲት ክፍሉ የውስጥ እቅድ (${completedTasksCount}/${totalTasksCount})`, labelEn: 'Audit Internal Plan', icon: ListTodo },
+                { id: 'feedback', labelAm: `💬 አስተያየቶች (${unreadFeedbackCount > 0 ? `${unreadFeedbackCount} አዲስ` : feedbackList.length})`, labelEn: 'Feedback & Inquiries', icon: MessageSquare }
               ] : [
                 { id: 'content', labelAm: '📝 የገጽ ይዘትና መገለጫ', labelEn: 'Page Profile & Content', icon: Edit3 },
                 { id: 'tasks', labelAm: `📋 የሥራ ዕቅድና ተግባራት (${completedTasksCount}/${totalTasksCount})`, labelEn: 'Tasks & Mandates', icon: ListTodo },
+                ...(selectedDeptId === 'leadership' ? [{ id: 'feedback', labelAm: `💬 አስተያየቶች (${unreadFeedbackCount > 0 ? `${unreadFeedbackCount} አዲስ` : feedbackList.length})`, labelEn: 'Feedback & Inquiries', icon: MessageSquare }] : []),
                 ...(selectedDeptId === 'education' ? [{ id: 'students', labelAm: `👥 ተመዝጋቢዎች (${deptRegistrations.length})`, labelEn: 'Registrations', icon: UserCheck }] : []),
                 ...(selectedDeptId === 'choir' ? [{ id: 'mezmur', labelAm: '🎵 መንፈሳዊ መዝሙራትና ዝማሬ', labelEn: 'Sacred Mezmur & Hymns', icon: Music }] : []),
                 { id: 'preview', labelAm: '👁️ የቀጥታ ገጽ እይታ', labelEn: 'Live Preview', icon: Eye },
@@ -1699,7 +1721,219 @@ export const DepartmentAdminPage: React.FC<DepartmentAdminPageProps> = ({
               </div>
             )}
 
-                        {/* SUB-TAB: MEZMUR & SACRED HYMNS (FOR CHOIR DEPARTMENT ONLY) */}
+                        {/* SUB-TAB: BELIEVERS' FEEDBACK & INQUIRIES (FOR LEADERSHIP & AUDIT) */}
+            {deptSubTab === 'feedback' && (selectedDeptId === 'leadership' || selectedDeptId === 'audit') && (
+              <div className="space-y-5 text-left animate-in fade-in duration-200">
+                {/* Header & Sync */}
+                <div className="p-5 rounded-3xl bg-gradient-to-r from-[#0a2723] via-[#0d332e] to-[#0a2723] border border-emerald-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
+                  <div className="flex items-center gap-3.5">
+                    <div className="p-3.5 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/40 shrink-0 shadow">
+                      <MessageSquare size={24} />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white flex items-center gap-2">
+                        <span>{isAmharic ? 'የምዕመናን አስተያየትና ጥያቄዎች ሳጥን' : 'Feedback & Inquiries Inbox'}</span>
+                        <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold">
+                          {feedbackList.length} {isAmharic ? 'መልዕክቶች' : 'Messages'}
+                        </span>
+                      </h4>
+                      <p className="text-xs text-emerald-200/80 mt-0.5">
+                        {isAmharic 
+                          ? 'በድረ-ገጹ ላይ ከምዕመናን በቀጥታ ለሥራ አመራር እና ለኦዲትና ኢንስፔክሽን የተላኩ አስተያየቶችና ጥያቄዎች' 
+                          : 'Direct feedback and inquiries submitted by believers to Executive Leadership & Audit.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={fetchFeedback}
+                    disabled={isSyncingFeedback}
+                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs shadow-lg transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 self-start sm:self-auto shrink-0"
+                  >
+                    <RefreshCw size={14} className={isSyncingFeedback ? 'animate-spin' : ''} />
+                    <span>{isSyncingFeedback ? (isAmharic ? 'በመጫን ላይ...' : 'Syncing...') : (isAmharic ? 'ከሰርቨር አድስ' : 'Sync Server')}</span>
+                  </button>
+                </div>
+
+                {/* KPI Metric Summary Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80 shadow">
+                    <span className="text-[11px] font-bold text-emerald-300/80 block uppercase">
+                      {isAmharic ? 'ጠቅላላ መልዕክት' : 'Total Messages'}
+                    </span>
+                    <span className="text-2xl font-black text-white font-mono">{feedbackList.length}</span>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-[#09201e] border border-rose-500/30 shadow">
+                    <span className="text-[11px] font-bold text-rose-300 block uppercase">
+                      {isAmharic ? 'ያልተነበበ / አዲስ' : 'Unread'}
+                    </span>
+                    <span className="text-2xl font-black text-rose-400 font-mono">{unreadFeedbackCount}</span>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-[#09201e] border border-blue-500/30 shadow">
+                    <span className="text-[11px] font-bold text-blue-300 block uppercase">
+                      {isAmharic ? 'የተነበበ' : 'Read'}
+                    </span>
+                    <span className="text-2xl font-black text-blue-400 font-mono">
+                      {feedbackList.filter(f => f.status === 'read').length}
+                    </span>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-[#09201e] border border-emerald-500/30 shadow">
+                    <span className="text-[11px] font-bold text-emerald-400 block uppercase">
+                      {isAmharic ? 'ምላሽ የተሰጠው' : 'Replied'}
+                    </span>
+                    <span className="text-2xl font-black text-emerald-400 font-mono">
+                      {feedbackList.filter(f => f.status === 'replied').length}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Filters & Search Toolbar */}
+                <div className="p-4 rounded-2xl bg-[#09201e] border border-emerald-900/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow">
+                  <div className="relative flex-1">
+                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-400/60" />
+                    <input
+                      type="text"
+                      value={feedbackSearchQuery}
+                      onChange={(e) => setFeedbackSearchQuery(e.target.value)}
+                      placeholder={isAmharic ? 'በስም፣ በስልክ፣ በርዕስ ወይም በመልዕክት ይፈልጉ...' : 'Search by name, contact, subject, or message...'}
+                      className="w-full pl-9 pr-4 py-2 bg-[#041211] border border-emerald-800 rounded-xl text-xs text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400 transition-colors"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-1.5 overflow-x-auto">
+                    {[
+                      { id: 'all', label: isAmharic ? 'ሁሉም' : 'All' },
+                      { id: 'unread', label: isAmharic ? 'ያልተነበበ' : 'Unread' },
+                      { id: 'read', label: isAmharic ? 'የተነበበ' : 'Read' },
+                      { id: 'replied', label: isAmharic ? 'ምላሽ የተሰጠ' : 'Replied' },
+                    ].map(st => (
+                      <button
+                        key={st.id}
+                        type="button"
+                        onClick={() => setFeedbackFilterStatus(st.id as any)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                          feedbackFilterStatus === st.id
+                            ? 'bg-amber-500 text-slate-950 shadow'
+                            : 'bg-[#041211] text-emerald-300/80 hover:text-white border border-emerald-900'
+                        }`}
+                      >
+                        {st.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Feedback List */}
+                <div className="space-y-3">
+                  {visibleFeedback.map((item) => (
+                    <div
+                      key={item.id || item._id}
+                      className={`p-5 rounded-2xl border transition-all text-left space-y-3 ${
+                        item.status === 'unread'
+                          ? 'bg-[#0b2b25] border-amber-500/50 shadow-lg ring-1 ring-amber-500/20'
+                          : item.status === 'replied'
+                          ? 'bg-[#061816]/70 border-emerald-800/60 opacity-90'
+                          : 'bg-[#061816] border-emerald-900/80'
+                      }`}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-900/60 pb-2.5">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h5 className="font-bold text-white text-sm">{item.name}</h5>
+                            <span className="text-xs text-emerald-300 font-mono">({item.contactInfo})</span>
+                          </div>
+                          <div className="text-[11px] text-amber-300/80 font-medium mt-0.5">{item.subject}</div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${
+                            item.status === 'unread'
+                              ? 'bg-rose-950 text-rose-300 border-rose-600'
+                              : item.status === 'read'
+                              ? 'bg-blue-950 text-blue-300 border-blue-600'
+                              : 'bg-emerald-950 text-emerald-300 border-emerald-600'
+                          }`}>
+                            {item.status === 'unread' ? 'አዲስ' : item.status === 'read' ? 'ተነቧል' : 'ምላሽ አግኝቷል'}
+                          </span>
+                          <span className="text-[10px] text-emerald-400/60 font-mono">
+                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ''}
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed bg-[#041211]/80 p-3.5 rounded-xl border border-emerald-900/50">
+                        {item.message}
+                      </p>
+
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
+                        <div className="flex items-center gap-2">
+                          {item.status !== 'read' && (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateFeedbackStatus(item.id || item._id || '', 'read')}
+                              className="px-3 py-1 rounded-lg bg-blue-900/60 hover:bg-blue-800 text-blue-200 border border-blue-700 text-xs font-semibold transition-all cursor-pointer"
+                            >
+                              {isAmharic ? 'እንደ ተነበበ ቁጠር' : 'Mark as Read'}
+                            </button>
+                          )}
+                          {item.status !== 'replied' && (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateFeedbackStatus(item.id || item._id || '', 'replied')}
+                              className="px-3 py-1 rounded-lg bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 border border-emerald-700 text-xs font-semibold transition-all cursor-pointer"
+                            >
+                              {isAmharic ? 'ምላሽ ተሰጥቷል' : 'Mark as Replied'}
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteFeedback(item.id || item._id || '')}
+                            className="px-3 py-1 rounded-lg bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800 text-xs font-semibold transition-all cursor-pointer"
+                          >
+                            {isAmharic ? 'ሰርዝ' : 'Delete'}
+                          </button>
+                        </div>
+
+                        {item.contactInfo.includes('@') ? (
+                          <a
+                            href={`mailto:${item.contactInfo}?subject=Re: ${encodeURIComponent(item.subject)}`}
+                            className="text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold"
+                          >
+                            <Mail size={12} />
+                            <span>{isAmharic ? 'በኢሜይል መልስ' : 'Reply by Email'}</span>
+                          </a>
+                        ) : (
+                          <a
+                            href={`tel:${item.contactInfo.replace(/\s+/g, '')}`}
+                            className="text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold"
+                          >
+                            <Phone size={12} />
+                            <span>{isAmharic ? 'በስልክ ደውል' : 'Call Phone'}</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                  {visibleFeedback.length === 0 && (
+                    <div className="py-12 text-center text-xs text-emerald-300/70 bg-[#09201e] rounded-3xl border border-dashed border-emerald-900 space-y-2">
+                      <MessageSquare size={28} className="mx-auto text-emerald-500/40" />
+                      <p className="font-semibold text-sm text-white">
+                        {isAmharic ? 'ምንም የተቀበሉት አስተያየት ወይም ጥያቄ የለም።' : 'No feedback or inquiries found.'}
+                      </p>
+                      <p className="text-emerald-300/60 max-w-sm mx-auto">
+                        {isAmharic 
+                          ? 'ምዕመናን በድረ-ገጹ ላይ መልዕክት ሲልኩ እዚህ ጋር በቅጽበት ይደርሰዎታል' 
+                          : 'Incoming messages from believers will appear here in real time'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* SUB-TAB: MEZMUR & SACRED HYMNS (FOR CHOIR DEPARTMENT ONLY) */}
             {deptSubTab === 'mezmur' && selectedDeptId === 'choir' && (
               <div className="space-y-4 animate-in fade-in duration-200 text-left">
                 <div className="p-5 rounded-3xl bg-gradient-to-r from-[#0a2723] via-[#0d332e] to-[#0a2723] border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xl">

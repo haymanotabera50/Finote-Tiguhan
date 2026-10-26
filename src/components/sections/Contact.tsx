@@ -4,7 +4,6 @@ import { siteContent } from '../../data/translations';
 import { EthiopianCross } from '../common/EthiopianCross';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { api } from '../../services/api';
-import { departmentsData } from '../../data/departmentsData';
 
 export const Contact: React.FC = () => {
   const { language, isAmharic } = useLanguage();
@@ -14,7 +13,6 @@ export const Contact: React.FC = () => {
   const [contactInfo, setContactInfo] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
-  const [departmentId, setDepartmentId] = useState('general');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [sent, setSent] = useState(false);
@@ -35,7 +33,7 @@ export const Contact: React.FC = () => {
         contactInfo: contactInfo.trim(),
         subject: subject.trim() || (isAmharic ? 'አጠቃላይ አስተያየትና ጥያቄ' : 'General Inquiry / Feedback'),
         message: message.trim(),
-        departmentId
+        departmentId: 'leadership_and_audit'
       });
 
       setSent(true);
@@ -43,7 +41,6 @@ export const Contact: React.FC = () => {
       setContactInfo('');
       setSubject('');
       setMessage('');
-      setDepartmentId('general');
     } catch (err: unknown) {
       console.error('Contact submission error:', err);
       setErrorMessage(
@@ -155,8 +152,8 @@ export const Contact: React.FC = () => {
                 </h4>
                 <p className="text-xs text-emerald-200/80 max-w-sm mx-auto">
                   {isAmharic 
-                    ? "መልዕክትዎ ለሰንበት ትምህርት ቤቱ አስተባባሪዎች ደርሷል። በቅርቡ ምላሽ እንሰጣለን።" 
-                    : "Your message has been received by Sunday School leadership. We will follow up soon."}
+                    ? "መልዕክትዎ ለሥራ አመራር ክፍል እና ለኦዲትና ኢንስፔክሽን ክፍል ደርሷል። በቅርቡ ምላሽ እንሰጣለን።" 
+                    : "Your feedback has been delivered directly to Executive Leadership and Audit & Inspection."}
                 </p>
                 <button
                   onClick={() => setSent(false)}
@@ -204,38 +201,18 @@ export const Contact: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-amber-300 mb-1.5">
-                      {isAmharic ? "መልዕክቱ የሚመለከተው ክፍል" : "Target Department"}
-                    </label>
-                    <select
-                      value={departmentId}
-                      onChange={(e) => setDepartmentId(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#051413] border border-emerald-800 rounded-xl text-xs sm:text-sm text-amber-200 focus:outline-none focus:border-amber-400 transition-colors cursor-pointer"
-                    >
-                      <option value="general">{isAmharic ? "🌟 አጠቃላይ አስተያየት / ለሥራ አመራር" : "🌟 General / Leadership"}</option>
-                      {departmentsData.map(d => (
-                        <option key={d.id} value={d.id}>
-                          {isAmharic ? d.nameAm : d.nameEn}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-amber-300 mb-1.5">
-                      {t.contactFormSubject} *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={subject}
-                      onChange={(e) => setSubject(e.target.value)}
-                      placeholder={isAmharic ? "ምሳሌ፦ ስለ አዲስ ተማሪዎች ምዝገባ" : "e.g. Inquiries about student enrollment"}
-                      className="w-full px-3 py-2.5 bg-[#051413] border border-emerald-800 rounded-xl text-sm text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400 transition-colors"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-xs font-semibold text-amber-300 mb-1.5">
+                    {t.contactFormSubject} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    placeholder={isAmharic ? "ምሳሌ፦ አጠቃላይ አስተያየት፣ ጥያቄ ወይም ማሳሰቢያ" : "e.g. General inquiry, feedback, or suggestion"}
+                    className="w-full px-3 py-2.5 bg-[#051413] border border-emerald-800 rounded-xl text-sm text-white placeholder-emerald-700 focus:outline-none focus:border-amber-400 transition-colors"
+                  />
                 </div>
 
                 <div>
